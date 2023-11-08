@@ -1,0 +1,52 @@
+{
+    "name": "rst-compiler",
+    "version": "0.0.0",
+    "description": "Parses reStructuredText and generates HTML or Vitepress-compatible Markdown",
+    "exports": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "README.md",
+        "dist/*",
+        "src/*"
+    ],
+    "type": "module",
+    "sideEffects": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Trinovantes/rst-compiler"
+    },
+    "author": {
+        "name": "Stephen",
+        "email": "hello@stephenli.ca",
+        "url": "https://www.stephenli.ca"
+    },
+    "license": "MIT",
+    "private": false,
+    "scripts": {
+        "dev": "  NODE_ENV=development tsc --watch",
+        "build": "NODE_ENV=production  tsc -p tsconfig.prod.json",
+        "prepublishOnly": "rm -rf ./dist && yarn build",
+        "lint": "tsc --noemit && eslint --ext .ts,.js,.vue --ignore-path .gitignore .",
+        "test": "vitest",
+        "playground": "bun run tests/playground.ts",
+        "benchmark": " node --loader ts-node/esm --experimental-specifier-resolution=node                                 tests/benchmarks/benchmark.ts",
+        "profile": "   node --loader ts-node/esm --experimental-specifier-resolution=node --prof --no-logfile-per-isolate tests/benchmarks/profile.ts && node --prof-process v8.log > v8.txt"
+    },
+    "devDependencies": {
+        "@types/benchmark": "^2.1.1",
+        "@types/node": "^20.7.0",
+        "@typescript-eslint/eslint-plugin": "^6.7.3",
+        "@typescript-eslint/parser": "^6.7.3",
+        "benchmark": "^2.1.4",
+        "eslint": "^8.15.0",
+        "eslint-config-standard": "^17.0.0",
+        "eslint-import-resolver-typescript": "^3.5.3",
+        "eslint-plugin-import": "^2.22.0",
+        "eslint-plugin-n": "^16.1.0",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^6.0.0",
+        "eslint-plugin-vue": "^9.9.0",
+        "typescript": "^5.0.2",
+        "vitest": "^0.34.5"
+    }
+}
