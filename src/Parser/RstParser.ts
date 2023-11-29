@@ -8,6 +8,7 @@ import { BlockquoteNode, blockquoteRe, isBlockquoteAttribution } from './Block/B
 import { emptyCommentRe } from './Block/CommentNode.js'
 import { Token } from '@/Lexer/Token.js'
 import { tokenizeInput } from '@/Lexer/tokenizeInput.js'
+import { TransitionNode, transitionRe } from './Block/TransitionNode.js'
 
 export class RstParser {
     // Parser internal states
@@ -145,6 +146,11 @@ export class RstParser {
 
             // Parse based on current state of input
             switch (true) {
+                case (this.peekTest(transitionRe)): {
+                    nodes.push(this.parseTransition())
+                    break
+                }
+
                 case (this.peekTest(bulletListRe)): {
                     nodes.push(this.parseBulletList())
                     break
@@ -230,6 +236,23 @@ export class RstParser {
             firstParagraph,
             ...restOfList,
         ])
+    }
+
+    private parseTransition(): TransitionNode {
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        this.consume()
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new TransitionNode({
+            startLineIdx,
+            endLineIdx,
+            startIdx,
+            endIdx,
+        })
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#sections
