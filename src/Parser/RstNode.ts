@@ -1,42 +1,64 @@
 export const enum RstNodeType {
-    Document = 'Document', // Root
-    Paragraph = 'Paragraph', // Generic fallback for all texts
-    Text = 'Text', // Inline text
-
+    Document = 'Document',
     Section = 'Section',
-    Directive = 'Directive',
-    Table = 'Table',
+    Transition = 'Transition',
 
+    // ------------------------------------------------------------------------
+    // Body elements
+    // ------------------------------------------------------------------------
+
+    Paragraph = 'Paragraph', // Generic fallback
+
+    ListItem = 'ListItem',
     BulletList = 'BulletList', // <ul>
     EnumeratedList = 'EnumeratedList', // <ol>
     DefinitionList = 'DefinitionList', // <dl>
-    ListItem = 'ListItem',
+    FieldList = 'FieldList',
+    OptionList = 'OptionList',
 
+    LiteralBlock = 'LiteralBlock',
+    LineBlock = 'LineBlock',
+    Blockquote = 'Blockquote',
+    BlockquoteAttribution = 'BlockquoteAttribution',
+    DocktestBlock = 'DocktestBlock',
+
+    Table = 'Table',
+
+    FootNote = 'FootNote',
+    Citation = 'Citation',
+    HyperLinkTarget = 'HyperLinkTarget',
+    Directive = 'Directive',
     SubstitutionDef = 'SubstitutionDef',
+    Comment = 'Comment',
+
+    // ------------------------------------------------------------------------
+    // Inline elements
+    // ------------------------------------------------------------------------
+
+    Text = 'Text',
+}
+
+export type RstNodeSource = {
+    startLineIdx: number
+    endLineIdx: number // exclusive
+    startIdx: number
+    endIdx: number // exclusive
 }
 
 export abstract class RstNode {
     abstract readonly type: RstNodeType
 
-    // eslint-disable-next-line no-use-before-define
-    protected parent: RstNode | null
-
     constructor(
-        readonly startIdx: number,
-        readonly endIdx: number, // exclusive
-        readonly startLine: number,
-        readonly endLine: number, // exclusive
-        protected readonly _children = new Array<RstNode>(),
-    ) {
-        for (const child of this._children) {
-            child.parent = this
-        }
-
-        this.parent = null
-    }
+        public readonly source: RstNodeSource,
+        protected readonly _children: ReadonlyArray<Readonly<RstNode>> = [],
+    ) {}
 
     get length(): number {
-        return this.endIdx - this.startIdx
+        return this.source.endIdx - this.source.startIdx
+    }
+
+    get children(): ReadonlyArray<Readonly<RstNode>> {
+        return this._children
     }
 
     protected get label(): string {
@@ -47,12 +69,22 @@ export abstract class RstNode {
         const selfTab = '  '.repeat(depth)
 
         // Prints line numbers in 1-based counting for ease of reading
-        const start = this.startLine + 1
-        const end = this.endLine + 1
-        let str = selfTab + `[${this.label}] startIdx:${this.startIdx} endIdx:${this.endIdx} (${this.length}) line:${start}-${end}\n`
+        const start = this.source.startLineIdx + 1
+        const end = this.source.endLineIdx + 1
+        let str = selfTab + `[${this.label}] startIdx:${this.source.startIdx} endIdx:${this.source.endIdx} (${this.length}) line:${start}-${end}\n`
 
         for (const child of this._children) {
             str += child.toString(depth + 1)
+        }
+
+        return str
+    }
+
+    getTextContent(): string {
+        let str = ''
+
+        for (const child of this._children) {
+            str += child.getTextContent()
         }
 
         return str

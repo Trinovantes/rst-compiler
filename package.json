@@ -24,7 +24,7 @@
     "private": false,
     "scripts": {
         "dev": "  NODE_ENV=development tsc --watch",
-        "build": "NODE_ENV=production  tsc -p tsconfig.prod.json",
+        "build": "NODE_ENV=production  tsc -p tsconfig.prod.json && tsc-alias -p tsconfig.prod.json",
         "prepublishOnly": "rm -rf ./dist && yarn build",
         "lint": "tsc --noemit && eslint --ext .ts,.js,.vue --ignore-path .gitignore .",
         "test": "vitest",
@@ -46,6 +46,7 @@
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-promise": "^6.0.0",
         "eslint-plugin-vue": "^9.9.0",
+        "tsc-alias": "^1.8.8",
         "typescript": "^5.0.2",
         "vitest": "^0.34.5"
     }
