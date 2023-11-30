@@ -3,12 +3,12 @@ import { ParagraphNode } from './Block/ParagraphNode.js'
 import { sectionRe, SectionNode, sectionChars } from './Block/SectionNode.js'
 import { RstNode, RstNodeType } from './RstNode.js'
 import { BulletListNode, bulletListRe } from './Block/BulletListNode.js'
-import { ListItemNode } from './Block/ListItemNode.js'
 import { BlockquoteNode, blockquoteRe, isBlockquoteAttribution } from './Block/BlockquoteNode.js'
 import { emptyCommentRe } from './Block/CommentNode.js'
 import { Token } from '@/Lexer/Token.js'
 import { tokenizeInput } from '@/Lexer/tokenizeInput.js'
 import { TransitionNode, transitionRe } from './Block/TransitionNode.js'
+import { ListItemNode } from './Block/ListItemNode.js'
 
 export class RstParser {
     // Parser internal states
@@ -88,6 +88,10 @@ export class RstParser {
     }
 
     private peekIsIndented(expectedIndentSize: number): boolean {
+        if (expectedIndentSize === 0) {
+            return true
+        }
+
         const nextToken = this.peek()
         if (!nextToken) {
             return false
@@ -136,7 +140,7 @@ export class RstParser {
             }
 
             // Exit if we are inside a construct but encounter a new block without the same indentation
-            if (currentIndentSize > 0 && !this.peekIsIndented(currentIndentSize)) {
+            if (!this.peekIsIndented(currentIndentSize)) {
                 break
             }
 
@@ -152,7 +156,7 @@ export class RstParser {
                 }
 
                 case (this.peekTest(bulletListRe)): {
-                    nodes.push(this.parseBulletList())
+                    nodes.push(this.parseBulletList(currentIndentSize))
                     break
                 }
 
@@ -178,64 +182,6 @@ export class RstParser {
         }
 
         return nodes
-    }
-
-    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bullet-lists
-    private parseBulletList(): BulletListNode {
-        const indent = bulletListRe.exec(this.peek()?.str ?? '')?.[1] // TODO fix indent detection
-        if (!indent) {
-            throw new Error('Failed to parseBulletList')
-        }
-
-        const startLineIdx = this._tokenIdx
-        const startIdx = this._inputIdx
-
-        const listItems = new Array<ListItemNode>()
-        while (this.peekTest(bulletListRe)) {
-            const listItem = this.parseListItem(indent.length)
-            listItems.push(listItem)
-        }
-
-        const endLineIdx = this._tokenIdx
-        const endIdx = this._inputIdx
-
-        return new BulletListNode({ startLineIdx, endLineIdx, startIdx, endIdx }, listItems)
-    }
-
-    // https://docutils.sourceforge.io/docs/ref/doctree.html#list-item
-    private parseListItem(expectedIndentSize: number): ListItemNode {
-        const startLineIdx = this._tokenIdx
-        const startIdx = this._inputIdx
-
-        const firstLine = this.consume()
-        let firstParagraphStr = bulletListRe.exec(firstLine.str)?.[2]
-        if (!firstParagraphStr) {
-            throw new Error('Failed to parseListItem')
-        }
-
-        while (this.peekIsContent() && this.peekIsIndented(expectedIndentSize)) {
-            const line = this.consume()
-            firstParagraphStr += line.str
-        }
-
-        const firstParagraph = new ParagraphNode(
-            {
-                startLineIdx,
-                endLineIdx: this._tokenIdx,
-                startIdx,
-                endIdx: startIdx + firstParagraphStr.length,
-            },
-            firstParagraphStr,
-        )
-        const restOfList = this.parseBodyElements(expectedIndentSize)
-
-        const endLineIdx = this._tokenIdx
-        const endIdx = this._inputIdx
-
-        return new ListItemNode({ startLineIdx, endLineIdx, startIdx, endIdx }, [
-            firstParagraph,
-            ...restOfList,
-        ])
     }
 
     private parseTransition(): TransitionNode {
@@ -296,30 +242,6 @@ export class RstParser {
         )
     }
 
-    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
-    private parseBlockquote(): BlockquoteNode {
-        const startLineIdx = this._tokenIdx
-        const startIdx = this._inputIdx
-
-        const indent = blockquoteRe.exec(this.peek()?.str ?? '')?.[1]
-        if (!indent) {
-            throw new Error('Failed to parseBlockquote')
-        }
-
-        const nodes = this.parseBodyElements(indent.length, (prevNode) => {
-            if (prevNode?.type !== RstNodeType.Paragraph) {
-                return false
-            }
-
-            return isBlockquoteAttribution(indent, prevNode)
-        })
-
-        const endLineIdx = this._tokenIdx
-        const endIdx = this._inputIdx
-
-        return new BlockquoteNode({ startLineIdx, endLineIdx, startIdx, endIdx }, nodes, indent)
-    }
-
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#paragraphs
     private parseParagraph(): ParagraphNode {
         const startLineIdx = this._tokenIdx
@@ -343,5 +265,100 @@ export class RstParser {
             },
             origStr,
         )
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bullet-lists
+    private parseBulletList(currentIndentSize: number): BulletListNode {
+        const indent = bulletListRe.exec(this.peek()?.str ?? '')?.[1]
+        if (indent === undefined) {
+            throw new Error('Failed to parseBulletList')
+        }
+
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        const listItems = new Array<ListItemNode>()
+        while (this.peekTest(bulletListRe) && this.peekIsIndented(currentIndentSize)) {
+            const listItem = this.parseListItem(indent.length, bulletListRe)
+            listItems.push(listItem)
+        }
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new BulletListNode({ startLineIdx, endLineIdx, startIdx, endIdx }, listItems)
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/doctree.html#list-item
+    private parseListItem(currentIndentSize: number, listItemRe: RegExp) {
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        const firstLine = this.consume()
+        const firstLineMatches = listItemRe.exec(firstLine.str)
+        if (!firstLineMatches) {
+            throw new Error('Failed to parseListItem')
+        }
+
+        const bulletAndSpace = firstLineMatches[2]
+        const bullet = bulletAndSpace.trim()
+        const listBodyIndentSize = currentIndentSize + bulletAndSpace.length
+
+        // Need to extract first line with regex since it starts with bullet and space
+        // e.g. "- [text]"
+        const firstLineText = firstLineMatches[3]
+
+        // Treat first child of list as paragraph
+        let firstParagraphStr = firstLineText
+        while (this.peekIsContent() && this.peekIsIndented(listBodyIndentSize)) {
+            const line = this.consume()
+            const lineText = line.str.substring(listBodyIndentSize)
+            firstParagraphStr += ' ' + lineText
+        }
+
+        const firstParagraph = new ParagraphNode(
+            {
+                startLineIdx,
+                endLineIdx: this._tokenIdx,
+                startIdx,
+                endIdx: startIdx + firstParagraphStr.length,
+            },
+            firstParagraphStr,
+        )
+
+        // Parse rest of list's elements (if any)
+        const restOfList = this.parseBodyElements(listBodyIndentSize)
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new ListItemNode({ startLineIdx, endLineIdx, startIdx, endIdx }, bullet, [
+            firstParagraph,
+            ...restOfList,
+        ])
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
+    private parseBlockquote(): BlockquoteNode {
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        const indent = blockquoteRe.exec(this.peek()?.str ?? '')?.[1]
+        if (indent === undefined) {
+            throw new Error('Failed to parseBlockquote')
+        }
+
+        const nodes = this.parseBodyElements(indent.length, (prevNode) => {
+            if (prevNode?.type !== RstNodeType.Paragraph) {
+                return false
+            }
+
+            return isBlockquoteAttribution(indent, prevNode)
+        })
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new BlockquoteNode({ startLineIdx, endLineIdx, startIdx, endIdx }, nodes, indent)
     }
 }
