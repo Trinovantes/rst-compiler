@@ -3,7 +3,7 @@ import { ParagraphNode } from './Block/ParagraphNode.js'
 import { sectionRe, SectionNode, sectionChars } from './Block/SectionNode.js'
 import { RstNode, RstNodeType } from './RstNode.js'
 import { BulletListNode, bulletListRe } from './Block/BulletListNode.js'
-import { BlockquoteNode, blockquoteRe, isBlockquoteAttribution } from './Block/BlockquoteNode.js'
+import { BlockquoteAttributionNode, BlockquoteNode, blockquoteAttributonRe } from './Block/BlockquoteNode.js'
 import { emptyCommentRe } from './Block/CommentNode.js'
 import { Token } from '@/Lexer/Token.js'
 import { tokenizeInput } from '@/Lexer/tokenizeInput.js'
@@ -109,7 +109,7 @@ export class RstParser {
         this._tokens = tokenizeInput(input)
         this._sectionMarkers = []
 
-        const nodes = this.parseBodyElements(0)
+        const nodes = this.parseBodyElements(0, RstNodeType.Document)
 
         const startLineIdx = 0
         const endLineIdx = this._tokenIdx
@@ -119,9 +119,10 @@ export class RstParser {
         return new DocumentNode({ startLineIdx, endLineIdx, startIdx, endIdx }, nodes)
     }
 
-    private parseBodyElements(currentIndentSize: number, shouldStop?: (prevNode?: RstNode) => boolean): Array<RstNode> {
+    private parseBodyElements(indentSize: number, parentType: RstNodeType): Array<RstNode> {
         const nodes = new Array<RstNode>()
 
+        // eslint-disable-next-line no-labels
         while (true) {
             // Consume all blank lines before parsing next block
             while (this.peekIsNewLine()) {
@@ -134,17 +135,19 @@ export class RstParser {
             }
 
             // Exit if we are inside a construct and encounted an empty comment
-            if (currentIndentSize > 0 && this.peekTest(emptyCommentRe)) {
+            if (parentType !== RstNodeType.Document && this.peekTest(emptyCommentRe)) {
                 this.consume() // Consume the empty comment
                 break
             }
 
-            // Exit if we are inside a construct but encounter a new block without the same indentation
-            if (!this.peekIsIndented(currentIndentSize)) {
+            // Exit if we are inside blockquote and encounted an attribution node
+            if (parentType === RstNodeType.Blockquote && this.peekTest(blockquoteAttributonRe)) {
+                nodes.push(this.parseBlockquoteAttribution(indentSize))
                 break
             }
 
-            if (shouldStop?.(nodes.at(-1))) {
+            // Exit if we are inside a construct but encounter a new block without the same indentation
+            if (!this.peekIsIndented(indentSize)) {
                 break
             }
 
@@ -156,7 +159,7 @@ export class RstParser {
                 }
 
                 case (this.peekTest(bulletListRe)): {
-                    nodes.push(this.parseBulletList(currentIndentSize))
+                    nodes.push(this.parseBulletList(indentSize))
                     break
                 }
 
@@ -170,13 +173,13 @@ export class RstParser {
                 }
 
                 // If next line has extra indentation, then treat it as blockquote
-                case (this.peekIsIndented(currentIndentSize + this._indentationSize)): {
-                    nodes.push(this.parseBlockquote())
+                case (this.peekIsIndented(indentSize + this._indentationSize)): {
+                    nodes.push(this.parseBlockquote(indentSize + this._indentationSize))
                     break
                 }
 
                 default: {
-                    nodes.push(this.parseParagraph(currentIndentSize))
+                    nodes.push(this.parseParagraph(indentSize))
                 }
             }
         }
@@ -243,7 +246,7 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#paragraphs
-    private parseParagraph(currentIndentSize: number): ParagraphNode {
+    private parseParagraph(indentSize: number): ParagraphNode {
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
@@ -254,7 +257,7 @@ export class RstParser {
         }
 
         const endLineIdx = this._tokenIdx
-        const origStr = lines.map((line) => line.str.substring(currentIndentSize)).join('\n')
+        const origStr = lines.map((line) => line.str.substring(indentSize)).join('\n')
 
         return new ParagraphNode(
             {
@@ -268,18 +271,13 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bullet-lists
-    private parseBulletList(currentIndentSize: number): BulletListNode {
-        const indent = bulletListRe.exec(this.peek()?.str ?? '')?.[1]
-        if (indent === undefined) {
-            throw new Error('Failed to parseBulletList')
-        }
-
+    private parseBulletList(indentSize: number): BulletListNode {
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
         const listItems = new Array<ListItemNode>()
-        while (this.peekTest(bulletListRe) && this.peekIsIndented(currentIndentSize)) {
-            const listItem = this.parseListItem(indent.length, bulletListRe)
+        while (this.peekTest(bulletListRe) && this.peekIsIndented(indentSize)) {
+            const listItem = this.parseListItem(indentSize, bulletListRe)
             listItems.push(listItem)
         }
 
@@ -290,7 +288,7 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/doctree.html#list-item
-    private parseListItem(currentIndentSize: number, listItemRe: RegExp) {
+    private parseListItem(indentSize: number, listItemRe: RegExp) {
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
@@ -302,7 +300,7 @@ export class RstParser {
 
         const bulletAndSpace = firstLineMatches[2]
         const bullet = bulletAndSpace.trim()
-        const listBodyIndentSize = currentIndentSize + bulletAndSpace.length
+        const listBodyIndentSize = indentSize + bulletAndSpace.length
 
         // Need to extract first line with regex since it starts with bullet and space
         // e.g. "- [text]"
@@ -327,7 +325,7 @@ export class RstParser {
         )
 
         // Parse rest of list's elements (if any)
-        const restOfList = this.parseBodyElements(listBodyIndentSize)
+        const restOfList = this.parseBodyElements(listBodyIndentSize, RstNodeType.ListItem)
 
         const endLineIdx = this._tokenIdx
         const endIdx = this._inputIdx
@@ -339,26 +337,54 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
-    private parseBlockquote(): BlockquoteNode {
+    private parseBlockquote(indentSize: number): BlockquoteNode {
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
-        const indent = blockquoteRe.exec(this.peek()?.str ?? '')?.[1]
-        if (indent === undefined) {
-            throw new Error('Failed to parseBlockquote')
-        }
-
-        const nodes = this.parseBodyElements(indent.length, (prevNode) => {
-            if (prevNode?.type !== RstNodeType.Paragraph) {
-                return false
-            }
-
-            return isBlockquoteAttribution(indent, prevNode)
-        })
+        const bodyNodes = this.parseBodyElements(indentSize, RstNodeType.Blockquote)
 
         const endLineIdx = this._tokenIdx
         const endIdx = this._inputIdx
 
-        return new BlockquoteNode({ startLineIdx, endLineIdx, startIdx, endIdx }, nodes, indent)
+        return new BlockquoteNode({ startLineIdx, endLineIdx, startIdx, endIdx }, bodyNodes, indentSize)
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
+    private parseBlockquoteAttribution(indentSize: number): BlockquoteAttributionNode {
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        const firstLine = this.consume()
+        const firstLineMatches = blockquoteAttributonRe.exec(firstLine.str)
+        if (!firstLineMatches) {
+            throw new Error('Failed to parseBlockquoteAttribution')
+        }
+
+        const bulletAndSpace = firstLineMatches[2]
+        const bodyIndentSize = indentSize + bulletAndSpace.length
+
+        // Need to extract first line with regex since it starts with bullet and space
+        // e.g. "-- [text]"
+        const firstLineText = firstLineMatches[3]
+
+        let attrStr = firstLineText
+        while (this.peekIsContent() && this.peekIsIndented(bodyIndentSize)) {
+            const line = this.consume()
+            const lineText = line.str.substring(bodyIndentSize)
+            attrStr += '\n' + lineText
+        }
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new BlockquoteAttributionNode(
+            {
+                startLineIdx,
+                endLineIdx,
+                startIdx,
+                endIdx,
+            },
+            attrStr,
+        )
     }
 }

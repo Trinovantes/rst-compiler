@@ -1,19 +1,8 @@
+import { TextNode } from '../Inline/TextNode.js'
 import { RstNode, RstNodeSource, RstNodeType } from '../RstNode.js'
-import { ParagraphNode } from './ParagraphNode.js'
 
 export const blockquoteRe = /^([ ]+)([^\n]*)$/
-
-export function isBlockquoteAttribution(indent: string, node?: RstNode): node is ParagraphNode {
-    if (!node) {
-        return false
-    }
-
-    if (node.type !== RstNodeType.Paragraph) {
-        return false
-    }
-
-    return new RegExp(`^${indent}(--|---)[ ]([^\n]*)`).test(node.getTextContent())
-}
+export const blockquoteAttributonRe = /^([ ]+)(---?[ ])([^\n]*)$/
 
 export class BlockquoteNode extends RstNode {
     type = RstNodeType.Blockquote
@@ -21,16 +10,8 @@ export class BlockquoteNode extends RstNode {
     constructor(
         source: RstNodeSource,
         children: Array<RstNode>,
-        indent: string,
+        readonly indentSize: number,
     ) {
-        const lastChiid = children.at(-1)
-        if (isBlockquoteAttribution(indent, lastChiid)) {
-            children = [
-                ...children.slice(0, children.length - 1),
-                new BlockquoteAttributionNode(lastChiid),
-            ]
-        }
-
         super(source, children)
     }
 }
@@ -38,7 +19,12 @@ export class BlockquoteNode extends RstNode {
 export class BlockquoteAttributionNode extends RstNode {
     type = RstNodeType.BlockquoteAttribution
 
-    constructor(paragraph: ParagraphNode) {
-        super(paragraph.source, [...paragraph.children])
+    constructor(
+        source: RstNodeSource,
+        origStr: string,
+    ) {
+        // TODO parse inline elements
+        const textNode = new TextNode(source.startLineIdx, source.endLineIdx, source.startIdx, origStr)
+        super(source, [textNode])
     }
 }
