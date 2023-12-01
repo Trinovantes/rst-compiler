@@ -330,7 +330,7 @@ export class RstParser {
         const endLineIdx = this._tokenIdx
         const endIdx = this._inputIdx
 
-        return new ListItemNode({ startLineIdx, endLineIdx, startIdx, endIdx }, bullet, [
+        return new ListItemNode(bullet, { startLineIdx, endLineIdx, startIdx, endIdx }, [
             firstParagraph,
             ...restOfList,
         ])
@@ -346,7 +346,7 @@ export class RstParser {
         const endLineIdx = this._tokenIdx
         const endIdx = this._inputIdx
 
-        return new BlockquoteNode({ startLineIdx, endLineIdx, startIdx, endIdx }, bodyNodes, indentSize)
+        return new BlockquoteNode({ startLineIdx, endLineIdx, startIdx, endIdx }, bodyNodes)
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes

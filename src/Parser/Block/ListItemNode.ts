@@ -4,8 +4,8 @@ export class ListItemNode extends RstNode {
     type = RstNodeType.ListItem
 
     constructor(
-        source: RstNodeSource,
         readonly bullet: string,
+        source: RstNodeSource,
         children: ReadonlyArray<Readonly<RstNode>> = [],
     ) {
         super(source, children)
