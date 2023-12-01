@@ -7,9 +7,9 @@ export class TextNode extends RstNode {
         startLineIdx: number,
         endLineIdx: number,
         startIdx: number,
-        readonly origStr: string,
+        readonly origText: string,
     ) {
-        const endIdx = startIdx + origStr.length
+        const endIdx = startIdx + origText.length
         super({ startLineIdx, endLineIdx, startIdx, endIdx })
     }
 
@@ -17,7 +17,7 @@ export class TextNode extends RstNode {
         const childTab = '  '.repeat(depth + 1)
         let str = super.toString(depth)
 
-        for (const line of this.origStr.split('\n')) {
+        for (const line of this.origText.split('\n')) {
             str += childTab + `"${line}"\n`
         }
 
@@ -25,6 +25,6 @@ export class TextNode extends RstNode {
     }
 
     override getTextContent(): string {
-        return this.origStr
+        return this.origText
     }
 }

@@ -132,3 +132,24 @@ test('when there is an empty comment, it breaks into 2 blockquotes', () => {
     expect(root.children[1].type).toBe(RstNodeType.Blockquote)
     expect(root.children[2].type).toBe(RstNodeType.Blockquote)
 })
+
+test('when the first line is a list character and space, it parses as BulletList inside Blockquote', () => {
+    const input = `
+        paragraph
+
+            - blockquote 1 list
+    `
+    const root = parseTestInput(input)
+
+    expect(root.children.length).toBe(2)
+    expect(root.children[0].type).toBe(RstNodeType.Paragraph)
+    expect(root.children[1].type).toBe(RstNodeType.Blockquote)
+
+    expect(root.children[1].children.length).toBe(1)
+    expect(root.children[1].children[0].type).toBe(RstNodeType.BulletList)
+    expect(root.children[1].children[0].children.length).toBe(1)
+    expect(root.children[1].children[0].children[0].type).toBe(RstNodeType.ListItem)
+    expect(root.children[1].children[0].children[0].children.length).toBe(1)
+    expect(root.children[1].children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
+    expect(root.children[1].children[0].children[0].children[0].getTextContent()).toBe('blockquote 1 list')
+})

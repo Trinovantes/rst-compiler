@@ -140,41 +140,41 @@ export class RstParser {
                 break
             }
 
+            // Exit if we are inside a construct but encounter a new block without the same indentation
+            if (parentType !== RstNodeType.Document && !this.peekIsIndented(indentSize)) {
+                break
+            }
+
             // Exit if we are inside blockquote and encounted an attribution node
             if (parentType === RstNodeType.Blockquote && this.peekTest(blockquoteAttributonRe)) {
                 nodes.push(this.parseBlockquoteAttribution(indentSize))
                 break
             }
 
-            // Exit if we are inside a construct but encounter a new block without the same indentation
-            if (!this.peekIsIndented(indentSize)) {
-                break
-            }
-
             // Parse based on current state of input
             switch (true) {
-                case (this.peekTest(transitionRe)): {
+                // If next line has extra indentation, then treat it as blockquote
+                case this.peekIsIndented(indentSize + this._indentationSize): {
+                    nodes.push(this.parseBlockquote(indentSize + this._indentationSize))
+                    break
+                }
+
+                case this.peekTest(transitionRe): {
                     nodes.push(this.parseTransition())
                     break
                 }
 
-                case (this.peekTest(bulletListRe)): {
+                case this.peekTest(bulletListRe): {
                     nodes.push(this.parseBulletList(indentSize))
                     break
                 }
 
-                case (this.peekTest(sectionRe, 0) && this.peekTest(sectionRe, 2)): {
+                case this.peekTest(sectionRe, 0) && this.peekTest(sectionRe, 2): {
                     nodes.push(this.parseSection(true))
                     break
                 }
-                case (this.peekTest(sectionRe, 1)): {
+                case this.peekTest(sectionRe, 1): {
                     nodes.push(this.parseSection(false))
-                    break
-                }
-
-                // If next line has extra indentation, then treat it as blockquote
-                case (this.peekIsIndented(indentSize + this._indentationSize)): {
-                    nodes.push(this.parseBlockquote(indentSize + this._indentationSize))
                     break
                 }
 
@@ -253,18 +253,19 @@ export class RstParser {
             const line = this.consume()
             lines.push(line)
         }
+        const paragraphText = lines.map((line) => line.str.substring(indentSize)).join('\n')
 
         const endLineIdx = this._tokenIdx
-        const origStr = lines.map((line) => line.str.substring(indentSize)).join('\n')
+        const endIdx = this._inputIdx
 
         return new ParagraphNode(
             {
                 startLineIdx,
                 endLineIdx,
                 startIdx,
-                endIdx: startIdx + origStr.length,
+                endIdx,
             },
-            origStr,
+            paragraphText,
         )
     }
 
@@ -305,11 +306,11 @@ export class RstParser {
         const firstLineText = firstLineMatches[3]
 
         // Treat first child of list as paragraph
-        let firstParagraphStr = firstLineText
+        let firstParagraphText = firstLineText
         while (this.peekIsContent() && this.peekIsIndented(listBodyIndentSize)) {
             const line = this.consume()
             const lineText = line.str.substring(listBodyIndentSize)
-            firstParagraphStr += '\n' + lineText
+            firstParagraphText += '\n' + lineText
         }
 
         const firstParagraph = new ParagraphNode(
@@ -317,9 +318,9 @@ export class RstParser {
                 startLineIdx,
                 endLineIdx: this._tokenIdx,
                 startIdx,
-                endIdx: startIdx + firstParagraphStr.length,
+                endIdx: startIdx + firstParagraphText.length,
             },
-            firstParagraphStr,
+            firstParagraphText,
         )
 
         // Parse rest of list's elements (if any)
@@ -365,11 +366,11 @@ export class RstParser {
         // e.g. "-- [text]"
         const firstLineText = firstLineMatches[3]
 
-        let attrStr = firstLineText
+        let attributionText = firstLineText
         while (this.peekIsContent() && this.peekIsIndented(bodyIndentSize)) {
             const line = this.consume()
             const lineText = line.str.substring(bodyIndentSize)
-            attrStr += '\n' + lineText
+            attributionText += '\n' + lineText
         }
 
         const endLineIdx = this._tokenIdx
@@ -382,7 +383,7 @@ export class RstParser {
                 startIdx,
                 endIdx,
             },
-            attrStr,
+            attributionText,
         )
     }
 }

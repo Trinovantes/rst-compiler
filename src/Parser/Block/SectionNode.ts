@@ -12,10 +12,10 @@ export class SectionNode extends RstNode {
         readonly sectionLevel: number,
 
         source: RstNodeSource,
-        origStr: string,
+        text: string,
     ) {
         // TODO parse inline elements
-        const textNode = new TextNode(source.startLineIdx, source.endLineIdx, source.startIdx, origStr)
+        const textNode = new TextNode(source.startLineIdx, source.endLineIdx, source.startIdx, text)
         super(source, [textNode])
     }
 

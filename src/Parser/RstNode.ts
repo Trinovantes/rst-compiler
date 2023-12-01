@@ -83,14 +83,14 @@ export abstract class RstNode {
     toExpectString(selfVarName = 'root'): string {
         let str = ''
 
-        str += `expect(${selfVarName}.children.length).toBe(${this.children.length})` + '\n'
+        str += `expect(${selfVarName}.children.length).toBe(${this.children.length})`
 
         for (let i = 0; i < this._children.length; i++) {
-            str += `expect(${selfVarName}.children[${i}].type).toBe(RstNodeType.${this._children[i].type})` + '\n'
+            str += '\n' + `expect(${selfVarName}.children[${i}].type).toBe(RstNodeType.${this._children[i].type})`
         }
 
         for (let i = 0; i < this._children.length; i++) {
-            str += this._children[i].toExpectString(`${selfVarName}.children[${i}]`) + '\n'
+            str += '\n' + this._children[i].toExpectString(`${selfVarName}.children[${i}]`)
         }
 
         return str

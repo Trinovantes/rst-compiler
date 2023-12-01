@@ -6,10 +6,19 @@ export class ParagraphNode extends RstNode {
 
     constructor(
         source: RstNodeSource,
-        origStr: string,
+        text: string,
     ) {
         // TODO parse inline elements
-        const textNode = new TextNode(source.startLineIdx, source.endLineIdx, source.startIdx, origStr)
+        const textNode = new TextNode(source.startLineIdx, source.endLineIdx, source.startIdx, text)
         super(source, [textNode])
+    }
+
+    override toExpectString(selfVarName: string): string {
+        let str = ''
+
+        str += `expect(${selfVarName}.getTextContent()).toBe('${this.getTextContent()}')`
+        str += '\n' + super.toExpectString(selfVarName)
+
+        return str
     }
 }
