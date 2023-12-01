@@ -5,6 +5,7 @@ export class ListItemNode extends RstNode {
 
     constructor(
         readonly bullet: string,
+
         source: RstNodeSource,
         children: ReadonlyArray<Readonly<RstNode>> = [],
     ) {

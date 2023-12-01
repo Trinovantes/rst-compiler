@@ -209,39 +209,37 @@ export class RstParser {
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
-        const overLine = hasOverline ? this.consume()?.str[0] : null // Overline section has no meaning (purely aesthetic)
-        const textStartLineIdx = this._tokenIdx
-        const textLine = this.consume()
-        const underLine = this.consume()?.str[0]
+        const overLineChar = hasOverline ? this.consume()?.str[0] : null // Overline section has no meaning (purely aesthetic)
+        const sectionText = this.consume()?.str
+        const underLineChar = this.consume()?.str[0]
 
         const endLineIdx = this._tokenIdx
         const endIdx = this._inputIdx
 
-        if (overLine !== null && overLine !== underLine) {
-            throw new Error(`Section overLine:${overLine} does not match underLine:${underLine}`)
+        if (overLineChar !== null && overLineChar !== underLineChar) {
+            throw new Error(`Section overLine:${overLineChar} does not match underLine:${underLineChar}`)
         }
-        if (!sectionChars.includes(underLine)) {
-            throw new Error(`Invalid underLine:${underLine}`)
+        if (!sectionChars.includes(underLineChar)) {
+            throw new Error(`Invalid underLine:${underLineChar}`)
         }
 
         // Register the marker if it has not been seen yet
-        if (!this._sectionMarkers.includes(underLine)) {
-            this._sectionMarkers.push(underLine)
+        if (!this._sectionMarkers.includes(underLineChar)) {
+            this._sectionMarkers.push(underLineChar)
         }
 
         // Get 1-based index of the marker
-        const sectionLevel = this._sectionMarkers.indexOf(underLine) + 1
+        const sectionLevel = this._sectionMarkers.indexOf(underLineChar) + 1
 
         return new SectionNode(
+            sectionLevel,
             {
                 startLineIdx,
                 endLineIdx,
                 startIdx,
                 endIdx,
             },
-            textStartLineIdx,
-            textLine,
-            sectionLevel,
+            sectionText,
         )
     }
 
