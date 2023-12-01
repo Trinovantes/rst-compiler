@@ -16,9 +16,10 @@ export class ListItemNode extends RstNode {
     }
 
     override toExpectString(selfVarName = 'root'): string {
-        let str = super.toExpectString(selfVarName)
+        let str = ''
 
-        str += `expect((${selfVarName} as ListItemNode).bullet).toBe('${this.bullet}')`
+        str += `expect((${selfVarName} as ListItemNode).bullet).toBe('${this.bullet}')` + '\n'
+        str += super.toExpectString(selfVarName)
 
         return str
     }

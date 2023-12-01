@@ -10,6 +10,7 @@ test('when text starts with list character and space, it parses as bullet list',
 
     const root = parseTestInput(input)
 
+    expect(root.children.length).toBe(1)
     expect(root.children[0].type).toBe(RstNodeType.BulletList)
     expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
     expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
@@ -17,25 +18,56 @@ test('when text starts with list character and space, it parses as bullet list',
     expect((root.children[0].children[0] as ListItemNode).bullet).toBe('-')
 })
 
-test.todo('TODO', () => {
+test('when following lines aligns with initial bullet, it parses as single paragraph', () => {
     const input = `
         - sentence 1
           sentence 2
+          sentence 3
     `
 
     const root = parseTestInput(input)
 
+    expect(root.children.length).toBe(1)
     expect(root.children[0].type).toBe(RstNodeType.BulletList)
+    expect(root.children[0].children.length).toBe(1)
     expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
-    expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
-    expect(root.children[0].children[0].children[0].children[0].type).toBe(RstNodeType.Text)
-    expect((root.children[0].children[0] as ListItemNode).bullet).toBe('-')
-
-    // Assume there is only 1 space separating between the 2 lines
-    expect(root.children[0].getTextContent()).toBe('sentence 1 sentence 2')
+    expect(root.children[0].children[0].getTextContent()).toBe('sentence 1\nsentence 2\nsentence 3')
 })
 
-test.todo('TODO', () => {
+test('when following line do not align with initial bullet, it parses as separate paragraph', () => {
+    const input = `
+        - sentence 1
+        sentence 2
+    `
+
+    const root = parseTestInput(input)
+
+    expect(root.children.length).toBe(2)
+    expect(root.children[0].type).toBe(RstNodeType.BulletList)
+    expect(root.children[1].type).toBe(RstNodeType.Paragraph)
+
+    expect(root.children[0].getTextContent()).toBe('sentence 1')
+})
+
+test('when following line aligns with initial bullet without linebreak, it parses as same paragraph', () => {
+    const input = `
+        - The following line appears to be a new sublist, but it is not:
+          - This is a paragraph continuation, not a sublist (since there's
+          no blank line).  This line is also incorrectly indented.
+          - Warnings may be issued by the implementation.
+    `
+
+    const root = parseTestInput(input)
+
+    expect(root.children.length).toBe(1)
+    expect(root.children[0].type).toBe(RstNodeType.BulletList)
+    expect(root.children[0].children.length).toBe(1)
+    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
+    expect(root.children[0].children[0].children.length).toBe(1)
+    expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
+})
+
+test('when there are line breaks in bullet, it parses as multiple paragraphs in same ListItem', () => {
     const input = `
         - paragraph 1
 
@@ -44,11 +76,19 @@ test.todo('TODO', () => {
 
     const root = parseTestInput(input)
 
-    console.log(root.toString())
-    console.log(root.toExpectString())
+    expect(root.children.length).toBe(1)
+    expect(root.children[0].type).toBe(RstNodeType.BulletList)
+    expect(root.children[0].children.length).toBe(1)
+    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
+    expect(root.children[0].children[0].children.length).toBe(2)
+    expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
+    expect(root.children[0].children[0].children[1].type).toBe(RstNodeType.Paragraph)
+
+    expect(root.children[0].children[0].children[0].getTextContent()).toBe('paragraph 1')
+    expect(root.children[0].children[0].children[1].getTextContent()).toBe('paragraph 2')
 })
 
-test.todo('TODO', () => {
+test('when a following line starts with list character and space with no indent, it parses as new ListItem in same BulletList', () => {
     const input = `
         - bullet 1 paragraph 1
 
@@ -59,11 +99,14 @@ test.todo('TODO', () => {
 
     const root = parseTestInput(input)
 
-    console.log(root.toString())
-    console.log(root.toExpectString())
+    expect(root.children.length).toBe(1)
+    expect(root.children[0].type).toBe(RstNodeType.BulletList)
+    expect(root.children[0].children.length).toBe(2)
+    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
+    expect(root.children[0].children[1].type).toBe(RstNodeType.ListItem)
 })
 
-test.todo('TODO', () => {
+test('when a following line starts with list character and space with same indent, it parses as new BulletList', () => {
     const input = `
         - parent list
 
@@ -74,11 +117,27 @@ test.todo('TODO', () => {
 
     const root = parseTestInput(input)
 
-    console.log(root.toString())
-    console.log(root.toExpectString())
+    expect(root.children.length).toBe(1)
+    expect(root.children[0].type).toBe(RstNodeType.BulletList)
+    expect(root.children[0].children.length).toBe(1)
+    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
+    expect(root.children[0].children[0].children.length).toBe(2)
+    expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
+    expect(root.children[0].children[0].children[1].type).toBe(RstNodeType.BulletList)
+
+    expect(root.children[0].children[0].children[1].children.length).toBe(1)
+    expect(root.children[0].children[0].children[1].children[0].type).toBe(RstNodeType.ListItem)
+    expect(root.children[0].children[0].children[1].children[0].children.length).toBe(2)
+    expect(root.children[0].children[0].children[1].children[0].children[0].type).toBe(RstNodeType.Paragraph)
+    expect(root.children[0].children[0].children[1].children[0].children[1].type).toBe(RstNodeType.BulletList)
+
+    expect(root.children[0].children[0].children[1].children[0].children[1].children.length).toBe(1)
+    expect(root.children[0].children[0].children[1].children[0].children[1].children[0].type).toBe(RstNodeType.ListItem)
+    expect(root.children[0].children[0].children[1].children[0].children[1].children[0].children.length).toBe(1)
+    expect(root.children[0].children[0].children[1].children[0].children[1].children[0].children[0].type).toBe(RstNodeType.Paragraph)
 })
 
-test.todo('TODO', () => {
+test('when multiple lines start with list character and space with same indent, it parses as separate BulletList', () => {
     const input = `
         - parent list
 
@@ -93,20 +152,25 @@ test.todo('TODO', () => {
 
     const root = parseTestInput(input)
 
-    console.log(root.toString())
-    console.log(root.toExpectString())
-})
+    expect(root.children.length).toBe(1)
+    expect(root.children[0].type).toBe(RstNodeType.BulletList)
+    expect(root.children[0].children.length).toBe(1)
+    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
+    expect(root.children[0].children[0].children.length).toBe(2)
+    expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
+    expect(root.children[0].children[0].children[1].type).toBe(RstNodeType.BulletList)
 
-test.todo('TODO', () => {
-    const input = `
-        - The following line appears to be a new sublist, but it is not:
-          - This is a paragraph continuation, not a sublist (since there's
-          no blank line).  This line is also incorrectly indented.
-          - Warnings may be issued by the implementation.
-    `
+    expect(root.children[0].children[0].children[1].children.length).toBe(2)
+    expect(root.children[0].children[0].children[1].children[0].type).toBe(RstNodeType.ListItem)
+    expect(root.children[0].children[0].children[1].children[1].type).toBe(RstNodeType.ListItem)
 
-    const root = parseTestInput(input)
+    expect((root.children[0].children[0].children[1].children[0] as ListItemNode).bullet).toBe('-')
+    expect(root.children[0].children[0].children[1].children[0].children.length).toBe(2)
+    expect(root.children[0].children[0].children[1].children[0].children[0].type).toBe(RstNodeType.Paragraph)
+    expect(root.children[0].children[0].children[1].children[0].children[1].type).toBe(RstNodeType.BulletList)
 
-    console.log(root.toString())
-    console.log(root.toExpectString())
+    expect((root.children[0].children[0].children[1].children[1] as ListItemNode).bullet).toBe('-')
+    expect(root.children[0].children[0].children[1].children[1].children.length).toBe(2)
+    expect(root.children[0].children[0].children[1].children[1].children[0].type).toBe(RstNodeType.Paragraph)
+    expect(root.children[0].children[0].children[1].children[1].children[1].type).toBe(RstNodeType.BulletList)
 })

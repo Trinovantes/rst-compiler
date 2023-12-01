@@ -176,7 +176,7 @@ export class RstParser {
                 }
 
                 default: {
-                    nodes.push(this.parseParagraph())
+                    nodes.push(this.parseParagraph(currentIndentSize))
                 }
             }
         }
@@ -243,7 +243,7 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#paragraphs
-    private parseParagraph(): ParagraphNode {
+    private parseParagraph(currentIndentSize: number): ParagraphNode {
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
@@ -254,7 +254,7 @@ export class RstParser {
         }
 
         const endLineIdx = this._tokenIdx
-        const origStr = lines.map((line) => line.str).join('\n')
+        const origStr = lines.map((line) => line.str.substring(currentIndentSize)).join('\n')
 
         return new ParagraphNode(
             {
@@ -313,7 +313,7 @@ export class RstParser {
         while (this.peekIsContent() && this.peekIsIndented(listBodyIndentSize)) {
             const line = this.consume()
             const lineText = line.str.substring(listBodyIndentSize)
-            firstParagraphStr += ' ' + lineText
+            firstParagraphStr += '\n' + lineText
         }
 
         const firstParagraph = new ParagraphNode(
