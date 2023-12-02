@@ -15,13 +15,4 @@ export class ListItemNode extends RstNode {
     override get label(): string {
         return `${this.type} "${this.bullet}"`
     }
-
-    override toExpectString(selfVarName: string): string {
-        let str = ''
-
-        str += `expect((${selfVarName} as ListItemNode).bullet).toBe('${this.bullet}')`
-        str += '\n' + super.toExpectString(selfVarName)
-
-        return str
-    }
 }

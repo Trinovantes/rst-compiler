@@ -1,9 +1,9 @@
 import { expect, test } from 'vitest'
+import { ListItemNode } from '@/Parser/List/ListItemNode.js'
+import { RstNodeType } from '@/Parser/RstNode.js'
 import { parseTestInput } from './parseTestInput.js'
-import { RstNodeType } from '@/index.js'
-import { ListItemNode } from '@/Parser/Block/ListItemNode.js'
 
-test('when text starts with list character and space, it parses as bullet list', () => {
+test('basic list', () => {
     const input = `
         - test
     `
@@ -42,11 +42,9 @@ test('when following line do not align with initial bullet, it parses as separat
 
     const root = parseTestInput(input)
 
-    expect(root.children.length).toBe(2)
-    expect(root.children[0].type).toBe(RstNodeType.BulletList)
-    expect(root.children[1].type).toBe(RstNodeType.Paragraph)
-
-    expect(root.children[0].getTextContent()).toBe('sentence 1')
+    expect(root.children.length).toBe(1)
+    expect(root.children[0].type).toBe(RstNodeType.Paragraph)
+    expect(root.children[0].getTextContent()).toBe('- sentence 1\nsentence 2')
 })
 
 test('when following line aligns with initial bullet without linebreak, it parses as same paragraph', () => {

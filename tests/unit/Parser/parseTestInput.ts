@@ -1,4 +1,4 @@
-import { RstParser } from '@/index.js'
+import { RstParser } from '@/Parser/RstParser.js'
 
 export function parseTestInput(input: string) {
     input = input.replace(/^\n+/, '') // Remove all newlines at start

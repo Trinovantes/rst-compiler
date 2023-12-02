@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { parseTestInput } from './parseTestInput.js'
-import { RstNodeType } from '@/index.js'
+import { RstNodeType } from '@/Parser/RstNode.js'
 
 test('when there is standalone text, it parses as paragraph', () => {
     const input = `

@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest'
 import { parseTestInput } from './parseTestInput.js'
-import { RstNodeType, SectionNode } from '@/index.js'
+import { SectionNode } from '@/Parser/Document/SectionNode.js'
+import { RstNodeType } from '@/Parser/RstNode.js'
 
 test('when there is only underline, it parses as single section', () => {
     const input = `

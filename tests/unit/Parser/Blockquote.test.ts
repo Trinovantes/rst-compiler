@@ -1,6 +1,6 @@
-import { RstNodeType } from '@/index.js'
 import { expect, test } from 'vitest'
 import { parseTestInput } from './parseTestInput.js'
+import { RstNodeType } from '@/Parser/RstNode.js'
 
 test('when there is an indented block, it parses blockquote', () => {
     const input = `
