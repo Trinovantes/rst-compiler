@@ -1,14 +1,14 @@
-import { DocumentNode } from './Block/DocumentNode.js'
+import { DocumentNode } from './Document/DocumentNode.js'
 import { ParagraphNode } from './Block/ParagraphNode.js'
-import { sectionRe, SectionNode, sectionChars } from './Block/SectionNode.js'
+import { sectionRe, SectionNode, sectionChars } from './Document/SectionNode.js'
 import { RstNode, RstNodeType } from './RstNode.js'
-import { BulletListNode, bulletListRe } from './Block/BulletListNode.js'
+import { BulletListNode, bulletListRe } from './List/BulletListNode.js'
 import { BlockquoteAttributionNode, BlockquoteNode, blockquoteAttributonRe } from './Block/BlockquoteNode.js'
-import { emptyCommentRe } from './Block/CommentNode.js'
+import { emptyCommentRe } from './ExplicitMarkup/CommentNode.js'
 import { Token } from '@/Lexer/Token.js'
 import { tokenizeInput } from '@/Lexer/tokenizeInput.js'
-import { TransitionNode, transitionRe } from './Block/TransitionNode.js'
-import { ListItemNode } from './Block/ListItemNode.js'
+import { TransitionNode, transitionRe } from './Document/TransitionNode.js'
+import { ListItemNode } from './List/ListItemNode.js'
 
 export class RstParser {
     // Parser internal states
