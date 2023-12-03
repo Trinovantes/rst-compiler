@@ -125,7 +125,6 @@ export class RstParser {
     private parseBodyElements(indentSize: number, parentType: RstNodeType): Array<RstNode> {
         const nodes = new Array<RstNode>()
 
-        // eslint-disable-next-line no-labels
         while (true) {
             // Consume all blank lines before parsing next block
             while (this.peekIsNewLine()) {
@@ -176,12 +175,11 @@ export class RstParser {
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
-        const lines = new Array<Token>()
+        let paragraphText = ''
         while (this.peekIsContent()) {
             const line = this.consume()
-            lines.push(line)
+            paragraphText += line.str.substring(indentSize) + '\n'
         }
-        const paragraphText = lines.map((line) => line.str.substring(indentSize)).join('\n')
 
         const endLineIdx = this._tokenIdx
         const endIdx = this._inputIdx
@@ -193,7 +191,7 @@ export class RstParser {
                 startIdx,
                 endIdx,
             },
-            paragraphText,
+            paragraphText.trim(),
         )
     }
 
@@ -205,6 +203,7 @@ export class RstParser {
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
+        // Consume the transition line without processing it (no need)
         this.consume()
 
         const endLineIdx = this._tokenIdx
@@ -268,41 +267,22 @@ export class RstParser {
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bullet-lists
     private parseBulletList(indentSize: number): BulletListNode | null {
-        const firstBulletMatches = this.peekTest(bulletListRe)
-        if (!firstBulletMatches) {
-            return null
-        }
-
-        // Check second line (if exists) to see if this is a valid list vs ordinary paragraph that happens to start with same characters as a bullet
-        const firstBulletAndSpace = firstBulletMatches[1]
-        const firstBulletBodyIndentSize = indentSize + firstBulletAndSpace.length
-        if (this.peekIsContent(1) && !this.peekIsIndented(firstBulletBodyIndentSize, 1)) {
-            return null
-        }
-
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
         const listItems = new Array<ListItemNode>()
-        while (this.canConsume() && this.peekIsIndented(indentSize)) {
-            const firstLineMatches = this.peekTest(bulletListRe)
-            if (!firstLineMatches) {
+        while (true) {
+            const listItem = this.parseBulletListItem(indentSize)
+            if (!listItem) {
                 break
             }
 
-            const bulletAndSpace = firstLineMatches[1]
-            const bulletIndentSize = indentSize + bulletAndSpace.length
-
-            // Actual bullet excluding formating
-            // e.g. "- text" extracts "-"
-            const bulletValue = firstLineMatches[2]
-
-            // Need to extract first line with regex since it starts with bullet and space
-            // e.g. "1. text" extracts "text"
-            const firstLineText = firstLineMatches.at(-1) ?? ''
-
-            const listItem = this.parseListItem(bulletIndentSize, bulletValue, firstLineText)
             listItems.push(listItem)
+        }
+
+        // Failed to parse any bullet list items thus this is not a bullet list
+        if (listItems.length === 0) {
+            return null
         }
 
         const endLineIdx = this._tokenIdx
@@ -311,74 +291,38 @@ export class RstParser {
         return new BulletListNode({ startLineIdx, endLineIdx, startIdx, endIdx }, listItems)
     }
 
-    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists
-    private parseEnumeratedList(indentSize: number): EnumeratedListNode | null {
-        const firstBulletMatches = this.peekTest(enumeratedListRe)
-        if (!firstBulletMatches) {
+    private parseBulletListItem(indentSize: number): ListItemNode | null {
+        if (!this.peekIsIndented(indentSize)) {
             return null
         }
+
+        const firstLineMatches = this.peekTest(bulletListRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        const bulletAndSpace = firstLineMatches[1]
+        const bulletValue = firstLineMatches[2] // Actual bullet excluding formating e.g. "- text" extracts "-"
+        const bulletIndentSize = indentSize + bulletAndSpace.length
 
         // Check second line (if exists) to see if this is a valid list vs ordinary paragraph that happens to start with same characters as a bullet
-        const firstBulletAndSpace = firstBulletMatches[1]
-        const firstBulletBodyIndentSize = indentSize + firstBulletAndSpace.length
-        if (this.peekIsContent(1) && !this.peekIsIndented(firstBulletBodyIndentSize, 1)) {
+        if (this.peekIsContent(1) && !this.peekIsIndented(bulletIndentSize, 1)) {
             return null
         }
 
-        const firstBulletValue = firstBulletMatches[2]
-        const firstBulletListType = getEnumeratedListType(firstBulletValue)
-
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
-        const listItems = new Array<ListItemNode>()
-        while (this.canConsume() && this.peekIsIndented(indentSize)) {
-            const firstLineMatches = this.peekTest(enumeratedListRe)
-            if (!firstLineMatches) {
-                break
-            }
-
-            const bulletAndSpace = firstLineMatches[1]
-            const bulletIndentSize = indentSize + bulletAndSpace.length
-
-            // Actual bullet excluding formating
-            // e.g. "1. text" extracts "1"
-            const bulletValue = firstLineMatches[2]
-            const bulletListType = getEnumeratedListType(bulletValue)
-            if (bulletListType !== firstBulletListType) {
-                break
-            }
-            const prevBulletValue = listItems.at(-1)?.bullet
-            if (!isSequentialBullet(bulletListType, bulletValue, prevBulletValue)) {
-                break
-            }
-
-            // Need to extract first line with regex since it starts with bullet and space
-            // e.g. "1. text" extracts "text"
-            const firstLineText = firstLineMatches.at(-1) ?? ''
-
-            const listItem = this.parseListItem(bulletIndentSize, bulletValue, firstLineText)
-            listItems.push(listItem)
-        }
-
-        const endLineIdx = this._tokenIdx
-        const endIdx = this._inputIdx
-
-        return new EnumeratedListNode(firstBulletListType, { startLineIdx, endLineIdx, startIdx, endIdx }, listItems)
-    }
-
-    // https://docutils.sourceforge.io/docs/ref/doctree.html#list-item
-    private parseListItem(indentSize: number, bulletValue: string, firstLineText: string): ListItemNode {
-        const startLineIdx = this._tokenIdx
-        const startIdx = this._inputIdx
-
+        // Consume first line that we've already peeked at and tested
         this.consume()
 
-        // Treat first child of list as paragraph
-        let firstParagraphText = firstLineText
-        while (this.peekIsContent() && this.peekIsIndented(indentSize)) {
+        // First child of list is always paragraph
+        // Need to extract first line's text with regex since it starts with bullet and space
+        // e.g. "- text" extracts "text"
+        let firstParagraphText = firstLineMatches.at(-1) ?? ''
+        while (this.peekIsContent() && this.peekIsIndented(bulletIndentSize)) {
             const line = this.consume()
-            const lineText = line.str.substring(indentSize)
+            const lineText = line.str.substring(bulletIndentSize)
             firstParagraphText += '\n' + lineText
         }
 
@@ -393,7 +337,98 @@ export class RstParser {
         )
 
         // Parse rest of list's elements (if any)
-        const restOfList = this.parseBodyElements(indentSize, RstNodeType.ListItem)
+        const restOfList = this.parseBodyElements(bulletIndentSize, RstNodeType.ListItem)
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new ListItemNode(bulletValue, { startLineIdx, endLineIdx, startIdx, endIdx }, [
+            firstParagraph,
+            ...restOfList,
+        ])
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists
+    private parseEnumeratedList(indentSize: number): EnumeratedListNode | null {
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        const listItems = new Array<ListItemNode>()
+        while (true) {
+            const prevBulletValue = listItems.at(-1)?.bullet
+            const listItem = this.parseEnumeratedListItem(indentSize, prevBulletValue)
+            if (!listItem) {
+                break
+            }
+
+            listItems.push(listItem)
+        }
+
+        // Failed to parse any enumerated list items thus this is not an enumerated list
+        if (listItems.length === 0) {
+            return null
+        }
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        const listType = getEnumeratedListType(listItems[0].bullet)
+        return new EnumeratedListNode(listType, { startLineIdx, endLineIdx, startIdx, endIdx }, listItems)
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/doctree.html#list-item
+    private parseEnumeratedListItem(indentSize: number, prevBulletValue?: string): ListItemNode | null {
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(enumeratedListRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        const bulletAndSpace = firstLineMatches[1]
+        const bulletValue = firstLineMatches[2] // Actual bullet excluding formating e.g. "1. text" extracts "1"
+        const bulletIndentSize = indentSize + bulletAndSpace.length
+
+        // Check second line (if exists) to see if this is a valid list vs ordinary paragraph that happens to start with same characters as a bullet
+        if (this.peekIsContent(1) && !this.peekIsIndented(bulletIndentSize, 1)) {
+            return null
+        }
+
+        // Check if current bullet is sequential (e.g. 1,2,3)
+        if (!isSequentialBullet(bulletValue, prevBulletValue)) {
+            return null
+        }
+
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        // First child of list is always paragraph
+        // Need to extract first line's text with regex since it starts with bullet and space
+        // e.g. "1. text" extracts "text"
+        let firstParagraphText = firstLineMatches.at(-1) ?? ''
+        while (this.peekIsContent() && this.peekIsIndented(bulletIndentSize)) {
+            const line = this.consume()
+            const lineText = line.str.substring(bulletIndentSize)
+            firstParagraphText += '\n' + lineText
+        }
+
+        const firstParagraph = new ParagraphNode(
+            {
+                startLineIdx,
+                endLineIdx: this._tokenIdx,
+                startIdx,
+                endIdx: startIdx + firstParagraphText.length,
+            },
+            firstParagraphText,
+        )
+
+        // Parse rest of list's elements (if any)
+        const restOfList = this.parseBodyElements(bulletIndentSize, RstNodeType.ListItem)
 
         const endLineIdx = this._tokenIdx
         const endIdx = this._inputIdx
@@ -406,21 +441,11 @@ export class RstParser {
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#definition-lists
     private parseDefinitionList(indentSize: number): DefinitionListNode | null {
-        // If line starts with escape character, do not parse as DefinitionList
-        if (this.peekTest(/^\\/)) {
-            return null
-        }
-
-        // Definition must be immediately after term and indented
-        if (!this.peekTest(definitionListRe) || !this.peekIsIndented(indentSize + this._indentationSize, 1)) {
-            return null
-        }
-
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
         const definitionItems = new Array<DefinitionListItemNode>()
-        while (this.canConsume()) {
+        while (true) {
             const listItem = this.parseDefinitionListItem(indentSize)
             if (!listItem) {
                 break
@@ -440,13 +465,30 @@ export class RstParser {
     }
 
     private parseDefinitionListItem(indentSize: number): DefinitionListItemNode | null {
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        // If line starts with escape character, do not parse as DefinitionList
+        if (this.peekTest(/^\\/)) {
+            return null
+        }
+
+        // Definition must be immediately after term and indented
+        if (!this.peekTest(definitionListRe) || !this.peekIsIndented(indentSize + this._indentationSize, 1)) {
+            return null
+        }
+
+        const termMatches = this.peekTest(definitionListRe)
+        if (!termMatches) {
+            return null
+        }
+
         const startLineIdx = this._tokenIdx
         const startIdx = this._inputIdx
 
-        const termMatches = definitionListRe.exec(this.consume().str)
-        if (!termMatches) {
-            throw new Error('Failed to parseDefinitionListItem')
-        }
+        // Consume term that we've already peeked at and tested
+        this.consume()
 
         const termAndClassifiers = termMatches[1].split(' : ')
         const term = termAndClassifiers[0]
@@ -484,6 +526,8 @@ export class RstParser {
         if (parentType !== RstNodeType.Blockquote) {
             return null
         }
+
+        // TODO test if attribution is not same indentation
 
         const firstLineMatches = this.peekTest(blockquoteAttributonRe)
         if (!firstLineMatches) {

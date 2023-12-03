@@ -32,7 +32,7 @@ export function getEnumeratedListType(bulletValue: string): EnumeratedListType {
     }
 }
 
-export function isSequentialBullet(listType: EnumeratedListType, currBulletValue: string, prevBulletValue?: string): boolean {
+export function isSequentialBullet(currBulletValue: string, prevBulletValue?: string): boolean {
     if (!prevBulletValue) {
         return true
     }
@@ -41,7 +41,13 @@ export function isSequentialBullet(listType: EnumeratedListType, currBulletValue
         return true
     }
 
-    switch (listType) {
+    const prevType = getEnumeratedListType(prevBulletValue)
+    const currType = getEnumeratedListType(currBulletValue)
+    if (prevType !== currType) {
+        return false
+    }
+
+    switch (currType) {
         case EnumeratedListType.Arabic: {
             const prev = parseInt(prevBulletValue)
             const curr = parseInt(currBulletValue)
