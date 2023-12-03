@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { parseTestInput } from './parseTestInput.js'
+import { parseTestInput } from '../../fixtures/parseTestInput.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
 
 test('when there are less than 4 characters, it parses as normal paragraph', () => {

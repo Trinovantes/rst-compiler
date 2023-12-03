@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
-import { parseTestInput } from './parseTestInput.js'
+import { parseTestInput } from '../../fixtures/parseTestInput.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
 
-test('when there is an indented block, it parses blockquote', () => {
+test('when there is an indented block, it parses as blockquote', () => {
     const input = `
         paragraph
 
@@ -133,7 +133,7 @@ test('when there is an empty comment, it breaks into 2 blockquotes', () => {
     expect(root.children[2].type).toBe(RstNodeType.Blockquote)
 })
 
-test('when the first line is a list character and space, it parses as BulletList inside Blockquote', () => {
+test('when the first line is a list character and space, it parses as bullet list inside a blockquote', () => {
     const input = `
         paragraph
 

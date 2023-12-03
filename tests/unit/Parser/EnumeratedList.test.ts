@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'vitest'
-import { parseTestInput } from './parseTestInput.js'
+import { parseTestInput } from '../../fixtures/parseTestInput.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
 import { ListItemNode } from '@/Parser/List/ListItemNode.js'
 import { EnumeratedListNode } from '@/Parser/List/EnumeratedListNode.js'
 import { EnumeratedListType } from '@/Parser/List/EnumeratedListType.js'
 
-describe('enumerations', () => {
+describe('enumerations denote start of enumerated list', () => {
     test('arabic numerals', () => {
         const input = `
             1. arabic numerals 1
