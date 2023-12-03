@@ -9,10 +9,11 @@ export const enum RstNodeType {
 
     Paragraph = 'Paragraph', // Generic fallback
 
-    ListItem = 'ListItem',
+    ListItem = 'ListItem', // <li>
     BulletList = 'BulletList', // <ul>
     EnumeratedList = 'EnumeratedList', // <ol>
     DefinitionList = 'DefinitionList', // <dl>
+    DefinitionListItem = 'DefinitionListItem', // <dt> and <dd>
     FieldList = 'FieldList',
     OptionList = 'OptionList',
 

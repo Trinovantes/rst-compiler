@@ -11,6 +11,7 @@ import { TransitionNode, transitionRe } from './Document/TransitionNode.js'
 import { ListItemNode } from './List/ListItemNode.js'
 import { EnumeratedListNode, enumeratedListRe } from './List/EnumeratedListNode.js'
 import { getEnumeratedListType, isSequentialBullet } from './List/EnumeratedListType.js'
+import { DefinitionListItemNode, DefinitionListNode, definitionListRe } from './List/DefinitionList.js'
 
 export class RstParser {
     // Parser internal states
@@ -159,6 +160,7 @@ export class RstParser {
                 this.parseBlockquote(indentSize) ??
                 this.parseBulletList(indentSize) ??
                 this.parseEnumeratedList(indentSize) ??
+                this.parseDefinitionList(indentSize) ??
                 this.parseTransition() ??
                 this.parseSection() ??
                 this.parseParagraph(indentSize)
@@ -282,15 +284,7 @@ export class RstParser {
         const startIdx = this._inputIdx
 
         const listItems = new Array<ListItemNode>()
-        while (true) {
-            if (!this.canConsume()) {
-                break
-            }
-
-            if (!this.peekIsIndented(indentSize)) {
-                break
-            }
-
+        while (this.canConsume() && this.peekIsIndented(indentSize)) {
             const firstLineMatches = this.peekTest(bulletListRe)
             if (!firstLineMatches) {
                 break
@@ -338,11 +332,7 @@ export class RstParser {
         const startIdx = this._inputIdx
 
         const listItems = new Array<ListItemNode>()
-        while (true) {
-            if (!this.peekIsIndented(indentSize)) {
-                break
-            }
-
+        while (this.canConsume() && this.peekIsIndented(indentSize)) {
             const firstLineMatches = this.peekTest(enumeratedListRe)
             if (!firstLineMatches) {
                 break
@@ -412,6 +402,63 @@ export class RstParser {
             firstParagraph,
             ...restOfList,
         ])
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#definition-lists
+    private parseDefinitionList(indentSize: number): DefinitionListNode | null {
+        // If line starts with escape character, do not parse as DefinitionList
+        if (this.peekTest(/^\\/)) {
+            return null
+        }
+
+        // Definition must be immediately after term and indented
+        if (!this.peekTest(definitionListRe) || !this.peekIsIndented(indentSize + this._indentationSize, 1)) {
+            return null
+        }
+
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        const definitionItems = new Array<DefinitionListItemNode>()
+        while (this.canConsume()) {
+            const listItem = this.parseDefinitionListItem(indentSize)
+            if (!listItem) {
+                break
+            }
+
+            definitionItems.push(listItem)
+        }
+
+        if (definitionItems.length === 0) {
+            return null
+        }
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new DefinitionListNode({ startLineIdx, endLineIdx, startIdx, endIdx }, definitionItems)
+    }
+
+    private parseDefinitionListItem(indentSize: number): DefinitionListItemNode | null {
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        const termMatches = definitionListRe.exec(this.consume().str)
+        if (!termMatches) {
+            throw new Error('Failed to parseDefinitionListItem')
+        }
+
+        const termAndClassifiers = termMatches[1].split(' : ')
+        const term = termAndClassifiers[0]
+        const classifiers = termAndClassifiers.slice(1)
+
+        const defBodyIndentSize = indentSize + this._indentationSize
+        const defBodyNodes = this.parseBodyElements(defBodyIndentSize, RstNodeType.DefinitionListItem)
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new DefinitionListItemNode(term, classifiers, defBodyNodes, { startLineIdx, endLineIdx, startIdx, endIdx })
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
