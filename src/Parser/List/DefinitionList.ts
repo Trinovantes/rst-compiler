@@ -62,4 +62,25 @@ export class DefinitionListItemNode extends RstNode {
 
         return str
     }
+
+    override toExpectString(selfVarName?: string): string {
+        let str = ''
+
+        str += `expect((${selfVarName} as DefinitionListItemNode).term.getTextContent()).toBe('${this.term.origText}')`
+
+        str += '\n' + `expect((${selfVarName} as DefinitionListItemNode).classifiers.length).toBe(${this.classifiers.length})`
+        for (let i = 0; i < this.classifiers.length; i++) {
+            str += '\n' + `expect((${selfVarName} as DefinitionListItemNode).classifiers[${i}].getTextContent()).toBe('${this.classifiers[i].origText}')`
+        }
+
+        str += '\n' + `expect((${selfVarName} as DefinitionListItemNode).defBodyNodes.length).toBe(${this.defBodyNodes.length})`
+        for (let i = 0; i < this.defBodyNodes.length; i++) {
+            str += '\n' + `expect((${selfVarName} as DefinitionListItemNode).defBodyNodes[${i}].type).toBe(RstNodeType.${this.defBodyNodes[i].type})`
+        }
+        for (let i = 0; i < this.defBodyNodes.length; i++) {
+            str += '\n' + this.defBodyNodes[i].toExpectString(`(${selfVarName} as DefinitionListItemNode).defBodyNodes[${i}]`)
+        }
+
+        return str
+    }
 }

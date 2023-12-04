@@ -469,11 +469,6 @@ export class RstParser {
             return null
         }
 
-        // If line starts with escape character, do not parse as DefinitionList
-        if (this.peekTest(/^\\/)) {
-            return null
-        }
-
         // Definition must be immediately after term and indented
         if (!this.peekTest(definitionListRe) || !this.peekIsIndented(indentSize + this._indentationSize, 1)) {
             return null
