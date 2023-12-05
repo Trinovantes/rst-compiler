@@ -1,6 +1,5 @@
-import { RstNode, RstNodeSource, RstNodeType } from '../RstNode.js'
+import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 import { EnumeratedListType } from './EnumeratedListType.js'
-import { ListItemNode } from './ListItemNode.js'
 
 export const romanUpperRe = /(I+|[MDCLXVI]{2,})/
 export const romanLowerRe = /(i+|[mdclxvi]{2,})/
@@ -42,17 +41,13 @@ export class EnumeratedListNode extends RstNode {
         return `${this.type} "${this.listType}"`
     }
 
-    override toExpectString(selfVarName: string): string {
-        let str = ''
+    override toObject(): RstNodeObject {
+        const root = super.toObject()
 
-        str += `expect((${selfVarName} as EnumeratedListNode).listType).toBe(EnumeratedListType.${this.listType})`
-        str += '\n' + super.toExpectString(selfVarName)
-
-        for (let i = 0; i < this._children.length; i++) {
-            const child = this._children[i] as ListItemNode
-            str += '\n' + `expect((${selfVarName}.children[${i}] as ListItemNode).bullet).toBe('${child.bullet}')`
+        root.meta = {
+            listType: this.listType,
         }
 
-        return str
+        return root
     }
 }

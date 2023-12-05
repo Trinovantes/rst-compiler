@@ -1,5 +1,5 @@
-import { expect, test } from 'vitest'
-import { parseTestInput } from '../../fixtures/parseTestInput.js'
+import { test } from 'vitest'
+import { expectDocument } from '../../fixtures/expectDocument.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
 
 test('when there are less than 4 characters, it parses as normal paragraph', () => {
@@ -7,8 +7,12 @@ test('when there are less than 4 characters, it parses as normal paragraph', () 
         ---
     `
 
-    const root = parseTestInput(input)
-    expect(root.children[0].type).toBe(RstNodeType.Paragraph)
+    expectDocument(input, [
+        {
+            type: RstNodeType.Paragraph,
+            text: '---',
+        },
+    ])
 })
 
 test('when there are 4 characters between paragraphs, it parses as transition', () => {
@@ -20,10 +24,19 @@ test('when there are 4 characters between paragraphs, it parses as transition', 
         text 2
     `
 
-    const root = parseTestInput(input)
-    expect(root.children[0].type).toBe(RstNodeType.Paragraph)
-    expect(root.children[1].type).toBe(RstNodeType.Transition)
-    expect(root.children[2].type).toBe(RstNodeType.Paragraph)
+    expectDocument(input, [
+        {
+            type: RstNodeType.Paragraph,
+            text: 'text 1',
+        },
+        {
+            type: RstNodeType.Transition,
+        },
+        {
+            type: RstNodeType.Paragraph,
+            text: 'text 2',
+        },
+    ])
 })
 
 test('when there are multiple section markers separated by linebreaks, it parses as multiple transitions', () => {
@@ -33,7 +46,12 @@ test('when there are multiple section markers separated by linebreaks, it parses
         ----
     `
 
-    const root = parseTestInput(input)
-    expect(root.children[0].type).toBe(RstNodeType.Transition)
-    expect(root.children[1].type).toBe(RstNodeType.Transition)
+    expectDocument(input, [
+        {
+            type: RstNodeType.Transition,
+        },
+        {
+            type: RstNodeType.Transition,
+        },
+    ])
 })

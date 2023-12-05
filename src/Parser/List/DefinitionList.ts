@@ -1,5 +1,5 @@
 import { TextNode } from '../Inline/TextNode.js'
-import { RstNode, RstNodeSource, RstNodeType } from '../RstNode.js'
+import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 
 export const definitionListRe = /^[ ]*([^\n]+)$/
 
@@ -63,24 +63,15 @@ export class DefinitionListItemNode extends RstNode {
         return str
     }
 
-    override toExpectString(selfVarName?: string): string {
-        let str = ''
+    override toObject(): RstNodeObject {
+        const root = super.toObject()
 
-        str += `expect((${selfVarName} as DefinitionListItemNode).term.getTextContent()).toBe('${this.term.origText}')`
-
-        str += '\n' + `expect((${selfVarName} as DefinitionListItemNode).classifiers.length).toBe(${this.classifiers.length})`
-        for (let i = 0; i < this.classifiers.length; i++) {
-            str += '\n' + `expect((${selfVarName} as DefinitionListItemNode).classifiers[${i}].getTextContent()).toBe('${this.classifiers[i].origText}')`
+        root.meta = {
+            term: this.term.getTextContent(),
+            classifiers: this.classifiers.map((classifier) => classifier.getTextContent()),
+            definition: this.defBodyNodes.map((bodyNode) => bodyNode.toObject(true)),
         }
 
-        str += '\n' + `expect((${selfVarName} as DefinitionListItemNode).defBodyNodes.length).toBe(${this.defBodyNodes.length})`
-        for (let i = 0; i < this.defBodyNodes.length; i++) {
-            str += '\n' + `expect((${selfVarName} as DefinitionListItemNode).defBodyNodes[${i}].type).toBe(RstNodeType.${this.defBodyNodes[i].type})`
-        }
-        for (let i = 0; i < this.defBodyNodes.length; i++) {
-            str += '\n' + this.defBodyNodes[i].toExpectString(`(${selfVarName} as DefinitionListItemNode).defBodyNodes[${i}]`)
-        }
-
-        return str
+        return root
     }
 }

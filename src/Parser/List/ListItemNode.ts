@@ -1,4 +1,4 @@
-import { RstNode, RstNodeSource, RstNodeType } from '../RstNode.js'
+import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 
 export class ListItemNode extends RstNode {
     type = RstNodeType.ListItem
@@ -14,5 +14,19 @@ export class ListItemNode extends RstNode {
 
     override get label(): string {
         return `${this.type} "${this.bullet}"`
+    }
+
+    override get isPlainTextContent(): boolean {
+        return this.children.length === 1 && this.children[0].isPlainTextContent
+    }
+
+    override toObject(): RstNodeObject {
+        const root = super.toObject(true)
+
+        root.meta = {
+            bullet: this.bullet,
+        }
+
+        return root
     }
 }

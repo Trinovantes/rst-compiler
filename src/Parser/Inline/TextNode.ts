@@ -1,4 +1,4 @@
-import { RstNode, RstNodeType } from '../RstNode.js'
+import { RstNode, RstNodeObject, RstNodeType } from '../RstNode.js'
 
 export class TextNode extends RstNode {
     type = RstNodeType.Text
@@ -22,6 +22,13 @@ export class TextNode extends RstNode {
         }
 
         return str
+    }
+
+    override toObject(): RstNodeObject {
+        return {
+            type: this.type,
+            text: this.origText,
+        }
     }
 
     override getTextContent(): string {

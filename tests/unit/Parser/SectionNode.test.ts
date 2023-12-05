@@ -1,17 +1,23 @@
 import { expect, test } from 'vitest'
 import { parseTestInput } from '../../fixtures/parseTestInput.js'
-import { SectionNode } from '@/Parser/Document/SectionNode.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
+import { expectDocument } from '../../fixtures/expectDocument.js'
 
 test('when there is only underline, it parses as single section', () => {
     const input = `
         test
         ---
     `
-    const root = parseTestInput(input)
 
-    expect(root.children[0].type).toBe(RstNodeType.Section)
-    expect((root.children[0] as SectionNode).sectionLevel).toBe(1)
+    expectDocument(input, [
+        {
+            type: RstNodeType.Section,
+            text: 'test',
+            meta: {
+                level: 1,
+            },
+        },
+    ])
 })
 
 test('when there are overline and underline, it parses as single section', () => {
@@ -20,10 +26,16 @@ test('when there are overline and underline, it parses as single section', () =>
         test
         ---
     `
-    const root = parseTestInput(input)
 
-    expect(root.children[0].type).toBe(RstNodeType.Section)
-    expect((root.children[0] as SectionNode).sectionLevel).toBe(1)
+    expectDocument(input, [
+        {
+            type: RstNodeType.Section,
+            text: 'test',
+            meta: {
+                level: 1,
+            },
+        },
+    ])
 })
 
 test('when there are multiple sections with different markers, the first section is h1 and second section is h2', () => {
@@ -34,12 +46,23 @@ test('when there are multiple sections with different markers, the first section
         test2
         ===
     `
-    const root = parseTestInput(input)
 
-    expect(root.children[0].type).toBe(RstNodeType.Section)
-    expect(root.children[1].type).toBe(RstNodeType.Section)
-    expect((root.children[0] as SectionNode).sectionLevel).toBe(1)
-    expect((root.children[1] as SectionNode).sectionLevel).toBe(2)
+    expectDocument(input, [
+        {
+            type: RstNodeType.Section,
+            text: 'test1',
+            meta: {
+                level: 1,
+            },
+        },
+        {
+            type: RstNodeType.Section,
+            text: 'test2',
+            meta: {
+                level: 2,
+            },
+        },
+    ])
 })
 
 test('when overline and underline do not match, it throws an error', () => {

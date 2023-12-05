@@ -1,7 +1,6 @@
-import { describe, expect, test } from 'vitest'
-import { ListItemNode } from '@/Parser/List/ListItemNode.js'
+import { describe, test } from 'vitest'
 import { RstNodeType } from '@/Parser/RstNode.js'
-import { parseTestInput } from '../../fixtures/parseTestInput.js'
+import { expectDocument } from '../../fixtures/expectDocument.js'
 
 describe('bullet characters denotes start of bullet list', () => {
     test.each([
@@ -15,17 +14,27 @@ describe('bullet characters denotes start of bullet list', () => {
             ${bullet} bullet 2
         `
 
-        const root = parseTestInput(input)
-
-        expect(root.children.length).toBe(1)
-        expect(root.children[0].type).toBe(RstNodeType.BulletList)
-        expect(root.children[0].children.length).toBe(2)
-        expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
-        expect(root.children[0].children[1].type).toBe(RstNodeType.ListItem)
-        expect(root.children[0].children[0].getTextContent()).toBe('bullet 1')
-        expect(root.children[0].children[1].getTextContent()).toBe('bullet 2')
-        expect((root.children[0].children[0] as ListItemNode).bullet).toBe(bullet)
-        expect((root.children[0].children[1] as ListItemNode).bullet).toBe(bullet)
+        expectDocument(input, [
+            {
+                type: RstNodeType.BulletList,
+                children: [
+                    {
+                        type: RstNodeType.ListItem,
+                        text: 'bullet 1',
+                        meta: {
+                            bullet,
+                        },
+                    },
+                    {
+                        type: RstNodeType.ListItem,
+                        text: 'bullet 2',
+                        meta: {
+                            bullet,
+                        },
+                    },
+                ],
+            },
+        ])
     })
 })
 
@@ -36,18 +45,29 @@ test('when there are line breaks in bullet, it parses as multiple paragraphs in 
           paragraph 2
     `
 
-    const root = parseTestInput(input)
-
-    expect(root.children.length).toBe(1)
-    expect(root.children[0].type).toBe(RstNodeType.BulletList)
-    expect(root.children[0].children.length).toBe(1)
-    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
-    expect(root.children[0].children[0].children.length).toBe(2)
-    expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
-    expect(root.children[0].children[0].children[1].type).toBe(RstNodeType.Paragraph)
-
-    expect(root.children[0].children[0].children[0].getTextContent()).toBe('paragraph 1')
-    expect(root.children[0].children[0].children[1].getTextContent()).toBe('paragraph 2')
+    expectDocument(input, [
+        {
+            type: RstNodeType.BulletList,
+            children: [
+                {
+                    type: RstNodeType.ListItem,
+                    meta: {
+                        bullet: '-',
+                    },
+                    children: [
+                        {
+                            type: RstNodeType.Paragraph,
+                            text: 'paragraph 1',
+                        },
+                        {
+                            type: RstNodeType.Paragraph,
+                            text: 'paragraph 2',
+                        },
+                    ],
+                },
+            ],
+        },
+    ])
 })
 
 test('when following line aligns with initial bullet, it parses as single paragraph in list item', () => {
@@ -56,13 +76,20 @@ test('when following line aligns with initial bullet, it parses as single paragr
           sentence 2
     `
 
-    const root = parseTestInput(input)
-
-    expect(root.children.length).toBe(1)
-    expect(root.children[0].type).toBe(RstNodeType.BulletList)
-    expect(root.children[0].children.length).toBe(1)
-    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
-    expect(root.children[0].children[0].getTextContent()).toBe('sentence 1\nsentence 2')
+    expectDocument(input, [
+        {
+            type: RstNodeType.BulletList,
+            children: [
+                {
+                    type: RstNodeType.ListItem,
+                    text: 'sentence 1\nsentence 2',
+                    meta: {
+                        bullet: '-',
+                    },
+                },
+            ],
+        },
+    ])
 })
 
 test('when following line aligns with initial bullet and has bullet character but does not have linebreak, it parses as same paragraph', () => {
@@ -73,14 +100,20 @@ test('when following line aligns with initial bullet and has bullet character bu
           - Warnings may be issued by the implementation.
     `
 
-    const root = parseTestInput(input)
-
-    expect(root.children.length).toBe(1)
-    expect(root.children[0].type).toBe(RstNodeType.BulletList)
-    expect(root.children[0].children.length).toBe(1)
-    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
-    expect(root.children[0].children[0].children.length).toBe(1)
-    expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
+    expectDocument(input, [
+        {
+            type: RstNodeType.BulletList,
+            children: [
+                {
+                    type: RstNodeType.ListItem,
+                    text: "The following line appears to be a new sublist, but it is not:\n- This is a paragraph continuation, not a sublist (since there's\nno blank line).  This line is also incorrectly indented.\n- Warnings may be issued by the implementation.",
+                    meta: {
+                        bullet: '-',
+                    },
+                },
+            ],
+        },
+    ])
 })
 
 test('when following line does not align with initial bullet, it parses as paragraph instead of list', () => {
@@ -89,11 +122,12 @@ test('when following line does not align with initial bullet, it parses as parag
         sentence 2
     `
 
-    const root = parseTestInput(input)
-
-    expect(root.children.length).toBe(1)
-    expect(root.children[0].type).toBe(RstNodeType.Paragraph)
-    expect(root.children[0].getTextContent()).toBe('- sentence 1\nsentence 2')
+    expectDocument(input, [
+        {
+            type: RstNodeType.Paragraph,
+            text: '- sentence 1\nsentence 2',
+        },
+    ])
 })
 
 test('when following line starts with bullet with linebreak, it parses as nested list', () => {
@@ -105,26 +139,54 @@ test('when following line starts with bullet with linebreak, it parses as nested
             - grandchild list
     `
 
-    const root = parseTestInput(input)
-
-    expect(root.children.length).toBe(1)
-    expect(root.children[0].type).toBe(RstNodeType.BulletList)
-    expect(root.children[0].children.length).toBe(1)
-    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
-    expect(root.children[0].children[0].children.length).toBe(2)
-    expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
-    expect(root.children[0].children[0].children[1].type).toBe(RstNodeType.BulletList)
-
-    expect(root.children[0].children[0].children[1].children.length).toBe(1)
-    expect(root.children[0].children[0].children[1].children[0].type).toBe(RstNodeType.ListItem)
-    expect(root.children[0].children[0].children[1].children[0].children.length).toBe(2)
-    expect(root.children[0].children[0].children[1].children[0].children[0].type).toBe(RstNodeType.Paragraph)
-    expect(root.children[0].children[0].children[1].children[0].children[1].type).toBe(RstNodeType.BulletList)
-
-    expect(root.children[0].children[0].children[1].children[0].children[1].children.length).toBe(1)
-    expect(root.children[0].children[0].children[1].children[0].children[1].children[0].type).toBe(RstNodeType.ListItem)
-    expect(root.children[0].children[0].children[1].children[0].children[1].children[0].children.length).toBe(1)
-    expect(root.children[0].children[0].children[1].children[0].children[1].children[0].children[0].type).toBe(RstNodeType.Paragraph)
+    expectDocument(input, [
+        {
+            type: RstNodeType.BulletList,
+            children: [
+                {
+                    type: RstNodeType.ListItem,
+                    meta: {
+                        bullet: '-',
+                    },
+                    children: [
+                        {
+                            type: RstNodeType.Paragraph,
+                            text: 'parent list',
+                        },
+                        {
+                            type: RstNodeType.BulletList,
+                            children: [
+                                {
+                                    type: RstNodeType.ListItem,
+                                    meta: {
+                                        bullet: '-',
+                                    },
+                                    children: [
+                                        {
+                                            type: RstNodeType.Paragraph,
+                                            text: 'child list',
+                                        },
+                                        {
+                                            type: RstNodeType.BulletList,
+                                            children: [
+                                                {
+                                                    type: RstNodeType.ListItem,
+                                                    text: 'grandchild list',
+                                                    meta: {
+                                                        bullet: '-',
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ])
 })
 
 test('when multiple lines start with bullets with same indent, it parses as separate nested lists', () => {
@@ -140,27 +202,76 @@ test('when multiple lines start with bullets with same indent, it parses as sepa
             - child 2 grandchild list
     `
 
-    const root = parseTestInput(input)
-
-    expect(root.children.length).toBe(1)
-    expect(root.children[0].type).toBe(RstNodeType.BulletList)
-    expect(root.children[0].children.length).toBe(1)
-    expect(root.children[0].children[0].type).toBe(RstNodeType.ListItem)
-    expect(root.children[0].children[0].children.length).toBe(2)
-    expect(root.children[0].children[0].children[0].type).toBe(RstNodeType.Paragraph)
-    expect(root.children[0].children[0].children[1].type).toBe(RstNodeType.BulletList)
-
-    expect(root.children[0].children[0].children[1].children.length).toBe(2)
-    expect(root.children[0].children[0].children[1].children[0].type).toBe(RstNodeType.ListItem)
-    expect(root.children[0].children[0].children[1].children[1].type).toBe(RstNodeType.ListItem)
-
-    expect((root.children[0].children[0].children[1].children[0] as ListItemNode).bullet).toBe('-')
-    expect(root.children[0].children[0].children[1].children[0].children.length).toBe(2)
-    expect(root.children[0].children[0].children[1].children[0].children[0].type).toBe(RstNodeType.Paragraph)
-    expect(root.children[0].children[0].children[1].children[0].children[1].type).toBe(RstNodeType.BulletList)
-
-    expect((root.children[0].children[0].children[1].children[1] as ListItemNode).bullet).toBe('-')
-    expect(root.children[0].children[0].children[1].children[1].children.length).toBe(2)
-    expect(root.children[0].children[0].children[1].children[1].children[0].type).toBe(RstNodeType.Paragraph)
-    expect(root.children[0].children[0].children[1].children[1].children[1].type).toBe(RstNodeType.BulletList)
+    expectDocument(input, [
+        {
+            type: RstNodeType.BulletList,
+            children: [
+                {
+                    type: RstNodeType.ListItem,
+                    meta: {
+                        bullet: '-',
+                    },
+                    children: [
+                        {
+                            type: RstNodeType.Paragraph,
+                            text: 'parent list',
+                        },
+                        {
+                            type: RstNodeType.BulletList,
+                            children: [
+                                {
+                                    type: RstNodeType.ListItem,
+                                    meta: {
+                                        bullet: '-',
+                                    },
+                                    children: [
+                                        {
+                                            type: RstNodeType.Paragraph,
+                                            text: 'child 1 list',
+                                        },
+                                        {
+                                            type: RstNodeType.BulletList,
+                                            children: [
+                                                {
+                                                    type: RstNodeType.ListItem,
+                                                    text: 'child 1 grandchild list',
+                                                    meta: {
+                                                        bullet: '-',
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    type: RstNodeType.ListItem,
+                                    meta: {
+                                        bullet: '-',
+                                    },
+                                    children: [
+                                        {
+                                            type: RstNodeType.Paragraph,
+                                            text: 'child 2 list',
+                                        },
+                                        {
+                                            type: RstNodeType.BulletList,
+                                            children: [
+                                                {
+                                                    type: RstNodeType.ListItem,
+                                                    text: 'child 2 grandchild list',
+                                                    meta: {
+                                                        bullet: '-',
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+    ])
 })

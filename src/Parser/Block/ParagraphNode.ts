@@ -1,4 +1,4 @@
-import { RstNode, RstNodeSource, RstNodeType } from '../RstNode.js'
+import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 import { TextNode } from '../Inline/TextNode.js'
 
 export class ParagraphNode extends RstNode {
@@ -13,12 +13,11 @@ export class ParagraphNode extends RstNode {
         super(source, [textNode])
     }
 
-    override toExpectString(selfVarName: string): string {
-        let str = ''
+    override get isPlainTextContent(): boolean {
+        return this.children.length === 1
+    }
 
-        str += `expect(${selfVarName}.getTextContent()).toBe('${this.getTextContent()}')`
-        str += '\n' + super.toExpectString(selfVarName)
-
-        return str
+    override toObject(): RstNodeObject {
+        return super.toObject(true)
     }
 }

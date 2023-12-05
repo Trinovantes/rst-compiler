@@ -39,11 +39,20 @@ export const enum RstNodeType {
     Text = 'Text',
 }
 
+// For debug purposes
 export type RstNodeSource = {
     startLineIdx: number
     endLineIdx: number // exclusive
     startIdx: number
     endIdx: number // exclusive
+}
+
+// For testing
+export type RstNodeObject = {
+    type: RstNodeType
+    text?: string
+    meta?: Record<string, string | number | Array<string> | Array<number> | RstNodeObject | Array<RstNodeObject>>
+    children?: Array<RstNodeObject>
 }
 
 export abstract class RstNode {
@@ -60,6 +69,10 @@ export abstract class RstNode {
 
     get children(): ReadonlyArray<Readonly<RstNode>> {
         return this._children
+    }
+
+    get isPlainTextContent(): boolean {
+        return false
     }
 
     protected get label(): string {
@@ -81,20 +94,22 @@ export abstract class RstNode {
         return str
     }
 
-    toExpectString(selfVarName = 'root'): string {
-        let str = ''
-
-        str += `expect(${selfVarName}.children.length).toBe(${this.children.length})`
-
-        for (let i = 0; i < this._children.length; i++) {
-            str += '\n' + `expect(${selfVarName}.children[${i}].type).toBe(RstNodeType.${this._children[i].type})`
+    toObject(omitChildrenIfPlainText = false): RstNodeObject {
+        const root: RstNodeObject = {
+            type: this.type,
         }
 
-        for (let i = 0; i < this._children.length; i++) {
-            str += '\n' + this._children[i].toExpectString(`${selfVarName}.children[${i}]`)
+        if (omitChildrenIfPlainText && this.isPlainTextContent) {
+            root.text = this.getTextContent()
+        } else if (this.children.length > 0) {
+            root.children = []
+
+            for (const child of this._children) {
+                root.children.push(child.toObject())
+            }
         }
 
-        return str
+        return root
     }
 
     getTextContent(): string {

@@ -1,5 +1,5 @@
 import { escapeForRegExp } from '@/utils/escapeForRegExp.js'
-import { RstNode, RstNodeSource, RstNodeType } from '../RstNode.js'
+import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 import { TextNode } from '../Inline/TextNode.js'
 
 export const sectionChars = ['=', '-', '`', ':', '.', "'", '"', '~', '^', '_', '*', '+', '#']
@@ -9,7 +9,7 @@ export class SectionNode extends RstNode {
     type = RstNodeType.Section
 
     constructor(
-        readonly sectionLevel: number,
+        readonly level: number,
 
         source: RstNodeSource,
         text: string,
@@ -20,6 +20,20 @@ export class SectionNode extends RstNode {
     }
 
     override get label(): string {
-        return `${this.type}:h${this.sectionLevel}`
+        return `${this.type}:h${this.level}`
+    }
+
+    override get isPlainTextContent(): boolean {
+        return this.children.length === 1
+    }
+
+    override toObject(): RstNodeObject {
+        const root = super.toObject(true)
+
+        root.meta = {
+            level: this.level,
+        }
+
+        return root
     }
 }
