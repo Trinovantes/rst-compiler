@@ -1,9 +1,6 @@
-import { describe, expect, test } from 'vitest'
-import { parseTestInput } from '../../fixtures/parseTestInput.js'
+import { describe, test } from 'vitest'
 import { expectDocument } from '../../fixtures/expectDocument.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
-import { ListItemNode } from '@/Parser/List/ListItemNode.js'
-import { EnumeratedListNode } from '@/Parser/List/EnumeratedListNode.js'
 import { EnumeratedListType } from '@/Parser/List/EnumeratedListType.js'
 
 describe('enumerations denote start of enumerated list', () => {
