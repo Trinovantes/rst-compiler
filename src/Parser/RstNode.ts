@@ -15,6 +15,7 @@ export const enum RstNodeType {
     DefinitionList = 'DefinitionList', // <dl>
     DefinitionListItem = 'DefinitionListItem', // <dt> and <dd>
     FieldList = 'FieldList',
+    FieldListItem = 'FieldListItem',
     OptionList = 'OptionList',
 
     LiteralBlock = 'LiteralBlock',

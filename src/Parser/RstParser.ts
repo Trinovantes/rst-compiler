@@ -12,6 +12,8 @@ import { ListItemNode } from './List/ListItemNode.js'
 import { EnumeratedListNode, enumeratedListRe } from './List/EnumeratedListNode.js'
 import { getEnumeratedListType, isSequentialBullet } from './List/EnumeratedListType.js'
 import { DefinitionListItemNode, DefinitionListNode, definitionListRe } from './List/DefinitionList.js'
+import { FieldListItemNode, FieldListNode, fieldListRe } from './List/FieldListNode.js'
+import { TextNode } from './Inline/TextNode.js'
 
 export class RstParser {
     // Parser internal states
@@ -160,6 +162,7 @@ export class RstParser {
                 this.parseBulletList(indentSize) ??
                 this.parseEnumeratedList(indentSize) ??
                 this.parseDefinitionList(indentSize) ??
+                this.parseFieldList(indentSize) ??
                 this.parseTransition() ??
                 this.parseSection() ??
                 this.parseParagraph(indentSize)
@@ -376,7 +379,6 @@ export class RstParser {
         return new EnumeratedListNode(listType, { startLineIdx, endLineIdx, startIdx, endIdx }, listItems)
     }
 
-    // https://docutils.sourceforge.io/docs/ref/doctree.html#list-item
     private parseEnumeratedListItem(indentSize: number, prevBulletValue?: string): ListItemNode | null {
         if (!this.peekIsIndented(indentSize)) {
             return null
@@ -496,6 +498,97 @@ export class RstParser {
         const endIdx = this._inputIdx
 
         return new DefinitionListItemNode(term, classifiers, defBodyNodes, { startLineIdx, endLineIdx, startIdx, endIdx })
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#field-lists
+    private parseFieldList(indentSize: number): FieldListNode | null {
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        const fieldItems = new Array<FieldListItemNode>()
+        while (true) {
+            const listItem = this.parseFieldListItemNode(indentSize)
+            if (!listItem) {
+                break
+            }
+
+            fieldItems.push(listItem)
+        }
+
+        if (fieldItems.length === 0) {
+            return null
+        }
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new FieldListNode({ startLineIdx, endLineIdx, startIdx, endIdx }, fieldItems)
+    }
+
+    private parseFieldListItemNode(indentSize: number): FieldListItemNode | null {
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(fieldListRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        const startLineIdx = this._tokenIdx
+        const startIdx = this._inputIdx
+
+        const fieldNameAndColons = firstLineMatches[1]
+        const fieldName = firstLineMatches[2]
+        const fieldNameNode = new TextNode(startLineIdx, startLineIdx + 1, startIdx + 1, fieldName)
+
+        // Field's indent size is based on next line's initial indent instead of where the colon is
+        const fieldIndentSize = this.peekIsContent(1)
+            ? this.peek(1)?.str.search(/\S|$/) ?? 0
+            : 0
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        // First child of list is always paragraph
+        // Need to extract first line's text with regex since it starts with bullet and space
+        // e.g. "1. text" extracts "text"
+        let firstParagraphText = firstLineMatches.at(-1) ?? ''
+        while (this.peekIsContent() && this.peekIsIndented(fieldIndentSize)) {
+            const line = this.consume()
+            const lineText = line.str.substring(fieldIndentSize)
+            firstParagraphText += '\n' + lineText
+        }
+
+        const firstParagraph = new ParagraphNode(
+            {
+                startLineIdx,
+                endLineIdx: this._tokenIdx,
+                startIdx: startIdx + fieldNameAndColons.length,
+                endIdx: startIdx + fieldNameAndColons.length + firstParagraphText.length,
+            },
+            firstParagraphText,
+        )
+
+        // Parse rest of field body's elements (if any)
+        const fieldBodyNodes = this.parseBodyElements(fieldIndentSize, RstNodeType.FieldListItem)
+
+        const endLineIdx = this._tokenIdx
+        const endIdx = this._inputIdx
+
+        return new FieldListItemNode(
+            fieldNameNode,
+            [
+                firstParagraph,
+                ...fieldBodyNodes,
+            ],
+            {
+                startLineIdx,
+                endLineIdx,
+                startIdx,
+                endIdx,
+            },
+        )
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
