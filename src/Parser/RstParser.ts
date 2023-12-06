@@ -145,8 +145,8 @@ export class RstParser {
                 this.parseBlockquote(indentSize) ??
                 this.parseBulletList(indentSize) ??
                 this.parseEnumeratedList(indentSize) ??
-                this.parseDefinitionList(indentSize) ??
                 this.parseFieldList(indentSize) ??
+                this.parseDefinitionList(indentSize) ??
                 this.parseTransition() ??
                 this.parseSection() ??
                 this.parseParagraph(indentSize)
@@ -488,15 +488,16 @@ export class RstParser {
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
     private parseBlockquote(indentSize: number): BlockquoteNode | null {
+        const startLineIdx = this._tokenIdx
+
         const bodyIndentSize = indentSize + this._indentationSize
         if (!this.peekIsIndented(bodyIndentSize)) {
             return null
         }
 
-        const startLineIdx = this._tokenIdx
         const bodyNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.Blockquote)
-        const endLineIdx = this._tokenIdx
 
+        const endLineIdx = this._tokenIdx
         return new BlockquoteNode({ startLineIdx, endLineIdx }, bodyNodes)
     }
 
