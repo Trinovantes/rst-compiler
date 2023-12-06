@@ -44,8 +44,6 @@ export const enum RstNodeType {
 export type RstNodeSource = {
     startLineIdx: number
     endLineIdx: number // exclusive
-    startIdx: number
-    endIdx: number // exclusive
 }
 
 // For testing
@@ -60,17 +58,9 @@ export abstract class RstNode {
     abstract readonly type: RstNodeType
 
     constructor(
-        public readonly source: RstNodeSource,
-        protected readonly _children: ReadonlyArray<Readonly<RstNode>> = [],
+        readonly source: RstNodeSource,
+        readonly children: ReadonlyArray<Readonly<RstNode>> = [],
     ) {}
-
-    get length(): number {
-        return this.source.endIdx - this.source.startIdx
-    }
-
-    get children(): ReadonlyArray<Readonly<RstNode>> {
-        return this._children
-    }
 
     get isPlainTextContent(): boolean {
         return false
@@ -86,26 +76,26 @@ export abstract class RstNode {
         // Prints line numbers in 1-based counting for ease of reading
         const start = this.source.startLineIdx + 1
         const end = this.source.endLineIdx + 1
-        let str = selfTab + `[${this.label}] startIdx:${this.source.startIdx} endIdx:${this.source.endIdx} (${this.length}) line:${start}-${end}\n`
+        let str = selfTab + `[${this.label}] (${start}-${end})\n`
 
-        for (const child of this._children) {
+        for (const child of this.children) {
             str += child.toString(depth + 1)
         }
 
         return str
     }
 
-    toObject(omitChildrenIfPlainText = false): RstNodeObject {
+    toObject(): RstNodeObject {
         const root: RstNodeObject = {
             type: this.type,
         }
 
-        if (omitChildrenIfPlainText && this.isPlainTextContent) {
+        if (this.isPlainTextContent) {
             root.text = this.getTextContent()
         } else if (this.children.length > 0) {
             root.children = []
 
-            for (const child of this._children) {
+            for (const child of this.children) {
                 root.children.push(child.toObject())
             }
         }
@@ -116,7 +106,7 @@ export abstract class RstNode {
     getTextContent(): string {
         let str = ''
 
-        for (const child of this._children) {
+        for (const child of this.children) {
             str += child.getTextContent()
         }
 

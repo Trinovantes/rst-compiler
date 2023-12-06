@@ -21,21 +21,13 @@ export class DefinitionListItemNode extends RstNode {
 
         source: RstNodeSource,
     ) {
-        const termStartLineIdx = source.startLineIdx
-        const termEndLineIdx = source.startLineIdx + 1
-        const term = new TextNode(termStartLineIdx, termEndLineIdx, source.startIdx, termText)
-
-        let startIdx = term.source.endIdx
-        const classifiers = new Array<TextNode>()
-        for (const classiferText of classifiersText) {
-            startIdx += ' : '.length
-            classifiers.push(new TextNode(termStartLineIdx, termEndLineIdx, startIdx, classiferText))
-            startIdx += classiferText.length
-        }
-
         super(source)
-        this.term = term
-        this.classifiers = classifiers
+
+        const startLineIdx = source.startLineIdx
+        const endLineIdx = source.startLineIdx + 1
+
+        this.term = new TextNode(termText, { startLineIdx, endLineIdx })
+        this.classifiers = classifiersText.map((text) => new TextNode(text, { startLineIdx, endLineIdx }))
         this.defBodyNodes = defBodyNodes
     }
 
@@ -45,7 +37,7 @@ export class DefinitionListItemNode extends RstNode {
         // Prints line numbers in 1-based counting for ease of reading
         const start = this.source.startLineIdx + 1
         const end = this.source.endLineIdx + 1
-        let str = selfTab + `[${this.label}] startIdx:${this.source.startIdx} endIdx:${this.source.endIdx} (${this.length}) line:${start}-${end}\n`
+        let str = selfTab + `[${this.label}] (${start}-${end})\n`
 
         str += selfTab + '  (Term)' + '\n'
         str += this.term.toString(depth + 2)
@@ -69,7 +61,7 @@ export class DefinitionListItemNode extends RstNode {
         root.meta = {
             term: this.term.getTextContent(),
             classifiers: this.classifiers.map((classifier) => classifier.getTextContent()),
-            definition: this.defBodyNodes.map((bodyNode) => bodyNode.toObject(true)),
+            definition: this.defBodyNodes.map((bodyNode) => bodyNode.toObject()),
         }
 
         return root

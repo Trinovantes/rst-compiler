@@ -21,7 +21,7 @@ export class ListItemNode extends RstNode {
     }
 
     override toObject(): RstNodeObject {
-        const root = super.toObject(true)
+        const root = super.toObject()
 
         root.meta = {
             bullet: this.bullet,

@@ -1,16 +1,13 @@
-import { RstNode, RstNodeObject, RstNodeType } from '../RstNode.js'
+import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 
 export class TextNode extends RstNode {
     type = RstNodeType.Text
 
     constructor(
-        startLineIdx: number,
-        endLineIdx: number,
-        startIdx: number,
         readonly origText: string,
+        source: RstNodeSource,
     ) {
-        const endIdx = startIdx + origText.length
-        super({ startLineIdx, endLineIdx, startIdx, endIdx })
+        super(source)
     }
 
     override toString(depth = 0): string {

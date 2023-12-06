@@ -10,12 +10,11 @@ export class SectionNode extends RstNode {
 
     constructor(
         readonly level: number,
-
+        readonly origText: string,
         source: RstNodeSource,
-        text: string,
     ) {
         // TODO parse inline elements
-        const textNode = new TextNode(source.startLineIdx, source.endLineIdx, source.startIdx, text)
+        const textNode = new TextNode(origText, source)
         super(source, [textNode])
     }
 
@@ -28,7 +27,7 @@ export class SectionNode extends RstNode {
     }
 
     override toObject(): RstNodeObject {
-        const root = super.toObject(true)
+        const root = super.toObject()
 
         root.meta = {
             level: this.level,
