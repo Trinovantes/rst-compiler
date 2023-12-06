@@ -1,14 +1,29 @@
 import { test } from 'vitest'
 import { expectDocument } from '../../fixtures/expectDocument.js'
-import { parseTestInput } from '../../fixtures/parseTestInput.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
 
 test('basic field list', () => {
     const input = `
-        0
-
-            :key: value
+        :key: value
     `
 
-    console.log(parseTestInput(input).toString())
+    expectDocument(input, [
+        {
+            type: RstNodeType.FieldList,
+            children: [
+                {
+                    type: RstNodeType.FieldListItem,
+                    meta: {
+                        name: 'key',
+                        body: [
+                            {
+                                type: RstNodeType.Paragraph,
+                                text: 'value',
+                            },
+                        ],
+                    },
+                },
+            ],
+        },
+    ])
 })
