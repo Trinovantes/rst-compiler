@@ -1,7 +1,7 @@
-import { TextNode } from '../Inline/TextNode.js'
+import { Text } from '../Inline/Text.js'
 import { RstNode, RstNodeSource, RstNodeType } from '../RstNode.js'
 
-export class ParagraphNode extends RstNode {
+export class Paragraph extends RstNode {
     type = RstNodeType.Paragraph
 
     constructor(
@@ -9,7 +9,7 @@ export class ParagraphNode extends RstNode {
         source: RstNodeSource,
     ) {
         // TODO parse inline elements
-        const textNode = new TextNode(origText, source)
+        const textNode = new Text(origText, source)
         super(source, [textNode])
     }
 

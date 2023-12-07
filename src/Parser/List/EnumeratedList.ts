@@ -1,10 +1,11 @@
 import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
+import { EnumeratedListType } from './EnumeratedListType.js'
 
-export class BulletListItemNode extends RstNode {
-    type = RstNodeType.BulletListItem
+export class EnumeratedList extends RstNode {
+    type = RstNodeType.EnumeratedList
 
     constructor(
-        readonly bullet: string,
+        readonly listType: EnumeratedListType,
 
         source: RstNodeSource,
         children: ReadonlyArray<Readonly<RstNode>> = [],
@@ -13,18 +14,14 @@ export class BulletListItemNode extends RstNode {
     }
 
     override get label(): string {
-        return `${this.type} "${this.bullet}"`
-    }
-
-    override get isPlainTextContent(): boolean {
-        return this.children.length === 1 && this.children[0].isPlainTextContent
+        return `${this.type} "${this.listType}"`
     }
 
     override toObject(): RstNodeObject {
         const root = super.toObject()
 
         root.meta = {
-            bullet: this.bullet,
+            listType: this.listType,
         }
 
         return root

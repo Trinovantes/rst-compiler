@@ -1,17 +1,11 @@
-import { TextNode } from '../Inline/TextNode.js'
+import { Text } from '../Inline/Text.js'
 import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 
-export const definitionListRe = /^[ ]*([^\n]+)$/
-
-export class DefinitionListNode extends RstNode {
-    type = RstNodeType.DefinitionList
-}
-
-export class DefinitionListItemNode extends RstNode {
+export class DefinitionListItem extends RstNode {
     type = RstNodeType.DefinitionListItem
 
-    readonly term: TextNode
-    readonly classifiers: Array<TextNode>
+    readonly term: Text
+    readonly classifiers: Array<Text>
     readonly defBodyNodes: Array<RstNode>
 
     constructor(
@@ -26,8 +20,8 @@ export class DefinitionListItemNode extends RstNode {
         const startLineIdx = source.startLineIdx
         const endLineIdx = source.startLineIdx + 1
 
-        this.term = new TextNode(termText, { startLineIdx, endLineIdx })
-        this.classifiers = classifiersText.map((text) => new TextNode(text, { startLineIdx, endLineIdx }))
+        this.term = new Text(termText, { startLineIdx, endLineIdx })
+        this.classifiers = classifiersText.map((text) => new Text(text, { startLineIdx, endLineIdx }))
         this.defBodyNodes = defBodyNodes
     }
 

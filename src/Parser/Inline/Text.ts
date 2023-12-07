@@ -1,6 +1,6 @@
 import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 
-export class TextNode extends RstNode {
+export class Text extends RstNode {
     type = RstNodeType.Text
 
     constructor(

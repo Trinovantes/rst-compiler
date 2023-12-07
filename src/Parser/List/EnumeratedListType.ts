@@ -1,5 +1,5 @@
 import { romanToInt } from '@/utils/romanToInt.js'
-import { romanUpperRe, romanLowerRe } from './EnumeratedListNode.js'
+import { romanLowerRe, romanUpperRe } from '../RstParser.js'
 
 export const enum EnumeratedListType {
     Arabic = 'Arabic',

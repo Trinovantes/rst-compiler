@@ -1,12 +1,6 @@
 import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 
-export const fieldListRe = /^[ ]*(:(.+): )([^\n]*)$/
-
-export class FieldListNode extends RstNode {
-    type = RstNodeType.FieldList
-}
-
-export class FieldListItemNode extends RstNode {
+export class FieldListItem extends RstNode {
     type = RstNodeType.FieldListItem
 
     constructor(

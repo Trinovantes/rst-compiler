@@ -1,11 +1,7 @@
-import { escapeForRegExp } from '@/utils/escapeForRegExp.js'
 import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
-import { TextNode } from '../Inline/TextNode.js'
+import { Text } from '../Inline/Text.js'
 
-export const sectionChars = ['=', '-', '`', ':', '.', "'", '"', '~', '^', '_', '*', '+', '#']
-export const sectionRe = new RegExp(`^(${sectionChars.map(escapeForRegExp).join('|')}){3,}[ ]*$`)
-
-export class SectionNode extends RstNode {
+export class Section extends RstNode {
     type = RstNodeType.Section
 
     constructor(
@@ -14,7 +10,7 @@ export class SectionNode extends RstNode {
         source: RstNodeSource,
     ) {
         // TODO parse inline elements
-        const textNode = new TextNode(origText, source)
+        const textNode = new Text(origText, source)
         super(source, [textNode])
     }
 

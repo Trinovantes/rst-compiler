@@ -1,19 +1,81 @@
-import { DocumentNode } from './Document/DocumentNode.js'
-import { ParagraphNode } from './Block/ParagraphNode.js'
-import { sectionRe, SectionNode, sectionChars } from './Document/SectionNode.js'
+import { Document } from './Document/Document.js'
+import { Paragraph } from './Block/Paragraph.js'
 import { RstNode, RstNodeType } from './RstNode.js'
-import { BulletListNode, bulletListRe } from './List/BulletListNode.js'
-import { BlockquoteAttributionNode, BlockquoteNode, blockquoteAttributonRe } from './Block/BlockquoteNode.js'
-import { emptyCommentRe } from './ExplicitMarkup/CommentNode.js'
+import { BulletList } from './List/BulletList.js'
+import { BlockquoteAttribution, Blockquote } from './Block/Blockquote.js'
 import { Token } from '@/Lexer/Token.js'
 import { tokenizeInput } from '@/Lexer/tokenizeInput.js'
-import { TransitionNode, transitionRe } from './Document/TransitionNode.js'
-import { BulletListItemNode } from './List/BulletListItemNode.js'
-import { EnumeratedListNode, enumeratedListRe } from './List/EnumeratedListNode.js'
+import { BulletListItem } from './List/BulletListItem.js'
+import { EnumeratedList } from './List/EnumeratedList.js'
 import { getEnumeratedListType, isSequentialBullet } from './List/EnumeratedListType.js'
-import { DefinitionListItemNode, DefinitionListNode, definitionListRe } from './List/DefinitionListNode.js'
-import { FieldListItemNode, FieldListNode, fieldListRe } from './List/FieldListNode.js'
-import { OptionListItemNode, OptionListItemNodeOption, OptionListNode, optionListRe, optionRe } from './List/OptionListNode.js'
+import { DefinitionList } from './List/DefinitionList.js'
+import { escapeForRegExp } from '@/utils/escapeForRegExp.js'
+import { OptionListItem, OptionListItemOption } from './List/OptionListItem.js'
+import { Section } from './Document/Section.js'
+import { DefinitionListItem } from './List/DefinitionListItem.js'
+import { FieldList } from './List/FieldList.js'
+import { FieldListItem } from './List/FieldListItem.js'
+import { OptionList } from './List/OptionList.js'
+import { Transition } from './Document/Transition.js'
+
+// ------------------------------------------------------------------------
+// Regular expressions used for parsing lines (excluding \n)
+// ------------------------------------------------------------------------
+
+export const romanUpperRe = /(I+|[MDCLXVI]{2,})/
+export const romanLowerRe = /(i+|[mdclxvi]{2,})/
+
+export const emptyCommentRe = /^\.\.\s*$/
+
+export const blockquoteRe           = /^([ ]+)(.+)$/
+export const blockquoteAttributonRe = /^([ ]+)(---?[ ]+)(.+)$/
+
+export const sectionChars = ['=', '-', '`', ':', '.', "'", '"', '~', '^', '_', '*', '+', '#']
+export const sectionMarkRe    = new RegExp(`^(${sectionChars.map(escapeForRegExp).join('|')}){3,}[ ]*$`)
+export const transitionMarkRe = new RegExp(`^(${sectionChars.map(escapeForRegExp).join('|')}){4,}[ ]*$`)
+
+export const definitionListItemRe = /^[ ]*(.+)$/
+export const fieldListItemRe      = /^[ ]*(:(.+): )(.+)$/
+export const bulletListItemRe     = /^[ ]*(([*+-])[ ]+)(.+)$/
+export const enumeratedListItemRe = new RegExp(
+    '^[ ]*' + // Whitespace at start
+    '(' +
+        '\\(?' + // Opening parenthesis
+        '(' +
+            '[0-9]+' + // Arabic
+            '|' +
+            '[A-Za-z]' + // Alphabet
+            '|' +
+            '#' + // Auto enumerator
+            '|' +
+            romanUpperRe.source + // Roman Numerals (uppercase)
+            '|' +
+            romanLowerRe.source + // Roman Numerals (lowercase)
+        ')' +
+        '[)\\.]' + // Closing parenthesis or period
+        ' ' + // Space
+    ')' +
+    '(.+)$', // Any char to end of line
+)
+
+export const optionListItemOptionArgRe = /[a-zA-Z][a-zA-Z0-9_-]*|<.+>/
+export const optionListItemOptionRe = new RegExp(
+    '(' +
+        `-([a-zA-Z0-9])([ ])(${optionListItemOptionArgRe.source})?` + // Short form (delimiter must be space)
+    '|' +
+        `--([a-zA-Z-]+)([ |=])(${optionListItemOptionArgRe.source})?` + // Long form (delimiter can either be equals or space)
+    ')',
+)
+export const optionListItemRe = new RegExp(
+    '^[ ]*' + // Whitespace at start
+    '-{1,2}' + // 1 or 2 dashes
+    '[^- ]' + // Next character cannot be a dash (since 3+ dashes need to be parsed as transition/section) or space (since 1 dash+space need to be parsed as bullet list)
+    '.+$', // Any char to end of line
+)
+
+// ------------------------------------------------------------------------
+// Main Parser
+// ------------------------------------------------------------------------
 
 export class RstParser {
     // Parser internal states
@@ -96,7 +158,7 @@ export class RstParser {
     // Node Parsers
     // ------------------------------------------------------------------------
 
-    parse(input: string): DocumentNode {
+    parse(input: string): Document {
         this._tokenIdx = 0
         this._tokens = tokenizeInput(input)
         this._sectionMarkers = []
@@ -106,7 +168,7 @@ export class RstParser {
         const startLineIdx = 0
         const endLineIdx = this._tokenIdx
 
-        return new DocumentNode({ startLineIdx, endLineIdx }, nodes)
+        return new Document({ startLineIdx, endLineIdx }, nodes)
     }
 
     private parseBodyElements(indentSize: number, parentType: RstNodeType): Array<RstNode> {
@@ -160,7 +222,7 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#paragraphs
-    private parseParagraph(indentSize: number): ParagraphNode {
+    private parseParagraph(indentSize: number): Paragraph {
         const startLineIdx = this._tokenIdx
 
         let paragraphText = ''
@@ -170,31 +232,31 @@ export class RstParser {
         }
 
         const endLineIdx = this._tokenIdx
-        return new ParagraphNode(paragraphText.trim(), { startLineIdx, endLineIdx }) // Need trim to remove last '\n'
+        return new Paragraph(paragraphText.trim(), { startLineIdx, endLineIdx }) // Need trim to remove last '\n'
     }
 
-    private parseTransition(): TransitionNode | null {
+    private parseTransition(): Transition | null {
         const startLineIdx = this._tokenIdx
 
-        if (!this.peekTest(transitionRe)) {
+        if (!this.peekTest(transitionMarkRe)) {
             return null
         }
 
-        // Consume the transition line without processing it (no need)
+        // Consume the transition line
         this.consume()
 
         const endLineIdx = this._tokenIdx
-        return new TransitionNode({ startLineIdx, endLineIdx })
+        return new Transition({ startLineIdx, endLineIdx })
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#sections
-    private parseSection(): SectionNode | null {
+    private parseSection(): Section | null {
         const startLineIdx = this._tokenIdx
 
         let hasOverline: boolean
-        if (this.peekTest(sectionRe, 0) && this.peekTest(sectionRe, 2)) {
+        if (this.peekTest(sectionMarkRe, 0) && this.peekTest(sectionMarkRe, 2)) {
             hasOverline = true
-        } else if (this.peekTest(sectionRe, 1)) {
+        } else if (this.peekTest(sectionMarkRe, 1)) {
             hasOverline = false
         } else {
             return null
@@ -220,14 +282,14 @@ export class RstParser {
         const sectionLevel = this._sectionMarkers.indexOf(underLineChar) + 1
 
         const endLineIdx = this._tokenIdx
-        return new SectionNode(sectionLevel, sectionText, { startLineIdx, endLineIdx })
+        return new Section(sectionLevel, sectionText, { startLineIdx, endLineIdx })
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bullet-lists
-    private parseBulletList(indentSize: number): BulletListNode | null {
+    private parseBulletList(indentSize: number): BulletList | null {
         const startLineIdx = this._tokenIdx
 
-        const listItems = new Array<BulletListItemNode>()
+        const listItems = new Array<BulletListItem>()
         while (true) {
             const listItem = this.parseBulletListItem(indentSize)
             if (!listItem) {
@@ -243,17 +305,17 @@ export class RstParser {
         }
 
         const endLineIdx = this._tokenIdx
-        return new BulletListNode({ startLineIdx, endLineIdx }, listItems)
+        return new BulletList({ startLineIdx, endLineIdx }, listItems)
     }
 
-    private parseBulletListItem(indentSize: number): BulletListItemNode | null {
+    private parseBulletListItem(indentSize: number): BulletListItem | null {
         const startLineIdx = this._tokenIdx
 
         if (!this.peekIsIndented(indentSize)) {
             return null
         }
 
-        const firstLineMatches = this.peekTest(bulletListRe)
+        const firstLineMatches = this.peekTest(bulletListItemRe)
         if (!firstLineMatches) {
             return null
         }
@@ -280,21 +342,21 @@ export class RstParser {
             firstParagraphText += '\n' + lineText
         }
 
-        const firstParagraph = new ParagraphNode(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
+        const firstParagraph = new Paragraph(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
         const restOfList = this.parseBodyElements(bulletIndentSize, RstNodeType.BulletListItem)
 
         const endLineIdx = this._tokenIdx
-        return new BulletListItemNode(bulletValue, { startLineIdx, endLineIdx }, [
+        return new BulletListItem(bulletValue, { startLineIdx, endLineIdx }, [
             firstParagraph,
             ...restOfList,
         ])
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#enumerated-lists
-    private parseEnumeratedList(indentSize: number): EnumeratedListNode | null {
+    private parseEnumeratedList(indentSize: number): EnumeratedList | null {
         const startLineIdx = this._tokenIdx
 
-        const listItems = new Array<BulletListItemNode>()
+        const listItems = new Array<BulletListItem>()
         while (true) {
             const prevBulletValue = listItems.at(-1)?.bullet
             const listItem = this.parseEnumeratedListItem(indentSize, prevBulletValue)
@@ -312,17 +374,17 @@ export class RstParser {
 
         const listType = getEnumeratedListType(listItems[0].bullet)
         const endLineIdx = this._tokenIdx
-        return new EnumeratedListNode(listType, { startLineIdx, endLineIdx }, listItems)
+        return new EnumeratedList(listType, { startLineIdx, endLineIdx }, listItems)
     }
 
-    private parseEnumeratedListItem(indentSize: number, prevBulletValue?: string): BulletListItemNode | null {
+    private parseEnumeratedListItem(indentSize: number, prevBulletValue?: string): BulletListItem | null {
         const startLineIdx = this._tokenIdx
 
         if (!this.peekIsIndented(indentSize)) {
             return null
         }
 
-        const firstLineMatches = this.peekTest(enumeratedListRe)
+        const firstLineMatches = this.peekTest(enumeratedListItemRe)
         if (!firstLineMatches) {
             return null
         }
@@ -354,21 +416,21 @@ export class RstParser {
             firstParagraphText += '\n' + lineText
         }
 
-        const firstParagraph = new ParagraphNode(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
+        const firstParagraph = new Paragraph(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
         const restOfList = this.parseBodyElements(bulletIndentSize, RstNodeType.BulletListItem)
 
         const endLineIdx = this._tokenIdx
-        return new BulletListItemNode(bulletValue, { startLineIdx, endLineIdx }, [
+        return new BulletListItem(bulletValue, { startLineIdx, endLineIdx }, [
             firstParagraph,
             ...restOfList,
         ])
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#definition-lists
-    private parseDefinitionList(indentSize: number): DefinitionListNode | null {
+    private parseDefinitionList(indentSize: number): DefinitionList | null {
         const startLineIdx = this._tokenIdx
 
-        const listItems = new Array<DefinitionListItemNode>()
+        const listItems = new Array<DefinitionListItem>()
         while (true) {
             const listItem = this.parseDefinitionListItem(indentSize)
             if (!listItem) {
@@ -383,10 +445,10 @@ export class RstParser {
         }
 
         const endLineIdx = this._tokenIdx
-        return new DefinitionListNode({ startLineIdx, endLineIdx }, listItems)
+        return new DefinitionList({ startLineIdx, endLineIdx }, listItems)
     }
 
-    private parseDefinitionListItem(indentSize: number): DefinitionListItemNode | null {
+    private parseDefinitionListItem(indentSize: number): DefinitionListItem | null {
         const startLineIdx = this._tokenIdx
 
         if (!this.peekIsIndented(indentSize)) {
@@ -394,11 +456,11 @@ export class RstParser {
         }
 
         // Definition must be immediately after term and indented
-        if (!this.peekTest(definitionListRe) || !this.peekIsIndented(indentSize + this._indentationSize, 1)) {
+        if (!this.peekTest(definitionListItemRe) || !this.peekIsIndented(indentSize + this._indentationSize, 1)) {
             return null
         }
 
-        const termMatches = this.peekTest(definitionListRe)
+        const termMatches = this.peekTest(definitionListItemRe)
         if (!termMatches) {
             return null
         }
@@ -414,16 +476,16 @@ export class RstParser {
         const defBodyNodes = this.parseBodyElements(defBodyIndentSize, RstNodeType.DefinitionListItem)
 
         const endLineIdx = this._tokenIdx
-        return new DefinitionListItemNode(term, classifiers, defBodyNodes, { startLineIdx, endLineIdx })
+        return new DefinitionListItem(term, classifiers, defBodyNodes, { startLineIdx, endLineIdx })
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#field-lists
-    private parseFieldList(indentSize: number): FieldListNode | null {
+    private parseFieldList(indentSize: number): FieldList | null {
         const startLineIdx = this._tokenIdx
 
-        const listItems = new Array<FieldListItemNode>()
+        const listItems = new Array<FieldListItem>()
         while (true) {
-            const listItem = this.parseFieldListItemNode(indentSize)
+            const listItem = this.parseFieldListItem(indentSize)
             if (!listItem) {
                 break
             }
@@ -436,17 +498,17 @@ export class RstParser {
         }
 
         const endLineIdx = this._tokenIdx
-        return new FieldListNode({ startLineIdx, endLineIdx }, listItems)
+        return new FieldList({ startLineIdx, endLineIdx }, listItems)
     }
 
-    private parseFieldListItemNode(indentSize: number): FieldListItemNode | null {
+    private parseFieldListItem(indentSize: number): FieldListItem | null {
         const startLineIdx = this._tokenIdx
 
         if (!this.peekIsIndented(indentSize)) {
             return null
         }
 
-        const firstLineMatches = this.peekTest(fieldListRe)
+        const firstLineMatches = this.peekTest(fieldListItemRe)
         if (!firstLineMatches) {
             return null
         }
@@ -471,11 +533,11 @@ export class RstParser {
             firstParagraphText += '\n' + lineText
         }
 
-        const firstParagraph = new ParagraphNode(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
+        const firstParagraph = new Paragraph(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
         const fieldBodyNodes = this.parseBodyElements(fieldIndentSize, RstNodeType.FieldListItem)
 
         const endLineIdx = this._tokenIdx
-        return new FieldListItemNode(
+        return new FieldListItem(
             fieldName,
             [
                 firstParagraph,
@@ -489,12 +551,12 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#option-lists
-    private parseOptionList(indentSize: number): OptionListNode | null {
+    private parseOptionList(indentSize: number): OptionList | null {
         const startLineIdx = this._tokenIdx
 
-        const listItems = new Array<OptionListItemNode>()
+        const listItems = new Array<OptionListItem>()
         while (true) {
-            const listItem = this.parseOptionListItemNode(indentSize)
+            const listItem = this.parseOptionListItem(indentSize)
             if (!listItem) {
                 break
             }
@@ -507,17 +569,17 @@ export class RstParser {
         }
 
         const endLineIdx = this._tokenIdx
-        return new OptionListNode({ startLineIdx, endLineIdx }, listItems)
+        return new OptionList({ startLineIdx, endLineIdx }, listItems)
     }
 
-    private parseOptionListItemNode(indentSize: number): OptionListItemNode | null {
+    private parseOptionListItem(indentSize: number): OptionListItem | null {
         const startLineIdx = this._tokenIdx
 
         if (!this.peekIsIndented(indentSize)) {
             return null
         }
 
-        const firstLineMatches = this.peekTest(optionListRe)
+        const firstLineMatches = this.peekTest(optionListItemRe)
         if (!firstLineMatches) {
             return null
         }
@@ -530,8 +592,8 @@ export class RstParser {
         // Consume first line that we've already peeked at and tested
         this.consume()
 
-        const options = new Array<OptionListItemNodeOption>()
-        const optionReWithState = new RegExp(optionRe, 'g')
+        const options = new Array<OptionListItemOption>()
+        const optionReWithState = new RegExp(optionListItemOptionRe, 'g')
         const matches = firstLineMatches[0].matchAll(optionReWithState)
         let parsedStrIdx = 0
         for (const match of matches) {
@@ -551,11 +613,11 @@ export class RstParser {
             firstParagraphText += '\n' + lineText
         }
 
-        const firstParagraph = new ParagraphNode(firstParagraphText.trim(), { startLineIdx, endLineIdx: this._tokenIdx })
+        const firstParagraph = new Paragraph(firstParagraphText.trim(), { startLineIdx, endLineIdx: this._tokenIdx })
         const fieldBodyNodes = this.parseBodyElements(descIndentSize, RstNodeType.OptionListItem)
 
         const endLineIdx = this._tokenIdx
-        return new OptionListItemNode(
+        return new OptionListItem(
             options,
             [
                 firstParagraph,
@@ -569,7 +631,7 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
-    private parseBlockquote(indentSize: number): BlockquoteNode | null {
+    private parseBlockquote(indentSize: number): Blockquote | null {
         const startLineIdx = this._tokenIdx
 
         const bodyIndentSize = indentSize + this._indentationSize
@@ -580,11 +642,11 @@ export class RstParser {
         const bodyNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.Blockquote)
 
         const endLineIdx = this._tokenIdx
-        return new BlockquoteNode({ startLineIdx, endLineIdx }, bodyNodes)
+        return new Blockquote({ startLineIdx, endLineIdx }, bodyNodes)
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
-    private parseBlockquoteAttribution(indentSize: number, parentType: RstNodeType): BlockquoteAttributionNode | null {
+    private parseBlockquoteAttribution(indentSize: number, parentType: RstNodeType): BlockquoteAttribution | null {
         const startLineIdx = this._tokenIdx
 
         if (parentType !== RstNodeType.Blockquote) {
@@ -600,6 +662,7 @@ export class RstParser {
             return null
         }
 
+        // Consume first line that we've already peeked at and tested
         this.consume()
 
         const bulletAndSpace = firstLineMatches[2]
@@ -617,6 +680,6 @@ export class RstParser {
         }
 
         const endLineIdx = this._tokenIdx
-        return new BlockquoteAttributionNode(attributionText, { startLineIdx, endLineIdx })
+        return new BlockquoteAttribution(attributionText, { startLineIdx, endLineIdx })
     }
 }

@@ -1,5 +1,5 @@
 import { RstNode, RstNodeType } from '../RstNode.js'
 
-export class DocumentNode extends RstNode {
+export class Document extends RstNode {
     type = RstNodeType.Document
 }

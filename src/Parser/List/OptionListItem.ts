@@ -1,33 +1,16 @@
 import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 
-export const optionArgRe = /[a-zA-Z][a-zA-Z0-9_-]*|<.+>/
-
-// Does not support DOS/VMS options
-export const optionRe = new RegExp(
-    '(' +
-        `-([a-zA-Z0-9])([ ])(${optionArgRe.source})?` + // Short form (delimiter must be space)
-    '|' +
-        `--([a-zA-Z-]+)([ |=])(${optionArgRe.source})?` + // Long form (delimiter can either be equals or space)
-    ')',
-)
-
-export const optionListRe = /^[ ]*-{1,2}[^ -][^\n]+$/
-
-export class OptionListNode extends RstNode {
-    type = RstNodeType.OptionList
-}
-
-export type OptionListItemNodeOption = {
+export type OptionListItemOption = {
     name: string
     delimiter: string
     argName?: string
 }
 
-export class OptionListItemNode extends RstNode {
+export class OptionListItem extends RstNode {
     type = RstNodeType.OptionListItem
 
     constructor(
-        readonly options: Array<OptionListItemNodeOption>,
+        readonly options: Array<OptionListItemOption>,
         readonly desc: Array<RstNode>,
 
         source: RstNodeSource,
