@@ -19,14 +19,14 @@ describe('bullet characters denotes start of bullet list', () => {
                 type: RstNodeType.BulletList,
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'bullet 1',
                         meta: {
                             bullet,
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'bullet 2',
                         meta: {
                             bullet,
@@ -50,7 +50,7 @@ test('when there are line breaks in bullet, it parses as multiple paragraphs in 
             type: RstNodeType.BulletList,
             children: [
                 {
-                    type: RstNodeType.ListItem,
+                    type: RstNodeType.BulletListItem,
                     meta: {
                         bullet: '-',
                     },
@@ -81,7 +81,7 @@ test('when following line aligns with initial bullet, it parses as single paragr
             type: RstNodeType.BulletList,
             children: [
                 {
-                    type: RstNodeType.ListItem,
+                    type: RstNodeType.BulletListItem,
                     text: 'sentence 1\nsentence 2',
                     meta: {
                         bullet: '-',
@@ -105,7 +105,7 @@ test('when following line aligns with initial bullet and has bullet character bu
             type: RstNodeType.BulletList,
             children: [
                 {
-                    type: RstNodeType.ListItem,
+                    type: RstNodeType.BulletListItem,
                     text: "The following line appears to be a new sublist, but it is not:\n- This is a paragraph continuation, not a sublist (since there's\nno blank line).  This line is also incorrectly indented.\n- Warnings may be issued by the implementation.",
                     meta: {
                         bullet: '-',
@@ -144,7 +144,7 @@ test('when following line starts with bullet with linebreak, it parses as nested
             type: RstNodeType.BulletList,
             children: [
                 {
-                    type: RstNodeType.ListItem,
+                    type: RstNodeType.BulletListItem,
                     meta: {
                         bullet: '-',
                     },
@@ -157,7 +157,7 @@ test('when following line starts with bullet with linebreak, it parses as nested
                             type: RstNodeType.BulletList,
                             children: [
                                 {
-                                    type: RstNodeType.ListItem,
+                                    type: RstNodeType.BulletListItem,
                                     meta: {
                                         bullet: '-',
                                     },
@@ -170,7 +170,7 @@ test('when following line starts with bullet with linebreak, it parses as nested
                                             type: RstNodeType.BulletList,
                                             children: [
                                                 {
-                                                    type: RstNodeType.ListItem,
+                                                    type: RstNodeType.BulletListItem,
                                                     text: 'grandchild list',
                                                     meta: {
                                                         bullet: '-',
@@ -207,7 +207,7 @@ test('when multiple lines start with bullets with same indent, it parses as sepa
             type: RstNodeType.BulletList,
             children: [
                 {
-                    type: RstNodeType.ListItem,
+                    type: RstNodeType.BulletListItem,
                     meta: {
                         bullet: '-',
                     },
@@ -220,7 +220,7 @@ test('when multiple lines start with bullets with same indent, it parses as sepa
                             type: RstNodeType.BulletList,
                             children: [
                                 {
-                                    type: RstNodeType.ListItem,
+                                    type: RstNodeType.BulletListItem,
                                     meta: {
                                         bullet: '-',
                                     },
@@ -233,7 +233,7 @@ test('when multiple lines start with bullets with same indent, it parses as sepa
                                             type: RstNodeType.BulletList,
                                             children: [
                                                 {
-                                                    type: RstNodeType.ListItem,
+                                                    type: RstNodeType.BulletListItem,
                                                     text: 'child 1 grandchild list',
                                                     meta: {
                                                         bullet: '-',
@@ -244,7 +244,7 @@ test('when multiple lines start with bullets with same indent, it parses as sepa
                                     ],
                                 },
                                 {
-                                    type: RstNodeType.ListItem,
+                                    type: RstNodeType.BulletListItem,
                                     meta: {
                                         bullet: '-',
                                     },
@@ -257,7 +257,7 @@ test('when multiple lines start with bullets with same indent, it parses as sepa
                                             type: RstNodeType.BulletList,
                                             children: [
                                                 {
-                                                    type: RstNodeType.ListItem,
+                                                    type: RstNodeType.BulletListItem,
                                                     text: 'child 2 grandchild list',
                                                     meta: {
                                                         bullet: '-',

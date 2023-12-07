@@ -21,21 +21,21 @@ describe('enumerations denote start of enumerated list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'arabic numerals 1',
                         meta: {
                             bullet: '1',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'arabic numerals 2',
                         meta: {
                             bullet: '2',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'arabic numerals 3',
                         meta: {
                             bullet: '3',
@@ -63,21 +63,21 @@ describe('enumerations denote start of enumerated list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'lowercase alphabet 1',
                         meta: {
                             bullet: 'a',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'lowercase alphabet 2',
                         meta: {
                             bullet: 'b',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'lowercase alphabet 3',
                         meta: {
                             bullet: 'c',
@@ -105,21 +105,21 @@ describe('enumerations denote start of enumerated list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'uppercase alphabet 1',
                         meta: {
                             bullet: 'A',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'uppercase alphabet 2',
                         meta: {
                             bullet: 'B',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'uppercase alphabet 3',
                         meta: {
                             bullet: 'C',
@@ -147,21 +147,21 @@ describe('enumerations denote start of enumerated list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'lowercase roman numerals 1',
                         meta: {
                             bullet: 'i',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'lowercase roman numerals 2',
                         meta: {
                             bullet: 'ii',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'lowercase roman numerals 3',
                         meta: {
                             bullet: 'iii',
@@ -189,21 +189,21 @@ describe('enumerations denote start of enumerated list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'uppercase roman numerals 1',
                         meta: {
                             bullet: 'I',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'uppercase roman numerals 2',
                         meta: {
                             bullet: 'II',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'uppercase roman numerals 3',
                         meta: {
                             bullet: 'III',
@@ -231,21 +231,21 @@ describe('enumerations denote start of enumerated list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'auto 1',
                         meta: {
                             bullet: '#',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'auto 2',
                         meta: {
                             bullet: '#',
                         },
                     },
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'auto 3',
                         meta: {
                             bullet: '#',
@@ -271,7 +271,7 @@ describe('formatting', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'list 1',
                         meta: {
                             bullet: '1',
@@ -295,7 +295,7 @@ describe('formatting', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'list 1',
                         meta: {
                             bullet: '1',
@@ -319,7 +319,7 @@ describe('formatting', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'list 1',
                         meta: {
                             bullet: '1',
@@ -373,7 +373,7 @@ test('when enumerators do not have the same sequence, it starts a new list', () 
             },
             children: [
                 {
-                    type: RstNodeType.ListItem,
+                    type: RstNodeType.BulletListItem,
                     text: 'list 1',
                     meta: {
                         bullet: '1',
@@ -388,7 +388,7 @@ test('when enumerators do not have the same sequence, it starts a new list', () 
             },
             children: [
                 {
-                    type: RstNodeType.ListItem,
+                    type: RstNodeType.BulletListItem,
                     text: 'list 2',
                     meta: {
                         bullet: 'a',
@@ -415,7 +415,7 @@ describe('when enumerators are not in sequence, it starts a new list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'list 1',
                         meta: {
                             bullet: '1',
@@ -430,7 +430,7 @@ describe('when enumerators are not in sequence, it starts a new list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'list 2',
                         meta: {
                             bullet: '3',
@@ -456,7 +456,7 @@ describe('when enumerators are not in sequence, it starts a new list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'list 1',
                         meta: {
                             bullet: 'a',
@@ -471,7 +471,7 @@ describe('when enumerators are not in sequence, it starts a new list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'list 2',
                         meta: {
                             bullet: 'c',
@@ -497,7 +497,7 @@ describe('when enumerators are not in sequence, it starts a new list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'list 1',
                         meta: {
                             bullet: 'i',
@@ -512,7 +512,7 @@ describe('when enumerators are not in sequence, it starts a new list', () => {
                 },
                 children: [
                     {
-                        type: RstNodeType.ListItem,
+                        type: RstNodeType.BulletListItem,
                         text: 'list 2',
                         meta: {
                             bullet: 'iii',

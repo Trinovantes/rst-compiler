@@ -451,15 +451,15 @@ export class RstParser {
             return null
         }
 
-        // Consume first line that we've already peeked at and tested
-        this.consume()
-
         const fieldName = firstLineMatches[2]
 
         // Field's indent size is based on next line's initial indent instead of where the colon is
         const fieldIndentSize = this.peekIsContent(1)
             ? this.peek(1)?.str.search(/\S|$/) ?? 0
             : 0
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
 
         // First child of list is always paragraph
         // Need to extract first line's text with regex since it starts with bullet and space

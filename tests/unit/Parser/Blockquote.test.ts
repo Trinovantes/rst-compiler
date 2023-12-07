@@ -241,7 +241,7 @@ test('when the first line is a list character and space, it parses as bullet lis
                     type: RstNodeType.BulletList,
                     children: [
                         {
-                            type: RstNodeType.ListItem,
+                            type: RstNodeType.BulletListItem,
                             text: 'blockquote 1 list',
                             meta: {
                                 bullet: '-',

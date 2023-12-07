@@ -1,7 +1,6 @@
 import { test } from 'vitest'
 import { expectDocument } from '../../fixtures/expectDocument.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
-import { parseTestInput } from '../../fixtures/parseTestInput.js'
 
 test('short-form option list without arg', () => {
     const input = `

@@ -11,7 +11,7 @@ export const optionRe = new RegExp(
     ')',
 )
 
-export const optionListRe = /^[ ]*-{1,2}[^\n]+$/
+export const optionListRe = /^[ ]*-{1,2}[^ -][^\n]+$/
 
 export class OptionListNode extends RstNode {
     type = RstNodeType.OptionList
