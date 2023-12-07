@@ -8,11 +8,12 @@ import { emptyCommentRe } from './ExplicitMarkup/CommentNode.js'
 import { Token } from '@/Lexer/Token.js'
 import { tokenizeInput } from '@/Lexer/tokenizeInput.js'
 import { TransitionNode, transitionRe } from './Document/TransitionNode.js'
-import { ListItemNode } from './List/ListItemNode.js'
+import { BulletListItemNode } from './List/BulletListItemNode.js'
 import { EnumeratedListNode, enumeratedListRe } from './List/EnumeratedListNode.js'
 import { getEnumeratedListType, isSequentialBullet } from './List/EnumeratedListType.js'
 import { DefinitionListItemNode, DefinitionListNode, definitionListRe } from './List/DefinitionListNode.js'
 import { FieldListItemNode, FieldListNode, fieldListRe } from './List/FieldListNode.js'
+import { OptionListItemNode, OptionListItemNodeOption, OptionListNode, optionListRe, optionRe } from './List/OptionListNode.js'
 
 export class RstParser {
     // Parser internal states
@@ -146,6 +147,7 @@ export class RstParser {
                 this.parseBulletList(indentSize) ??
                 this.parseEnumeratedList(indentSize) ??
                 this.parseFieldList(indentSize) ??
+                this.parseOptionList(indentSize) ??
                 this.parseDefinitionList(indentSize) ??
                 this.parseTransition() ??
                 this.parseSection() ??
@@ -225,7 +227,7 @@ export class RstParser {
     private parseBulletList(indentSize: number): BulletListNode | null {
         const startLineIdx = this._tokenIdx
 
-        const listItems = new Array<ListItemNode>()
+        const listItems = new Array<BulletListItemNode>()
         while (true) {
             const listItem = this.parseBulletListItem(indentSize)
             if (!listItem) {
@@ -244,7 +246,7 @@ export class RstParser {
         return new BulletListNode({ startLineIdx, endLineIdx }, listItems)
     }
 
-    private parseBulletListItem(indentSize: number): ListItemNode | null {
+    private parseBulletListItem(indentSize: number): BulletListItemNode | null {
         const startLineIdx = this._tokenIdx
 
         if (!this.peekIsIndented(indentSize)) {
@@ -279,10 +281,10 @@ export class RstParser {
         }
 
         const firstParagraph = new ParagraphNode(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
-        const restOfList = this.parseBodyElements(bulletIndentSize, RstNodeType.ListItem)
+        const restOfList = this.parseBodyElements(bulletIndentSize, RstNodeType.BulletListItem)
 
         const endLineIdx = this._tokenIdx
-        return new ListItemNode(bulletValue, { startLineIdx, endLineIdx }, [
+        return new BulletListItemNode(bulletValue, { startLineIdx, endLineIdx }, [
             firstParagraph,
             ...restOfList,
         ])
@@ -292,7 +294,7 @@ export class RstParser {
     private parseEnumeratedList(indentSize: number): EnumeratedListNode | null {
         const startLineIdx = this._tokenIdx
 
-        const listItems = new Array<ListItemNode>()
+        const listItems = new Array<BulletListItemNode>()
         while (true) {
             const prevBulletValue = listItems.at(-1)?.bullet
             const listItem = this.parseEnumeratedListItem(indentSize, prevBulletValue)
@@ -313,7 +315,7 @@ export class RstParser {
         return new EnumeratedListNode(listType, { startLineIdx, endLineIdx }, listItems)
     }
 
-    private parseEnumeratedListItem(indentSize: number, prevBulletValue?: string): ListItemNode | null {
+    private parseEnumeratedListItem(indentSize: number, prevBulletValue?: string): BulletListItemNode | null {
         const startLineIdx = this._tokenIdx
 
         if (!this.peekIsIndented(indentSize)) {
@@ -353,10 +355,10 @@ export class RstParser {
         }
 
         const firstParagraph = new ParagraphNode(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
-        const restOfList = this.parseBodyElements(bulletIndentSize, RstNodeType.ListItem)
+        const restOfList = this.parseBodyElements(bulletIndentSize, RstNodeType.BulletListItem)
 
         const endLineIdx = this._tokenIdx
-        return new ListItemNode(bulletValue, { startLineIdx, endLineIdx }, [
+        return new BulletListItemNode(bulletValue, { startLineIdx, endLineIdx }, [
             firstParagraph,
             ...restOfList,
         ])
@@ -366,22 +368,22 @@ export class RstParser {
     private parseDefinitionList(indentSize: number): DefinitionListNode | null {
         const startLineIdx = this._tokenIdx
 
-        const definitionItems = new Array<DefinitionListItemNode>()
+        const listItems = new Array<DefinitionListItemNode>()
         while (true) {
             const listItem = this.parseDefinitionListItem(indentSize)
             if (!listItem) {
                 break
             }
 
-            definitionItems.push(listItem)
+            listItems.push(listItem)
         }
 
-        if (definitionItems.length === 0) {
+        if (listItems.length === 0) {
             return null
         }
 
         const endLineIdx = this._tokenIdx
-        return new DefinitionListNode({ startLineIdx, endLineIdx }, definitionItems)
+        return new DefinitionListNode({ startLineIdx, endLineIdx }, listItems)
     }
 
     private parseDefinitionListItem(indentSize: number): DefinitionListItemNode | null {
@@ -419,22 +421,22 @@ export class RstParser {
     private parseFieldList(indentSize: number): FieldListNode | null {
         const startLineIdx = this._tokenIdx
 
-        const fieldItems = new Array<FieldListItemNode>()
+        const listItems = new Array<FieldListItemNode>()
         while (true) {
             const listItem = this.parseFieldListItemNode(indentSize)
             if (!listItem) {
                 break
             }
 
-            fieldItems.push(listItem)
+            listItems.push(listItem)
         }
 
-        if (fieldItems.length === 0) {
+        if (listItems.length === 0) {
             return null
         }
 
         const endLineIdx = this._tokenIdx
-        return new FieldListNode({ startLineIdx, endLineIdx }, fieldItems)
+        return new FieldListNode({ startLineIdx, endLineIdx }, listItems)
     }
 
     private parseFieldListItemNode(indentSize: number): FieldListItemNode | null {
@@ -449,15 +451,15 @@ export class RstParser {
             return null
         }
 
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
         const fieldName = firstLineMatches[2]
 
         // Field's indent size is based on next line's initial indent instead of where the colon is
         const fieldIndentSize = this.peekIsContent(1)
             ? this.peek(1)?.str.search(/\S|$/) ?? 0
             : 0
-
-        // Consume first line that we've already peeked at and tested
-        this.consume()
 
         // First child of list is always paragraph
         // Need to extract first line's text with regex since it starts with bullet and space
@@ -475,6 +477,86 @@ export class RstParser {
         const endLineIdx = this._tokenIdx
         return new FieldListItemNode(
             fieldName,
+            [
+                firstParagraph,
+                ...fieldBodyNodes,
+            ],
+            {
+                startLineIdx,
+                endLineIdx,
+            },
+        )
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#option-lists
+    private parseOptionList(indentSize: number): OptionListNode | null {
+        const startLineIdx = this._tokenIdx
+
+        const listItems = new Array<OptionListItemNode>()
+        while (true) {
+            const listItem = this.parseOptionListItemNode(indentSize)
+            if (!listItem) {
+                break
+            }
+
+            listItems.push(listItem)
+        }
+
+        if (listItems.length === 0) {
+            return null
+        }
+
+        const endLineIdx = this._tokenIdx
+        return new OptionListNode({ startLineIdx, endLineIdx }, listItems)
+    }
+
+    private parseOptionListItemNode(indentSize: number): OptionListItemNode | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(optionListRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        // Desc's indent size is based on next line's initial indent instead of where the first line starts
+        const descIndentSize = this.peekIsContent(1)
+            ? this.peek(1)?.str.search(/\S|$/) ?? 0
+            : 0
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        const options = new Array<OptionListItemNodeOption>()
+        const optionReWithState = new RegExp(optionRe, 'g')
+        const matches = firstLineMatches[0].matchAll(optionReWithState)
+        let parsedStrIdx = 0
+        for (const match of matches) {
+            parsedStrIdx = (match.index ?? 0) + match[0].length
+
+            options.push({
+                name: match[2] ?? match[5],
+                delimiter: match[3] ?? match[6],
+                argName: match[4] ?? match[7],
+            })
+        }
+
+        let firstParagraphText = firstLineMatches[0].substring(parsedStrIdx)
+        while (this.peekIsContent() && this.peekIsIndented(descIndentSize)) {
+            const line = this.consume()
+            const lineText = line.str.substring(descIndentSize)
+            firstParagraphText += '\n' + lineText
+        }
+
+        const firstParagraph = new ParagraphNode(firstParagraphText.trim(), { startLineIdx, endLineIdx: this._tokenIdx })
+        const fieldBodyNodes = this.parseBodyElements(descIndentSize, RstNodeType.OptionListItem)
+
+        const endLineIdx = this._tokenIdx
+        return new OptionListItemNode(
+            options,
             [
                 firstParagraph,
                 ...fieldBodyNodes,

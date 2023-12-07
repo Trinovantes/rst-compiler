@@ -9,21 +9,21 @@ export const enum RstNodeType {
 
     Paragraph = 'Paragraph', // Generic fallback
 
-    ListItem = 'ListItem', // <li>
     BulletList = 'BulletList', // <ul>
+    BulletListItem = 'BulletListItem', // <li>
     EnumeratedList = 'EnumeratedList', // <ol>
     DefinitionList = 'DefinitionList', // <dl>
     DefinitionListItem = 'DefinitionListItem', // <dt> and <dd>
     FieldList = 'FieldList',
     FieldListItem = 'FieldListItem',
     OptionList = 'OptionList',
+    OptionListItem = 'OptionListItem',
 
     LiteralBlock = 'LiteralBlock',
     LineBlock = 'LineBlock',
     Blockquote = 'Blockquote',
     BlockquoteAttribution = 'BlockquoteAttribution',
     DocktestBlock = 'DocktestBlock',
-
     Table = 'Table',
 
     FootNote = 'FootNote',
@@ -50,7 +50,12 @@ export type RstNodeSource = {
 export type RstNodeObject = {
     type: RstNodeType
     text?: string
-    meta?: Record<string, string | number | Array<string> | Array<number> | RstNodeObject | Array<RstNodeObject>>
+    meta?: Record<string,
+        string | Array<string> |
+        number | Array<number> |
+        RstNodeObject | Array<RstNodeObject> |
+        Record<string, string | undefined> | Array<Record<string, string | undefined>>
+    >
     children?: Array<RstNodeObject>
 }
 

@@ -1,7 +1,7 @@
 import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 
-export class ListItemNode extends RstNode {
-    type = RstNodeType.ListItem
+export class BulletListItemNode extends RstNode {
+    type = RstNodeType.BulletListItem
 
     constructor(
         readonly bullet: string,
