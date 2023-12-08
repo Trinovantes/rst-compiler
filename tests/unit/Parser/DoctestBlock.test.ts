@@ -15,7 +15,7 @@ test('doctest block', () => {
     ])
 })
 
-test('literal block takes priority over doctest block', () => {
+test('when indented doctest is preceded by literal block marker, it is parsed as literal block instead', () => {
     const input = `
         The following is a literal block::
         
@@ -34,7 +34,7 @@ test('literal block takes priority over doctest block', () => {
     ])
 })
 
-test('literal block takes priority over doctest block', () => {
+test('when indented doctest is not preceded by literal block marker, it is parsed as doctest inside a blockquote', () => {
     const input = `
         paragraph
         
