@@ -20,6 +20,7 @@ import { OptionList } from './List/OptionList.js'
 import { Transition } from './Document/Transition.js'
 import { LiteralBlock } from './Block/LiteralBlock.js'
 import { LineBlock } from './Block/LineBlock.js'
+import { DocktestBlock } from './Block/DoctestBlock.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -76,6 +77,7 @@ export const emptyCommentRe = /^\.\.\s*$/
 export const quotedLiteralBlockRe   = /^([ ]*)>+(?: .+)?$/
 export const lineBlockRe            = /^([ ]*)\| (.+)$/
 export const blockquoteAttributonRe = /^([ ]*)(---?[ ]+)(.+)$/
+export const doctestBlockRe         = /^([ ]*)>>> (.+)$/
 
 // ------------------------------------------------------------------------
 // Main Parser
@@ -213,6 +215,7 @@ export class RstParser {
                 this.parseLineBlock(indentSize) ??
                 this.parseBlockquoteAttribution(indentSize, parentType) ??
                 this.parseBlockquote(indentSize) ??
+                this.parseDoctestBlock(indentSize) ??
 
                 this.parseTransition() ??
                 this.parseSection() ??
@@ -768,5 +771,23 @@ export class RstParser {
 
         const endLineIdx = this._tokenIdx
         return new BlockquoteAttribution(attributionText, { startLineIdx, endLineIdx })
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#doctest-blocks
+    private parseDoctestBlock(indentSize: number): DocktestBlock | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekTest(doctestBlockRe)) {
+            return null
+        }
+
+        let doctestBlockText = ''
+        while (this.peekIsContent() && this.peekIsIndented(indentSize)) {
+            const line = this.consume()
+            doctestBlockText += line.str + '\n'
+        }
+
+        const endLineIdx = this._tokenIdx
+        return new DocktestBlock(doctestBlockText.trim(), { startLineIdx, endLineIdx })
     }
 }
