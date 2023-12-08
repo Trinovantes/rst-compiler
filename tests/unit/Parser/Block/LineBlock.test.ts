@@ -1,5 +1,5 @@
 import { test } from 'vitest'
-import { expectDocument } from '../../fixtures/expectDocument.js'
+import { expectDocument } from '../../../fixtures/expectDocument.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
 
 test('basic line block', () => {

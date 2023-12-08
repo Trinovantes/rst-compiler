@@ -1,5 +1,5 @@
 import { describe, test } from 'vitest'
-import { expectDocument } from '../../fixtures/expectDocument.js'
+import { expectDocument } from '../../../fixtures/expectDocument.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
 import { EnumeratedListType } from '@/Parser/List/EnumeratedListType.js'
 

@@ -1,6 +1,6 @@
 import { describe, test } from 'vitest'
 import { RstNodeType } from '@/Parser/RstNode.js'
-import { expectDocument } from '../../fixtures/expectDocument.js'
+import { expectDocument } from '../../../fixtures/expectDocument.js'
 
 describe('bullet characters denotes start of bullet list', () => {
     test.each([
