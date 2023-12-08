@@ -40,7 +40,7 @@ export const enum RstNodeType {
     Text = 'Text',
 }
 
-// For debug purposes
+// For debugging
 export type RstNodeSource = {
     startLineIdx: number
     endLineIdx: number // exclusive

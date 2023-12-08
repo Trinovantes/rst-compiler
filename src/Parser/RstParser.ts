@@ -2,7 +2,8 @@ import { Document } from './Document/Document.js'
 import { Paragraph } from './Block/Paragraph.js'
 import { RstNode, RstNodeType } from './RstNode.js'
 import { BulletList } from './List/BulletList.js'
-import { BlockquoteAttribution, Blockquote } from './Block/Blockquote.js'
+import { Blockquote } from './Block/Blockquote.js'
+import { BlockquoteAttribution } from './Block/BlockquoteAttribution.js'
 import { Token } from '@/Lexer/Token.js'
 import { tokenizeInput } from '@/Lexer/tokenizeInput.js'
 import { BulletListItem } from './List/BulletListItem.js'
@@ -17,6 +18,7 @@ import { FieldList } from './List/FieldList.js'
 import { FieldListItem } from './List/FieldListItem.js'
 import { OptionList } from './List/OptionList.js'
 import { Transition } from './Document/Transition.js'
+import { LiteralBlock } from './Block/LiteralBlock.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -141,17 +143,12 @@ export class RstParser {
         return re.exec(nextToken.str)
     }
 
+    private peekIndentSize(offset = 0): number {
+        return this.peek(offset)?.str.search(/\S|$/) ?? 0
+    }
+
     private peekIsIndented(expectedIndentSize: number, offset = 0): boolean {
-        if (expectedIndentSize === 0) {
-            return true
-        }
-
-        const nextToken = this.peek(offset)
-        if (!nextToken) {
-            return false
-        }
-
-        return new RegExp(`^[ ]{${expectedIndentSize}}([^\n]*)$`).test(nextToken.str)
+        return this.peekIndentSize(offset) === expectedIndentSize
     }
 
     // ------------------------------------------------------------------------
@@ -192,7 +189,7 @@ export class RstParser {
             }
 
             // Exit if we are inside a construct but encounter a new block without the same indentation
-            if (parentType !== RstNodeType.Document && !this.peekIsIndented(indentSize)) {
+            if (parentType !== RstNodeType.Document && this.peekIndentSize() < indentSize) {
                 break
             }
 
@@ -204,13 +201,16 @@ export class RstParser {
             // Try and parse next line
             // If a function is not applicable, it returns null and we continue down the chain until we reach Paragraph as fallback
             const nextNode =
-                this.parseBlockquoteAttribution(indentSize, parentType) ??
-                this.parseBlockquote(indentSize) ??
                 this.parseBulletList(indentSize) ??
                 this.parseEnumeratedList(indentSize) ??
                 this.parseFieldList(indentSize) ??
                 this.parseOptionList(indentSize) ??
                 this.parseDefinitionList(indentSize) ??
+
+                this.parseLiteralBlock(indentSize) ??
+                this.parseBlockquoteAttribution(indentSize, parentType) ??
+                this.parseBlockquote(indentSize) ??
+
                 this.parseTransition() ??
                 this.parseSection() ??
                 this.parseParagraph(indentSize)
@@ -630,16 +630,22 @@ export class RstParser {
         )
     }
 
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-blocks
+    private parseLiteralBlock(indentSize: number): LiteralBlock | null {
+        //
+        return null
+    }
+
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
     private parseBlockquote(indentSize: number): Blockquote | null {
         const startLineIdx = this._tokenIdx
 
-        const bodyIndentSize = indentSize + this._indentationSize
-        if (!this.peekIsIndented(bodyIndentSize)) {
+        const blockIndentSize = indentSize + this._indentationSize
+        if (!this.peekIsIndented(blockIndentSize)) {
             return null
         }
 
-        const bodyNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.Blockquote)
+        const bodyNodes = this.parseBodyElements(blockIndentSize, RstNodeType.Blockquote)
 
         const endLineIdx = this._tokenIdx
         return new Blockquote({ startLineIdx, endLineIdx }, bodyNodes)
