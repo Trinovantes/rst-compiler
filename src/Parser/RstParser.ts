@@ -19,6 +19,7 @@ import { FieldListItem } from './List/FieldListItem.js'
 import { OptionList } from './List/OptionList.js'
 import { Transition } from './Document/Transition.js'
 import { LiteralBlock } from './Block/LiteralBlock.js'
+import { LineBlock } from './Block/LineBlock.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -72,10 +73,9 @@ export const optionListItemRe = new RegExp(
 
 export const emptyCommentRe = /^\.\.\s*$/
 
-export const quotedLiteralBlockRe = /^([>]+)(?: (.+))?$/
-
-export const blockquoteRe           = /^([ ]+)(.+)$/
-export const blockquoteAttributonRe = /^([ ]+)(---?[ ]+)(.+)$/
+export const quotedLiteralBlockRe   = /^([ ]*)>+(?: .+)?$/
+export const lineBlockRe            = /^([ ]*)\| (.+)$/
+export const blockquoteAttributonRe = /^([ ]*)(---?[ ]+)(.+)$/
 
 // ------------------------------------------------------------------------
 // Main Parser
@@ -210,6 +210,7 @@ export class RstParser {
                 this.parseDefinitionList(indentSize) ??
 
                 this.parseLiteralBlock(indentSize, nodes.at(-1)) ??
+                this.parseLineBlock(indentSize) ??
                 this.parseBlockquoteAttribution(indentSize, parentType) ??
                 this.parseBlockquote(indentSize) ??
 
@@ -233,6 +234,8 @@ export class RstParser {
                 } else if (prevParagraphText.endsWith('::')) {
                     // Else prev paragraph ends with "anytext::" and we need to put the paragraph back with "::" replaced with ":" (basically delete the last character)
                     nodes.push(new Paragraph(prevParagraphText.substring(0, prevParagraphText.length - 1), prevParagraph.source))
+                } else {
+                    throw new Error('Invalid prevParagraph')
                 }
             }
 
@@ -686,6 +689,33 @@ export class RstParser {
         return new LiteralBlock(literalText.trim(), { startLineIdx, endLineIdx })
     }
 
+    private parseLineBlock(indentSize: number): LineBlock | null {
+        const startLineIdx = this._tokenIdx
+
+        let lineBlockText = ''
+        while (true) {
+            if (!this.peekIsIndented(indentSize)) {
+                return null
+            }
+
+            const lineMatches = this.peekTest(lineBlockRe)
+            if (!lineMatches) {
+                break
+            }
+
+            this.consume()
+            const text = lineMatches[2]
+            lineBlockText += text + '\n'
+        }
+
+        if (lineBlockText.length === 0) {
+            return null
+        }
+
+        const endLineIdx = this._tokenIdx
+        return new LineBlock(lineBlockText.trim(), { startLineIdx, endLineIdx })
+    }
+
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
     private parseBlockquote(indentSize: number): Blockquote | null {
         const startLineIdx = this._tokenIdx
@@ -729,7 +759,7 @@ export class RstParser {
         const firstLineText = firstLineMatches.at(-1) ?? ''
 
         let attributionText = firstLineText
-        while (this.peekIsContent() && this.peekIsIndented(bodyIndentSize)) {
+        while (this.peekIsIndented(bodyIndentSize)) {
             const line = this.consume()
             const lineText = line.str.substring(bodyIndentSize)
             attributionText += '\n' + lineText
