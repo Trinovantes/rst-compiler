@@ -759,7 +759,7 @@ export class RstParser {
         const firstLineText = firstLineMatches.at(-1) ?? ''
 
         let attributionText = firstLineText
-        while (this.peekIsIndented(bodyIndentSize)) {
+        while (this.peekIsContent() && this.peekIsIndented(bodyIndentSize)) {
             const line = this.consume()
             const lineText = line.str.substring(bodyIndentSize)
             attributionText += '\n' + lineText
