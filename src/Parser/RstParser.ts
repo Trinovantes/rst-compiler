@@ -689,6 +689,7 @@ export class RstParser {
         return new LiteralBlock(literalText.trim(), { startLineIdx, endLineIdx })
     }
 
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#line-blocks
     private parseLineBlock(indentSize: number): LineBlock | null {
         const startLineIdx = this._tokenIdx
 
