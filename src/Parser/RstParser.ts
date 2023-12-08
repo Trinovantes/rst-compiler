@@ -27,11 +27,6 @@ import { LiteralBlock } from './Block/LiteralBlock.js'
 export const romanUpperRe = /(I+|[MDCLXVI]{2,})/
 export const romanLowerRe = /(i+|[mdclxvi]{2,})/
 
-export const emptyCommentRe = /^\.\.\s*$/
-
-export const blockquoteRe           = /^([ ]+)(.+)$/
-export const blockquoteAttributonRe = /^([ ]+)(---?[ ]+)(.+)$/
-
 export const sectionChars = ['=', '-', '`', ':', '.', "'", '"', '~', '^', '_', '*', '+', '#']
 export const sectionMarkRe    = new RegExp(`^(${sectionChars.map(escapeForRegExp).join('|')}){3,}[ ]*$`)
 export const transitionMarkRe = new RegExp(`^(${sectionChars.map(escapeForRegExp).join('|')}){4,}[ ]*$`)
@@ -74,6 +69,13 @@ export const optionListItemRe = new RegExp(
     '[^- ]' + // Next character cannot be a dash (since 3+ dashes need to be parsed as transition/section) or space (since 1 dash+space need to be parsed as bullet list)
     '.+$', // Any char to end of line
 )
+
+export const emptyCommentRe = /^\.\.\s*$/
+
+export const quotedLiteralBlockRe = /^([>]+)(?: (.+))?$/
+
+export const blockquoteRe           = /^([ ]+)(.+)$/
+export const blockquoteAttributonRe = /^([ ]+)(---?[ ]+)(.+)$/
 
 // ------------------------------------------------------------------------
 // Main Parser
@@ -207,13 +209,32 @@ export class RstParser {
                 this.parseOptionList(indentSize) ??
                 this.parseDefinitionList(indentSize) ??
 
-                this.parseLiteralBlock(indentSize) ??
+                this.parseLiteralBlock(indentSize, nodes.at(-1)) ??
                 this.parseBlockquoteAttribution(indentSize, parentType) ??
                 this.parseBlockquote(indentSize) ??
 
                 this.parseTransition() ??
                 this.parseSection() ??
                 this.parseParagraph(indentSize)
+
+            if (nextNode.type === RstNodeType.LiteralBlock) {
+                const prevParagraph = nodes.pop()
+                if (!prevParagraph) {
+                    throw new Error('Invalid prevParagraph')
+                }
+
+                const prevParagraphText = prevParagraph.getTextContent()
+                if (prevParagraphText === '::') {
+                    // No additional action needed since the lone "::" paragraph has already been popped
+                    // Delete the lone "::" paragraph that denotes that current node is a literal block
+                } else if (prevParagraphText.endsWith(' ::')) {
+                    // If prev paragraph ends with " ::", then we need to put the paragraph back with the " ::" removed
+                    nodes.push(new Paragraph(prevParagraphText.substring(0, prevParagraphText.length - 3), prevParagraph.source))
+                } else if (prevParagraphText.endsWith('::')) {
+                    // Else prev paragraph ends with "anytext::" and we need to put the paragraph back with "::" replaced with ":" (basically delete the last character)
+                    nodes.push(new Paragraph(prevParagraphText.substring(0, prevParagraphText.length - 1), prevParagraph.source))
+                }
+            }
 
             nodes.push(nextNode)
         }
@@ -631,9 +652,38 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#literal-blocks
-    private parseLiteralBlock(indentSize: number): LiteralBlock | null {
-        //
-        return null
+    private parseLiteralBlock(indentSize: number, prevNode?: RstNode): LiteralBlock | null {
+        const startLineIdx = this._tokenIdx
+
+        if (prevNode?.type !== RstNodeType.Paragraph) {
+            return null
+        }
+
+        if (!prevNode.getTextContent().endsWith('::')) {
+            return null
+        }
+
+        const indentedBlockSize = indentSize + this._indentationSize
+        let literalText = ''
+
+        if (this.peekIsIndented(indentedBlockSize)) {
+            // Indented literal block must be on next level of indentation
+            while (this.peekIsContent() && this.peekIsIndented(indentedBlockSize)) {
+                const line = this.consume()
+                literalText += line.str.substring(indentSize) + '\n'
+            }
+        } else if (this.peekTest(quotedLiteralBlockRe)) {
+            // Quoted literal block must be on same indentation as current body
+            while (this.peekIsContent() && this.peekIsIndented(indentSize) && this.peekTest(quotedLiteralBlockRe)) {
+                const line = this.consume()
+                literalText += line.str.substring(indentSize) + '\n'
+            }
+        } else {
+            throw new Error('Failed to parseLiteralBlock')
+        }
+
+        const endLineIdx = this._tokenIdx
+        return new LiteralBlock(literalText.trim(), { startLineIdx, endLineIdx })
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#block-quotes
