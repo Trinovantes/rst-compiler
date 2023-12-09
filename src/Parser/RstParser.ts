@@ -865,11 +865,8 @@ export class RstParser {
             for (let i = right - 1; i >= left; i--) {
                 const c = tableLines[bot][i]
                 if (c === '+') {
-                    // Found candidate
-                    const isValid = scanTopLeft(top, left, right, bot)
-                    if (isValid) {
-                        return true
-                    }
+                    // Do nothing since this "+" might simply be an intermediate corner for row/col cell
+                    // In docutils lib, it tracks every intermediate "+" encountered
                 } else if (c !== '-') {
                     // If left of bottom-right corner is not "-", then we did not start from a valid bottom-right corner
                     // +--+--+
@@ -881,7 +878,8 @@ export class RstParser {
                 }
             }
 
-            return false
+            // Found candidate
+            return scanTopLeft(top, left, right, bot)
         }
 
         const scanTopLeft = (top: number, left: number, right: number, bot: number): boolean => {
@@ -889,8 +887,8 @@ export class RstParser {
                 const c = tableLines[i][left]
 
                 if (c === '+') {
-                    // Do nothing since this "+" it may not necessarily be where we started
-                    // In docutils lib, it tracks every intermediate + encountered
+                    // Do nothing since this "+" might simply be an intermediate corner for row/col cell
+                    // In docutils lib, it tracks every intermediate "+" encountered
                 } else if (c !== '|') {
                     // If above bottom-left corner is not "|", then we did not start from a valid bottom-left corner
                     // +--+--+
@@ -1019,20 +1017,11 @@ export class RstParser {
 
         for (const rowCoord of rowSepCoords) {
             const rowCells = new Array<TableCell>()
-
-            if (rowCoord < headSepIdx) {
-                headRows.push(new TableRow({
-                    startLineIdx: startLineIdx + 1,
-                    endLineIdx: startLineIdx + 1,
-                }, rowCells))
-            } else {
-                bodyRows.push(new TableRow({
-                    startLineIdx: startLineIdx + 1,
-                    endLineIdx: startLineIdx + 1,
-                }, rowCells))
-            }
-
             const cellsOnThisRow = parsedCells.filter((cell) => cell.topLeft[0] === rowCoord)
+
+            let rowStartLineIdx = startLineIdx
+            let rowEndLineIdx = startLineIdx + 1
+
             for (const parsedCell of cellsOnThisRow) {
                 const startRow = parsedCell.topLeft[0]
                 const startCol = parsedCell.topLeft[1]
@@ -1042,10 +1031,28 @@ export class RstParser {
                 const rowSpan = getRowSpan(startRow, endRow)
                 const colSpan = getColSpan(startCol, endCol)
 
+                const cellStartLineIdx = startLineIdx + startRow
+                const cellEndLineIdx = startLineIdx + endRow
+
+                rowStartLineIdx = Math.max(rowStartLineIdx, cellStartLineIdx)
+                rowEndLineIdx = Math.max(rowEndLineIdx, cellEndLineIdx)
+
                 rowCells.push(new TableCell(rowSpan, colSpan, {
-                    startLineIdx: startLineIdx + 1,
-                    endLineIdx: startLineIdx + 1,
+                    startLineIdx: cellStartLineIdx,
+                    endLineIdx: cellEndLineIdx,
                 }, parsedCell.contents))
+            }
+
+            if (rowCoord < headSepIdx) {
+                headRows.push(new TableRow({
+                    startLineIdx: rowStartLineIdx,
+                    endLineIdx: rowEndLineIdx,
+                }, rowCells))
+            } else {
+                bodyRows.push(new TableRow({
+                    startLineIdx: rowStartLineIdx,
+                    endLineIdx: rowEndLineIdx,
+                }, rowCells))
             }
         }
 
