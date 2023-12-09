@@ -8,7 +8,7 @@ export class EnumeratedList extends RstNode {
         readonly listType: EnumeratedListType,
 
         source: RstNodeSource,
-        children: ReadonlyArray<Readonly<RstNode>> = [],
+        children: Array<RstNode> = [],
     ) {
         super(source, children)
     }

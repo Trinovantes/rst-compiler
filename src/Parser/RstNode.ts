@@ -24,7 +24,10 @@ export const enum RstNodeType {
     Blockquote = 'Blockquote',
     BlockquoteAttribution = 'BlockquoteAttribution',
     DocktestBlock = 'DocktestBlock',
+
     Table = 'Table',
+    TableRow = 'TableRow',
+    TableCell = 'TableCell',
 
     FootNote = 'FootNote',
     Citation = 'Citation',
@@ -64,7 +67,7 @@ export abstract class RstNode {
 
     constructor(
         readonly source: RstNodeSource,
-        readonly children: ReadonlyArray<Readonly<RstNode>> = [],
+        readonly children: Array<RstNode> = [],
     ) {}
 
     get isPlainTextContent(): boolean {

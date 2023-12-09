@@ -7,7 +7,7 @@ export class BulletListItem extends RstNode {
         readonly bullet: string,
 
         source: RstNodeSource,
-        children: ReadonlyArray<Readonly<RstNode>> = [],
+        children: Array<RstNode> = [],
     ) {
         super(source, children)
     }

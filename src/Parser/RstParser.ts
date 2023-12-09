@@ -21,6 +21,7 @@ import { Transition } from './Document/Transition.js'
 import { LiteralBlock } from './Block/LiteralBlock.js'
 import { LineBlock } from './Block/LineBlock.js'
 import { DocktestBlock } from './Block/DoctestBlock.js'
+import { Table, TableRow, TableCell } from './Block/Table.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -30,8 +31,8 @@ export const romanUpperRe = /(I+|[MDCLXVI]{2,})/
 export const romanLowerRe = /(i+|[mdclxvi]{2,})/
 
 export const sectionChars = ['=', '-', '`', ':', '.', "'", '"', '~', '^', '_', '*', '+', '#']
-export const sectionMarkRe    = new RegExp(`^(${sectionChars.map(escapeForRegExp).join('|')}){3,}[ ]*$`)
-export const transitionMarkRe = new RegExp(`^(${sectionChars.map(escapeForRegExp).join('|')}){4,}[ ]*$`)
+export const sectionMarkRe    = new RegExp(`^(${sectionChars.map(escapeForRegExp).map((c) => `${c}{3,}`).join('|')})[ ]*$`)
+export const transitionMarkRe = new RegExp(`^(${sectionChars.map(escapeForRegExp).map((c) => `${c}{4,}`).join('|')})[ ]*$`)
 
 export const definitionListItemRe = /^[ ]*(.+)$/
 export const fieldListItemRe      = /^[ ]*(:(.+): )(.+)$/
@@ -78,6 +79,9 @@ export const quotedLiteralBlockRe   = /^([ ]*)>+(?: .+)?$/
 export const lineBlockRe            = /^([ ]*)\| (.+)$/
 export const blockquoteAttributonRe = /^([ ]*)(---?[ ]+)(.+)$/
 export const doctestBlockRe         = /^([ ]*)>>> (.+)$/
+
+export const gridTableRe        = /^([ ]*)(?:\+-*)+\+[ ]*$/
+export const gridTableHeadSepRe = /^([ ]*)(?:\+=*)+\+[ ]*$/
 
 // ------------------------------------------------------------------------
 // Main Parser
@@ -216,6 +220,8 @@ export class RstParser {
                 this.parseBlockquoteAttribution(indentSize, parentType) ??
                 this.parseBlockquote(indentSize) ??
                 this.parseDoctestBlock(indentSize) ??
+                this.parseGridTable(indentSize) ??
+                this.parseSimpleTable(indentSize) ??
 
                 this.parseTransition() ??
                 this.parseSection() ??
@@ -789,5 +795,267 @@ export class RstParser {
 
         const endLineIdx = this._tokenIdx
         return new DocktestBlock(doctestBlockText.trim(), { startLineIdx, endLineIdx })
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#grid-tables
+    private parseGridTable(indentSize: number): Table | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekTest(gridTableRe)) {
+            return null
+        }
+
+        const tableLines = new Array<string>()
+        while (this.peekIsContent() && this.peekIsIndented(indentSize)) {
+            const line = this.consume()
+            tableLines.push(line.str)
+        }
+
+        const numRows = tableLines.length
+        const numCols = tableLines[0].length
+        const tableRight = numCols - 1
+        const tableBottom = numRows - 1
+
+        const scanTopRight = (top: number, left: number): [number, number] | null => {
+            for (let i = left + 1; i <= tableRight; i++) {
+                const c = tableLines[top][i]
+                if (c === '+') {
+                    const bottomRight = scanBotRight(top, left, i)
+                    if (bottomRight) {
+                        return bottomRight
+                    }
+                } else if (c !== '-') {
+                    // If right of top-left corner is not "-", then we did not start from a valid top-left corner
+                    // +--+--+
+                    // |  |  |
+                    // +-(*) |
+                    // |  |  |
+                    // +--+--+
+                    return null
+                }
+            }
+
+            return null
+        }
+
+        const scanBotRight = (top: number, left: number, right: number): [number, number] | null => {
+            for (let i = top + 1; i <= tableBottom; i++) {
+                const c = tableLines[i][right]
+                if (c === '+') {
+                    // Found candidate
+                    const isValid = scanBotLeft(top, left, right, i)
+                    if (isValid) {
+                        return [i, right]
+                    }
+                } else if (c !== '|') {
+                    // If below top-right corner is not "|", then we did not start from a valid top-right corner
+                    // +-(*)-+
+                    // |     |
+                    // +--+--|
+                    // |  |  |
+                    // +--+--+
+                    return null
+                }
+            }
+
+            return null
+        }
+
+        const scanBotLeft = (top: number, left: number, right: number, bot: number): boolean => {
+            for (let i = right - 1; i >= left; i--) {
+                const c = tableLines[bot][i]
+                if (c === '+') {
+                    // Found candidate
+                    const isValid = scanTopLeft(top, left, right, bot)
+                    if (isValid) {
+                        return true
+                    }
+                } else if (c !== '-') {
+                    // If left of bottom-right corner is not "-", then we did not start from a valid bottom-right corner
+                    // +--+--+
+                    // |  |  |
+                    // +--+ (+)
+                    // |  |  |
+                    // +--+--+
+                    return false
+                }
+            }
+
+            return false
+        }
+
+        const scanTopLeft = (top: number, left: number, right: number, bot: number): boolean => {
+            for (let i = bot - 1; i >= top; i--) {
+                const c = tableLines[i][left]
+
+                if (c === '+') {
+                    // Do nothing since this "+" it may not necessarily be where we started
+                    // In docutils lib, it tracks every intermediate + encountered
+                } else if (c !== '|') {
+                    // If above bottom-left corner is not "|", then we did not start from a valid bottom-left corner
+                    // +--+--+
+                    // |     |
+                    // +-(+)-+
+                    // |  |  |
+                    // +--+--+
+                    return false
+                }
+            }
+
+            return true
+        }
+
+        const parseTableCell = (top: number, left: number, right: number, bot: number): Array<RstNode> => {
+            let cellText = ''
+            for (let row = top + 1; row < bot; row++) {
+                const line = tableLines[row].substring(left + 1, right).trim()
+                if (line.length === 0) {
+                    continue
+                }
+
+                cellText += line + '\n'
+            }
+
+            const parser = new RstParser(this._indentationSize)
+            const root = parser.parse(cellText.trim())
+            return root.children
+        }
+
+        // Find the header/body separation marker if exists (to be used for codegen for <thead> vs <tbody>)
+        let headSepIdx = -1
+        for (let i = 0; i < tableLines.length; i++) {
+            if (!gridTableHeadSepRe.test(tableLines[i])) {
+                continue
+            }
+
+            if (headSepIdx >= 0) {
+                throw new Error('Table has multiple head/body row separators')
+            }
+
+            headSepIdx = i
+            tableLines[i] = tableLines[i].replaceAll('=', '-')
+        }
+
+        const done = new Array<Array<boolean>>()
+        for (let i = 0; i < numRows - 1; i++) {
+            done.push(new Array<boolean>())
+
+            for (let j = 0; j < numCols - 1; j++) {
+                done[i][j] = false
+            }
+        }
+
+        // Start top-left corner of table and flood-fill search for all the table cells
+        const corners = new Array<[number, number]>([0, 0])
+        const parsedCells = new Array<{
+            topLeft: [number, number]
+            bottomRight: [number, number]
+            contents: Array<RstNode>
+        }>()
+        while (corners.length > 0) {
+            const [cornerTop, cornerLeft] = corners.shift() ?? [0xDEADBEEF, 0xDEADBEEF]
+
+            // Reached edges of table and don't need to parse this corner
+            if (cornerTop === tableBottom || cornerLeft === tableRight) {
+                continue
+            }
+
+            // Already processed past this row in current column
+            if (done[cornerTop][cornerLeft]) {
+                continue
+            }
+
+            // Check that we are actually starting in the top-left corner of a cell
+            if (tableLines[cornerTop][cornerLeft] !== '+') {
+                throw new Error('Invalid table')
+            }
+
+            const botRight = scanTopRight(cornerTop, cornerLeft)
+            if (!botRight) {
+                continue
+            }
+
+            const [cornerBot, cornerRight] = botRight
+            for (let row = cornerTop; row < cornerBot; row++) {
+                for (let col = cornerLeft; col < cornerRight; col++) {
+                    done[row][col] = true
+                }
+            }
+
+            corners.push([cornerTop, cornerRight])
+            corners.push([cornerBot, cornerLeft])
+            parsedCells.push({
+                topLeft: [cornerTop, cornerLeft],
+                bottomRight: [cornerBot, cornerRight],
+                contents: parseTableCell(cornerTop, cornerLeft, cornerRight, cornerBot),
+            })
+        }
+
+        const rowSepCoords = [...new Set(parsedCells.map((cell) => cell.topLeft[0]))].toSorted()
+        const getRowSpan = (startRow: number, endRow: number): number => {
+            const start = rowSepCoords.indexOf(startRow)
+            const end = rowSepCoords.indexOf(endRow)
+            if (end === -1) {
+                return rowSepCoords.length - start
+            } else {
+                return end - start
+            }
+        }
+
+        const colSepCoords = [...new Set(parsedCells.map((cell) => cell.topLeft[1]))].toSorted()
+        const getColSpan = (startCol: number, endCol: number): number => {
+            const start = colSepCoords.indexOf(startCol)
+            const end = colSepCoords.indexOf(endCol)
+            if (end === -1) {
+                return colSepCoords.length - start
+            } else {
+                return end - start
+            }
+        }
+
+        // Convert this.cells from coordinate space to table space
+        const headRows = new Array<TableRow>()
+        const bodyRows = new Array<TableRow>()
+
+        for (const rowCoord of rowSepCoords) {
+            const rowCells = new Array<TableCell>()
+
+            if (rowCoord < headSepIdx) {
+                headRows.push(new TableRow({
+                    startLineIdx: startLineIdx + 1,
+                    endLineIdx: startLineIdx + 1,
+                }, rowCells))
+            } else {
+                bodyRows.push(new TableRow({
+                    startLineIdx: startLineIdx + 1,
+                    endLineIdx: startLineIdx + 1,
+                }, rowCells))
+            }
+
+            const cellsOnThisRow = parsedCells.filter((cell) => cell.topLeft[0] === rowCoord)
+            for (const parsedCell of cellsOnThisRow) {
+                const startRow = parsedCell.topLeft[0]
+                const startCol = parsedCell.topLeft[1]
+                const endRow = parsedCell.bottomRight[0]
+                const endCol = parsedCell.bottomRight[1]
+
+                const rowSpan = getRowSpan(startRow, endRow)
+                const colSpan = getColSpan(startCol, endCol)
+
+                rowCells.push(new TableCell(rowSpan, colSpan, {
+                    startLineIdx: startLineIdx + 1,
+                    endLineIdx: startLineIdx + 1,
+                }, parsedCell.contents))
+            }
+        }
+
+        const endLineIdx = this._tokenIdx
+        return new Table(headRows, bodyRows, { startLineIdx, endLineIdx })
+    }
+
+    // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#simple-tables
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    private parseSimpleTable(indentSize: number): Table | null {
+        return null
     }
 }
