@@ -83,6 +83,9 @@ export const doctestBlockRe         = /^([ ]*)>>> (.+)$/
 export const gridTableRe        = /^([ ]*)(?:\+-*)+\+[ ]*$/
 export const gridTableHeadSepRe = /^([ ]*)(?:\+=*)+\+[ ]*$/
 
+export const simpleTableRe         = /^([ ]*)=+([ ]+[=]+)+$/
+export const simpleTableColSpanRe = /^([ ]*)-[ -]*$/
+
 // ------------------------------------------------------------------------
 // Main Parser
 // ------------------------------------------------------------------------
@@ -846,7 +849,7 @@ export class RstParser {
         // After we find a cell, we queue up the cell's top-right corner and bottom-left corner as candidates for other cells' top-right corners
         // We skip queuing bottom-right since it is redudant as the next cell starting from current's top-right will queue up its bottom-left (current's bottom-right)
         //
-        // For each cell, we start at the top-left corner and scan right/down/left/up for "+" markers
+        // For each cell, we start at the top-left corner and scan clockwise (right/down/left/up) for "+" markers
         // At each step, we ensure we see the expected characters:
         //      "-" when going left/right
         //      "|" when going up/down
@@ -1126,8 +1129,198 @@ export class RstParser {
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#simple-tables
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private parseSimpleTable(indentSize: number): Table | null {
-        return null
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        if (!this.peekTest(simpleTableRe)) {
+            return null
+        }
+
+        // --------------------------------------------------------------------
+        // Step 1
+        //
+        // Collect all lines of the table into an array of strings for easy traversal and indexing
+        // This is slightly more tricky than grid table since simple table allows linebreaks inside the table
+        //
+        // 1. Keep consuming until we've matched 1 table header followed by blank line (bottom border)
+        // 2. Otherwise keep consuming until we've matched 2 table headers (header separator + bottom border)
+        // 3. Throw error if we've reached end of input (malformed table)
+        // --------------------------------------------------------------------
+
+        const tableLines = new Array<string>()
+        tableLines.push(this.consume().str.trim()) // Top border
+
+        let numSeparatorMatched = 0
+        while (true) {
+            if (!this.canConsume()) {
+                throw new Error('Reached end of input before finding simple table bottom border')
+            }
+
+            const isSeparator = this.peekTest(simpleTableRe)
+            if (isSeparator) {
+                numSeparatorMatched++
+            }
+
+            const line = this.consume()
+            tableLines.push(line.str)
+
+            // Found both header separator and bottom border
+            if (numSeparatorMatched === 2) {
+                break
+            }
+
+            // Found bottom border
+            if (isSeparator && (this.peekIsNewLine() || !this.canConsume())) {
+                break
+            }
+        }
+
+        let headSeparatorLocation = -1
+        for (let i = 1; i < tableLines.length - 1; i++) {
+            if (simpleTableRe.test(tableLines[i])) {
+                headSeparatorLocation = i
+                break
+            }
+        }
+
+        // --------------------------------------------------------------------
+        // Step 2
+        //
+        // Parse table
+        //
+        // Each sequence of "=" in table's top border denotes a column
+        // Each sequence of "-" in table column span row denotes a column (that potentially spans multiple columns)
+        //
+        // Each row either ends when
+        // - The following line only contains '-' denoting column span row
+        // - The following line's first column area contains text
+        // --------------------------------------------------------------------
+
+        const parseColumn = (line: string, marker: '-' | '='): Array<{ startCoord: number; endCoord: number}> => {
+            const columnData = new Array<{ startCoord: number; endCoord: number}>()
+            let endCoord = 0
+
+            while (true) {
+                const startCoord = line.indexOf(marker, endCoord)
+                endCoord = line.indexOf(' ', startCoord)
+
+                // Cannot find anymore column starts
+                if (startCoord === -1) {
+                    break
+                }
+
+                // Current column has no end space
+                if (endCoord === -1) {
+                    endCoord = line.length
+                }
+
+                columnData.push({ startCoord, endCoord })
+            }
+
+            return columnData
+        }
+
+        const columnData = parseColumn(tableLines[0], '=')
+        const getColSpan = (colStartCoord: number, colEndCoord?: number): number => {
+            let startColumnIdx = 0
+            while (startColumnIdx < columnData.length && colStartCoord > columnData[startColumnIdx].startCoord) {
+                startColumnIdx++
+            }
+
+            let endColumnIdx: number
+            if (colEndCoord === undefined) {
+                endColumnIdx = columnData.length
+            } else {
+                endColumnIdx = startColumnIdx + 1
+                while (endColumnIdx < columnData.length && colEndCoord > columnData[endColumnIdx].startCoord) {
+                    endColumnIdx++
+                }
+            }
+
+            return endColumnIdx - startColumnIdx
+        }
+
+        const parseRow = (rowStartCoord: number, rowEndCoord: number): TableRow => {
+            const lastRowIsHeaderSeparator = simpleTableRe.test(tableLines[rowEndCoord - 1])
+            const lastRowIsColSpanMarker = simpleTableColSpanRe.test(tableLines[rowEndCoord - 1])
+
+            const rowLines = lastRowIsHeaderSeparator || lastRowIsColSpanMarker
+                ? tableLines.slice(rowStartCoord, rowEndCoord - 1)
+                : tableLines.slice(rowStartCoord, rowEndCoord)
+
+            const rowColumnData = lastRowIsColSpanMarker
+                ? parseColumn(tableLines[rowEndCoord - 1], '-')
+                : columnData
+
+            // Parse each cell based on column data
+            const rowCells = Array<TableCell>()
+            for (let i = 0; i < rowColumnData.length; i++) {
+                const { startCoord, endCoord } = rowColumnData[i]
+
+                // Last column of simple table has unbounded width
+                const colSpan = (i === rowColumnData.length - 1)
+                    ? getColSpan(startCoord)
+                    : getColSpan(startCoord, endCoord)
+                const cellText = (i === rowColumnData.length - 1)
+                    ? rowLines.map((line) => line.substring(startCoord)).join('\n')
+                    : rowLines.map((line) => line.substring(startCoord, endCoord)).join('\n')
+
+                const parser = new RstParser(this._indentationSize)
+                const root = parser.parse(cellText.trim())
+
+                rowCells.push(new TableCell(1, colSpan, {
+                    startLineIdx: startLineIdx + rowStartCoord,
+                    endLineIdx: lastRowIsHeaderSeparator || lastRowIsColSpanMarker
+                        ? startLineIdx + rowEndCoord - 1
+                        : startLineIdx + rowEndCoord,
+                }, root.children))
+            }
+
+            return new TableRow({
+                startLineIdx: startLineIdx + rowStartCoord,
+                endLineIdx: lastRowIsHeaderSeparator || lastRowIsColSpanMarker
+                    ? startLineIdx + rowEndCoord - 1
+                    : startLineIdx + rowEndCoord,
+            }, rowCells)
+        }
+
+        const headRows = new Array<TableRow>()
+        const bodyRows = new Array<TableRow>()
+
+        for (let i = 1; i < tableLines.length - 1; i++) {
+            const rowStartCoord = i
+
+            // Find end of current row
+            // Skip this search if [i === tableLines.length - 2] since it is the last content row
+            // [tableLines.length - 1] contains end of table border
+            for (let j = i; j < tableLines.length - 2; j++, i++) {
+                // If next line is column span underlines or header separator, then we've reached end of current row
+                if (simpleTableRe.test(tableLines[j + 1]) || simpleTableColSpanRe.test(tableLines[j + 1])) {
+                    i += 1 // Skip the col-span underline
+                    break
+                }
+
+                // If next line has string in first column, then we've reached end of current row
+                const firstColumnOfNextLine = tableLines[j + 1].substring(columnData[0].startCoord, columnData[0].endCoord)
+                if (firstColumnOfNextLine.trim()) {
+                    break
+                }
+            }
+
+            const rowEndCoord = i + 1
+
+            if (rowStartCoord < headSeparatorLocation) {
+                headRows.push(parseRow(rowStartCoord, rowEndCoord))
+            } else {
+                bodyRows.push(parseRow(rowStartCoord, rowEndCoord))
+            }
+        }
+
+        const endLineIdx = this._tokenIdx
+        return new Table(headRows, bodyRows, { startLineIdx, endLineIdx })
     }
 }
