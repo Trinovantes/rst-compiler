@@ -73,9 +73,11 @@ export class TableCell extends RstNode {
     override toObject(): RstNodeObject {
         const root = super.toObject()
 
-        root.meta = {
-            rowSpan: this.rowSpan,
-            colSpan: this.colSpan,
+        if (this.rowSpan !== 1 || this.colSpan !== 1) {
+            root.meta = {
+                rowSpan: this.rowSpan,
+                colSpan: this.colSpan,
+            }
         }
 
         return root

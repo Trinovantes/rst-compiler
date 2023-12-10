@@ -805,16 +805,89 @@ export class RstParser {
             return null
         }
 
+        // --------------------------------------------------------------------
+        // Step 1
+        //
+        // Collect all lines of the table into an array of strings for easy traversal and indexing
+        // --------------------------------------------------------------------
+
         const tableLines = new Array<string>()
         while (this.peekIsContent() && this.peekIsIndented(indentSize)) {
             const line = this.consume()
             tableLines.push(line.str)
         }
 
+        // --------------------------------------------------------------------
+        // Step 2
+        //
+        // Find the header/body separation marker if exists (to be used to determine which rows go in <thead> or <tbody>)
+        // --------------------------------------------------------------------
+
+        let headSeparatorLocation = -1
+        for (let i = 0; i < tableLines.length; i++) {
+            if (!gridTableHeadSepRe.test(tableLines[i])) {
+                continue
+            }
+
+            if (headSeparatorLocation >= 0) {
+                throw new Error('Table has multiple head/body row separators')
+            }
+
+            headSeparatorLocation = i
+
+            // Now that we know where the head/body is dived, we can replace separator "=" with '-' as if it didn't exist to make the table uniform for next step
+            tableLines[i] = tableLines[i].replaceAll('=', '-')
+        }
+
+        // --------------------------------------------------------------------
+        // Step 3
+        //
+        // Start from top-left corner of table and search for all the cells
+        // After we find a cell, we queue up the cell's top-right corner and bottom-left corner as candidates for other cells' top-right corners
+        // We skip queuing bottom-right since it is redudant as the next cell starting from current's top-right will queue up its bottom-left (current's bottom-right)
+        //
+        // For each cell, we start at the top-left corner and scan right/down/left/up for "+" markers
+        // At each step, we ensure we see the expected characters:
+        //      "-" when going left/right
+        //      "|" when going up/down
+        //
+        // If we cannot cycle back to the starting top-left corner, then the original top-left corner that we started with is not the start of an actual table cell (so we disard it and continue)
+        //
+        //       |  |  |
+        //      -0--1--2-
+        //       |     |
+        //      -3     4-
+        //       |     |
+        //      -5--6--7-
+        //       |  |  |
+        //
+        // We start at (0)
+        //  - Go right and encounter (1)
+        //      - Go down but did not find "+" or "|" [FAIL]
+        //  - Go right and encounter (2)
+        //      - Go down and see (4)
+        //          - Go left but did not see "-" [FAIL]
+        //      - Go down and see (7)
+        //          - Go left and see (6)
+        //              - Go up but did not see "|" [FAIL]
+        //          - Go left and see (5)
+        //              - Go up and see (3) [Ignore since we are not at starting row yet]
+        //              - Go up and see (0) [FINISH]
+        //
+        // Afterwards, we queue up coordinates of corner (2) and (5) and continue the search
+        // --------------------------------------------------------------------
+
         const numRows = tableLines.length
         const numCols = tableLines[0].length
         const tableRight = numCols - 1
         const tableBottom = numRows - 1
+
+        const corners = new Array<[number, number]>([0, 0])
+        const parsedCells = new Array<{
+            topLeft: [number, number]
+            bottomRight: [number, number]
+            contents: Array<RstNode>
+        }>()
 
         const scanTopRight = (top: number, left: number): [number, number] | null => {
             for (let i = left + 1; i <= tableRight; i++) {
@@ -878,7 +951,8 @@ export class RstParser {
                 }
             }
 
-            // Found candidate
+            // Reached left wall
+            // Finally check if we can go back up to top wall
             return scanTopLeft(top, left, right, bot)
         }
 
@@ -900,6 +974,7 @@ export class RstParser {
                 }
             }
 
+            // Reached top wall and our scan is now complete
             return true
         }
 
@@ -919,21 +994,8 @@ export class RstParser {
             return root.children
         }
 
-        // Find the header/body separation marker if exists (to be used for codegen for <thead> vs <tbody>)
-        let headSepIdx = -1
-        for (let i = 0; i < tableLines.length; i++) {
-            if (!gridTableHeadSepRe.test(tableLines[i])) {
-                continue
-            }
-
-            if (headSepIdx >= 0) {
-                throw new Error('Table has multiple head/body row separators')
-            }
-
-            headSepIdx = i
-            tableLines[i] = tableLines[i].replaceAll('=', '-')
-        }
-
+        // Use this to track which parts of the table has been scanned and can be skipped later
+        // done[i][j] = i-th row (line) j-th column (character in line)
         const done = new Array<Array<boolean>>()
         for (let i = 0; i < numRows - 1; i++) {
             done.push(new Array<boolean>())
@@ -943,13 +1005,6 @@ export class RstParser {
             }
         }
 
-        // Start top-left corner of table and flood-fill search for all the table cells
-        const corners = new Array<[number, number]>([0, 0])
-        const parsedCells = new Array<{
-            topLeft: [number, number]
-            bottomRight: [number, number]
-            contents: Array<RstNode>
-        }>()
         while (corners.length > 0) {
             const [cornerTop, cornerLeft] = corners.shift() ?? [0xDEADBEEF, 0xDEADBEEF]
 
@@ -989,6 +1044,15 @@ export class RstParser {
             })
         }
 
+        // --------------------------------------------------------------------
+        // Step 4
+        //
+        // Construct the final table AST structure from cells found
+        // 1. Get all unique top coordinates from table cells (each unique coordinate represents a new <tr> row)
+        // 2. For each row <tr>, find all the cells belonging to it based on their top-left coordinate and sort them by left edg
+        // 3. For each cell <td>, calculate how many rows/cols each one occupies based on their top/bot left/right edges
+        // --------------------------------------------------------------------
+
         const rowSepCoords = [...new Set(parsedCells.map((cell) => cell.topLeft[0]))].toSorted()
         const getRowSpan = (startRow: number, endRow: number): number => {
             const start = rowSepCoords.indexOf(startRow)
@@ -1011,13 +1075,14 @@ export class RstParser {
             }
         }
 
-        // Convert this.cells from coordinate space to table space
         const headRows = new Array<TableRow>()
         const bodyRows = new Array<TableRow>()
 
         for (const rowCoord of rowSepCoords) {
             const rowCells = new Array<TableCell>()
-            const cellsOnThisRow = parsedCells.filter((cell) => cell.topLeft[0] === rowCoord)
+            const cellsOnThisRow = parsedCells
+                .filter((cell) => cell.topLeft[0] === rowCoord)
+                .toSorted((cellA, cellB) => cellA.topLeft[1] - cellB.topLeft[1])
 
             let rowStartLineIdx = startLineIdx
             let rowEndLineIdx = startLineIdx + 1
@@ -1043,7 +1108,7 @@ export class RstParser {
                 }, parsedCell.contents))
             }
 
-            if (rowCoord < headSepIdx) {
+            if (rowCoord < headSeparatorLocation) {
                 headRows.push(new TableRow({
                     startLineIdx: rowStartLineIdx,
                     endLineIdx: rowEndLineIdx,
