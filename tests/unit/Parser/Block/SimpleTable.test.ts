@@ -277,3 +277,117 @@ test('when there is an empty cell in first column in first row after header sepa
         },
     ])
 })
+
+test('rightmost column has unbounded size', () => {
+    const input = `
+        =====  =====
+        col 1  col 2
+        =====  =====
+        1      Second column of row 1.
+        2      Second column of row 2.
+               Second line of paragraph.
+        3      - Second column of row 3.
+
+               - Second item in bullet
+                 list (row 3, column 2).
+        \\      Row 4; column 1 will be empty.
+        =====  =====
+    `
+
+    expectDocument(input, [
+        {
+            type: RstNodeType.Table,
+            meta: {
+                headRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 1',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 2',
+                            },
+                        ],
+                    },
+                ],
+                bodyRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: '1',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'Second column of row 1.',
+                            },
+                        ],
+                    },
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: '2',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'Second column of row 2.\nSecond line of paragraph.',
+                            },
+                        ],
+                    },
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: '3',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                children: [
+                                    {
+                                        type: RstNodeType.BulletList,
+                                        children: [
+                                            {
+                                                type: RstNodeType.BulletListItem,
+                                                text: 'Second column of row 3.',
+                                                meta: {
+                                                    bullet: '-',
+                                                },
+                                            },
+                                            {
+                                                type: RstNodeType.BulletListItem,
+                                                text: 'Second item in bullet\nlist (row 3, column 2).',
+                                                meta: {
+                                                    bullet: '-',
+                                                },
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: '\\',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'Row 4; column 1 will be empty.',
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+    ])
+})
