@@ -67,7 +67,7 @@ export class TableCell extends RstNode {
     }
 
     protected override get label(): string {
-        return `${this.type} rowSpan:${this.rowSpan} colSpan:${this.colSpan}`
+        return `${this.type} rowSpan:${this.rowSpan} colSpan:${this.colSpan} children:${this.children.length}`
     }
 
     override toObject(): RstNodeObject {

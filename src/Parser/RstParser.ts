@@ -226,8 +226,8 @@ export class RstParser {
                 this.parseGridTable(indentSize) ??
                 this.parseSimpleTable(indentSize) ??
 
-                this.parseTransition() ??
                 this.parseSection() ??
+                this.parseTransition() ??
                 this.parseParagraph(indentSize)
 
             if (nextNode.type === RstNodeType.LiteralBlock) {

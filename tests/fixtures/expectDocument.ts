@@ -10,7 +10,5 @@ export function expectDocument(input: string, expectedBodyNodes: Array<RstNodeOb
         children: expectedBodyNodes,
     }
 
-    console.log(root.toString())
-
     expect(output).toStrictEqual(expectedOutput)
 }

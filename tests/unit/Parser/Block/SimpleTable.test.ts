@@ -2,17 +2,34 @@ import { test } from 'vitest'
 import { expectDocument } from '../../../fixtures/expectDocument.js'
 import { RstNodeType } from '@/Parser/RstNode.js'
 
-test.only('simple table', () => {
+test('simple table', () => {
     const input = `
         =====  =====
         col 1  col 2
-        test   test
         =====  =====
     `
 
     expectDocument(input, [
         {
             type: RstNodeType.Table,
+            meta: {
+                headRows: [],
+                bodyRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 1',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 2',
+                            },
+                        ],
+                    },
+                ],
+            },
         },
     ])
 })
@@ -21,13 +38,16 @@ test('simple table must have at least 2 columns, otherwise it will be parsed as 
     const input = `
         =====
         col 1
-        test
         =====
     `
 
     expectDocument(input, [
         {
-            type: RstNodeType.Table,
+            type: RstNodeType.Section,
+            text: 'col 1',
+            meta: {
+                level: 1,
+            },
         },
     ])
 })
@@ -37,13 +57,45 @@ test('simple table with header separator', () => {
         =====  =====
         col 1  col 2
         =====  =====
-        test   test
+        test1  test2
         =====  =====
     `
 
     expectDocument(input, [
         {
             type: RstNodeType.Table,
+            meta: {
+                headRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 1',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 2',
+                            },
+                        ],
+                    },
+                ],
+                bodyRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'test1',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'test2',
+                            },
+                        ],
+                    },
+                ],
+            },
         },
     ])
 })
@@ -54,30 +106,35 @@ test('when there is a line break after header separator, it breaks stops the tab
         col 1  col 2
         =====  =====
 
-        test   test
+        test1  test2
         =====  =====
     `
 
     expectDocument(input, [
         {
             type: RstNodeType.Table,
+            meta: {
+                headRows: [],
+                bodyRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 1',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 2',
+                            },
+                        ],
+                    },
+                ],
+            },
         },
-    ])
-})
-
-test('TODO', () => {
-    const input = `
-        =====  =====
-        col 1  col 2
-        =====  =====
-               test
-        test   test
-        =====  =====
-    `
-
-    expectDocument(input, [
         {
-            type: RstNodeType.Table,
+            type: RstNodeType.Paragraph,
+            text: 'test1  test2\n=====  =====',
         },
     ])
 })
@@ -93,6 +150,36 @@ test('simple table with empty cell not in first column', () => {
     expectDocument(input, [
         {
             type: RstNodeType.Table,
+            meta: {
+                headRows: [],
+                bodyRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 1',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 2',
+                            },
+                        ],
+                    },
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'test',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                            },
+                        ],
+                    },
+                ],
+            },
         },
     ])
 })
@@ -101,13 +188,92 @@ test('when there is an empty cell in first column, it should not be a new row', 
     const input = `
         =====  =====
         col 1  col 2
-        test
+               test
         =====  =====
     `
 
     expectDocument(input, [
         {
             type: RstNodeType.Table,
+            meta: {
+                headRows: [],
+                bodyRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 1',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 2\ntest',
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+    ])
+})
+
+test('when there is an empty cell in first column in first row after header separator, it should be a new row', () => {
+    const input = `
+        =====  =====
+        col 1  col 2
+        =====  =====
+               test1
+        test2  test3
+        =====  =====
+    `
+
+    expectDocument(input, [
+        {
+            type: RstNodeType.Table,
+            meta: {
+                headRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 1',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'col 2',
+                            },
+                        ],
+                    },
+                ],
+                bodyRows: [
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'test1',
+                            },
+                        ],
+                    },
+                    {
+                        type: RstNodeType.TableRow,
+                        children: [
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'test2',
+                            },
+                            {
+                                type: RstNodeType.TableCell,
+                                text: 'test3',
+                            },
+                        ],
+                    },
+                ],
+            },
         },
     ])
 })
