@@ -39,9 +39,10 @@ test('when there are 4 characters between paragraphs, it parses as transition', 
     ])
 })
 
-test('when there are multiple section markers separated by linebreaks, it parses as multiple transitions', () => {
+test('when there are section markers separated by multiple linebreaks, it parses as multiple transitions', () => {
     const input = `
         ----
+
 
         ----
     `
