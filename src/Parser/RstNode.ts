@@ -56,6 +56,7 @@ export type RstNodeObject = {
     meta?: Record<string,
         string | Array<string> |
         number | Array<number> |
+        boolean | Array<boolean> |
         RstNodeObject | Array<RstNodeObject> |
         Record<string, string | undefined> | Array<Record<string, string | undefined>>
     >

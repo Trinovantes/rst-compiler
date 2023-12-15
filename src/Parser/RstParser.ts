@@ -24,6 +24,7 @@ import { DocktestBlock } from './Block/DoctestBlock.js'
 import { Table, TableRow, TableCell } from './Block/Table.js'
 import { Footnote } from './ExplicitMarkup/Footnote.js'
 import { Citation } from './ExplicitMarkup/Citation.js'
+import { HyperlinkTarget } from './ExplicitMarkup/HyperlinkTarget.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -85,15 +86,11 @@ export const doctestBlockRe         = /^([ ]*)>>> (.+)$/
 export const gridTableRe        = /^([ ]*)(?:\+-*)+\+[ ]*$/
 export const gridTableHeadSepRe = /^([ ]*)(?:\+=*)+\+[ ]*$/
 
-export const simpleTableRe         = /^([ ]*)=+([ ]+[=]+)+$/
+export const simpleTableRe        = /^([ ]*)=+([ ]+[=]+)+$/
 export const simpleTableColSpanRe = /^([ ]*)-[ -]*$/
 
 export const footnoteRe = new RegExp(
-    '^' +
-    '(' +
-        '..' +
-        '[ ]+' +
-    ')' +
+    '^( *.. +)' +
     '\\[' +
         '(' +
             '[0-9]+' + // Any number
@@ -103,11 +100,31 @@ export const footnoteRe = new RegExp(
             '\\*' + // Auto symbol
         ')' +
     '\\]' +
-    '[ ]+' +
+    ' +' +
     '(.+)$', // Any char to end of line
 )
 
-export const citationRe = /^(.. +)\[([\w-.]+)\] +(.+)$/
+export const citationRe = new RegExp(
+    '^( *.. +)' +
+    '\\[' +
+        '([\\w-.]+)' +
+    '\\]' +
+    ' +' +
+    '(.+)$', // Any char to end of line
+)
+
+export const hyperlinkTargetRe = new RegExp(
+    '^( *.. +)' +
+    '_' +
+        '(?:' +
+            '([\\w-.]+)' + // Only alpha numeric or dash
+            '|' +
+            '`([^`]+)`' + // Any character except backtick (`) in-between backticks
+        ')' +
+    ':' +
+    ' *' +
+    '(.*)$', // Any char to end of line
+)
 
 // ------------------------------------------------------------------------
 // Main Parser
@@ -251,6 +268,7 @@ export class RstParser {
 
                 this.parseFootnote(indentSize) ??
                 this.parseCitation(indentSize) ??
+                this.parseHyperlinkTarget(indentSize) ??
 
                 this.parseSection() ??
                 this.parseTransition() ??
@@ -1370,7 +1388,7 @@ export class RstParser {
         const bodyIndentSize = indentSize + bulletAndSpace.length
 
         // Need to extract first line with regex since it starts with bullet and space
-        // e.g. "-- [text]"
+        // e.g. ".. [1] {text}"
         const firstLineText = firstLineMatches.at(-1) ?? ''
 
         let footnoteText = firstLineText
@@ -1389,7 +1407,8 @@ export class RstParser {
             {
                 startLineIdx,
                 endLineIdx,
-            }, [
+            },
+            [
                 firstParagraph,
                 ...footnoteBodyNodes,
             ],
@@ -1416,7 +1435,7 @@ export class RstParser {
         const bodyIndentSize = indentSize + bulletAndSpace.length
 
         // Need to extract first line with regex since it starts with bullet and space
-        // e.g. "-- [text]"
+        // e.g. ".. [label] {text}"
         const firstLineText = firstLineMatches.at(-1) ?? ''
 
         let citationText = firstLineText
@@ -1435,10 +1454,52 @@ export class RstParser {
             {
                 startLineIdx,
                 endLineIdx,
-            }, [
+            },
+            [
                 firstParagraph,
                 ...citationBodyNodes,
             ],
+        )
+    }
+
+    private parseHyperlinkTarget(indentSize: number): HyperlinkTarget | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(hyperlinkTargetRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        const label = firstLineMatches.at(2) ?? firstLineMatches.at(3) ?? ''
+        const bulletAndSpace = firstLineMatches.at(1) ?? '.. '
+        const bodyIndentSize = indentSize + bulletAndSpace.length
+
+        // Need to extract first line with regex since it starts with bullet and space
+        // e.g. ".. _label: {text}"
+        const firstLineText = firstLineMatches.at(-1) ?? ''
+
+        let linkText = firstLineText
+        while (this.peekIsContent() && this.peekIsIndented(bodyIndentSize)) {
+            const line = this.consume()
+            const lineText = line.str.substring(bodyIndentSize)
+            linkText += lineText
+        }
+
+        const endLineIdx = this._tokenIdx
+        return new HyperlinkTarget(
+            label,
+            linkText,
+            {
+                startLineIdx,
+                endLineIdx,
+            },
         )
     }
 }
