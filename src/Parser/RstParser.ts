@@ -26,6 +26,7 @@ import { Footnote } from './ExplicitMarkup/Footnote.js'
 import { Citation } from './ExplicitMarkup/Citation.js'
 import { HyperlinkTarget } from './ExplicitMarkup/HyperlinkTarget.js'
 import { Comment } from './ExplicitMarkup/Comment.js'
+import { SubstitutionDef } from './ExplicitMarkup/SubstitutionDef.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -126,6 +127,18 @@ export const hyperlinkTargetRe = new RegExp(
 )
 
 export const anonymousHyperlinkTargetRe = /^__ (.+)$/
+
+export const substitutionDefRe = new RegExp(
+    '^( *.. +)' +
+    '\\|' +
+    '(.+)' + // Substitution text
+    '\\|' +
+    ' *' +
+    '(\\w+)' + // Directive
+    '::' +
+    ' *' +
+    '(.*)$', // Any char to end of line
+)
 
 export const commentRe      = /^( *\.\. *)(.*)$/
 export const emptyCommentRe = /^\.\.$/
@@ -260,6 +273,7 @@ export class RstParser {
                 this.parseCitation(indentSize) ??
                 this.parseHyperlinkTarget(indentSize) ??
                 this.parseAnonymousHyperlinkTarget(indentSize) ??
+                this.parseSubstitutionDef(indentSize) ??
                 this.parseComment(indentSize) ??
 
                 this.parseBulletList(indentSize) ??
@@ -601,39 +615,55 @@ export class RstParser {
 
         const fieldName = firstLineMatches[2]
 
-        // Field's indent size is based on next line's initial indent instead of where the colon is
-        const fieldIndentSize = this.peekIsContent(1)
-            ? this.peek(1)?.str.search(/\S|$/) ?? 0
-            : 0
-
         // Consume first line that we've already peeked at and tested
         this.consume()
 
-        // First child of list is always paragraph
-        // Need to extract first line's text with regex since it starts with bullet and space
-        // e.g. "1. text" extracts "text"
-        let firstParagraphText = firstLineMatches.at(-1) ?? ''
-        while (this.peekIsContent() && this.peekIsIndented(fieldIndentSize)) {
-            const line = this.consume()
-            const lineText = line.str.substring(fieldIndentSize)
-            firstParagraphText += '\n' + lineText
+        const isItemBodyMultiline = this.peekIsContent() && !this.peekTest(fieldListItemRe)
+        if (isItemBodyMultiline) {
+            // Field's indent size is based on next line's initial indent instead of where the colon is
+            const bodyIndentSize = this.peekIndentSize()
+
+            // First child of list is always paragraph
+            // Need to extract first line's text with regex since it starts with bullet and space
+            // e.g. "1. text" extracts "text"
+            let firstParagraphText = firstLineMatches.at(-1) ?? ''
+            while (this.peekIsContent() && this.peekIsIndented(bodyIndentSize)) {
+                const line = this.consume()
+                const lineText = line.str.substring(bodyIndentSize)
+                firstParagraphText += '\n' + lineText
+            }
+
+            const firstParagraph = new Paragraph(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
+            const fieldBodyNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.FieldListItem)
+
+            const endLineIdx = this._tokenIdx
+            return new FieldListItem(
+                fieldName,
+                [
+                    firstParagraph,
+                    ...fieldBodyNodes,
+                ],
+                {
+                    startLineIdx,
+                    endLineIdx,
+                },
+            )
+        } else {
+            const firstParagraphText = firstLineMatches.at(-1) ?? ''
+            const firstParagraph = new Paragraph(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
+
+            const endLineIdx = this._tokenIdx
+            return new FieldListItem(
+                fieldName,
+                [
+                    firstParagraph,
+                ],
+                {
+                    startLineIdx,
+                    endLineIdx,
+                },
+            )
         }
-
-        const firstParagraph = new Paragraph(firstParagraphText, { startLineIdx, endLineIdx: this._tokenIdx })
-        const fieldBodyNodes = this.parseBodyElements(fieldIndentSize, RstNodeType.FieldListItem)
-
-        const endLineIdx = this._tokenIdx
-        return new FieldListItem(
-            fieldName,
-            [
-                firstParagraph,
-                ...fieldBodyNodes,
-            ],
-            {
-                startLineIdx,
-                endLineIdx,
-            },
-        )
     }
 
     // https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#option-lists
@@ -1595,5 +1625,40 @@ export class RstParser {
                 },
             )
         }
+    }
+
+    private parseSubstitutionDef(indentSize: number): SubstitutionDef | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(substitutionDefRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        const directive = firstLineMatches[3]
+        const needle = firstLineMatches[2]
+        const data = firstLineMatches.at(-1) ?? ''
+
+        const bodyIndentSize = indentSize + '.. '.length
+        const directiveNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.SubstitutionDef)
+
+        const endLineIdx = this._tokenIdx
+        return new SubstitutionDef(
+            directive,
+            needle,
+            data,
+            {
+                startLineIdx,
+                endLineIdx,
+            },
+            directiveNodes,
+        )
     }
 }
