@@ -27,6 +27,7 @@ import { Citation } from './ExplicitMarkup/Citation.js'
 import { HyperlinkTarget } from './ExplicitMarkup/HyperlinkTarget.js'
 import { Comment } from './ExplicitMarkup/Comment.js'
 import { SubstitutionDef } from './ExplicitMarkup/SubstitutionDef.js'
+import { Directive } from './ExplicitMarkup/Directive.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -127,6 +128,14 @@ export const hyperlinkTargetRe = new RegExp(
 )
 
 export const anonymousHyperlinkTargetRe = /^__ (.+)$/
+
+export const directiveRe = new RegExp(
+    '^( *.. +)' +
+    '(\\w+)' + // Directive
+    '::' +
+    ' *' +
+    '(.*)$', // Any char to end of line
+)
 
 export const substitutionDefRe = new RegExp(
     '^( *.. +)' +
@@ -273,6 +282,7 @@ export class RstParser {
                 this.parseCitation(indentSize) ??
                 this.parseHyperlinkTarget(indentSize) ??
                 this.parseAnonymousHyperlinkTarget(indentSize) ??
+                this.parseDirective(indentSize) ??
                 this.parseSubstitutionDef(indentSize) ??
                 this.parseComment(indentSize) ??
 
@@ -308,7 +318,7 @@ export class RstParser {
                     // If prev paragraph ends with " ::", then we need to put the paragraph back with the " ::" removed
                     nodes.push(new Paragraph(prevParagraphText.substring(0, prevParagraphText.length - 3), prevParagraph.source))
                 } else if (prevParagraphText.endsWith('::')) {
-                    // Else prev paragraph ends with "anytext::" and we need to put the paragraph back with "::" replaced with ":" (basically delete the last character)
+                    // Else prev paragraph ends with "anytext::" and we need to put the paragraph back with "::" replaced with ":" (basically delete the last colon)
                     nodes.push(new Paragraph(prevParagraphText.substring(0, prevParagraphText.length - 1), prevParagraph.source))
                 } else {
                     throw new Error('Invalid prevParagraph')
@@ -1569,6 +1579,74 @@ export class RstParser {
         )
     }
 
+    private parseDirective(indentSize: number): Directive | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(directiveRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        const directive = firstLineMatches[2]
+        const data = firstLineMatches.at(-1) ?? ''
+
+        const bodyIndentSize = indentSize + '.. '.length
+        const directiveBodyNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.Directive)
+
+        const endLineIdx = this._tokenIdx
+        return new Directive(
+            directive,
+            data,
+            {
+                startLineIdx,
+                endLineIdx,
+            },
+            directiveBodyNodes,
+        )
+    }
+
+    private parseSubstitutionDef(indentSize: number): SubstitutionDef | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(substitutionDefRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        const directive = firstLineMatches[3]
+        const needle = firstLineMatches[2]
+        const data = firstLineMatches.at(-1) ?? ''
+
+        const bodyIndentSize = indentSize + '.. '.length
+        const substitutionBodyNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.SubstitutionDef)
+
+        const endLineIdx = this._tokenIdx
+        return new SubstitutionDef(
+            directive,
+            needle,
+            data,
+            {
+                startLineIdx,
+                endLineIdx,
+            },
+            substitutionBodyNodes,
+        )
+    }
+
     private parseComment(indentSize: number): Comment | null {
         const startLineIdx = this._tokenIdx
 
@@ -1625,40 +1703,5 @@ export class RstParser {
                 },
             )
         }
-    }
-
-    private parseSubstitutionDef(indentSize: number): SubstitutionDef | null {
-        const startLineIdx = this._tokenIdx
-
-        if (!this.peekIsIndented(indentSize)) {
-            return null
-        }
-
-        const firstLineMatches = this.peekTest(substitutionDefRe)
-        if (!firstLineMatches) {
-            return null
-        }
-
-        // Consume first line that we've already peeked at and tested
-        this.consume()
-
-        const directive = firstLineMatches[3]
-        const needle = firstLineMatches[2]
-        const data = firstLineMatches.at(-1) ?? ''
-
-        const bodyIndentSize = indentSize + '.. '.length
-        const directiveNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.SubstitutionDef)
-
-        const endLineIdx = this._tokenIdx
-        return new SubstitutionDef(
-            directive,
-            needle,
-            data,
-            {
-                startLineIdx,
-                endLineIdx,
-            },
-            directiveNodes,
-        )
     }
 }
