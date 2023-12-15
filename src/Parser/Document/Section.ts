@@ -14,12 +14,12 @@ export class Section extends RstNode {
         super(source, [textNode])
     }
 
-    override get label(): string {
-        return `${this.type}:h${this.level}`
-    }
-
     override get isPlainTextContent(): boolean {
         return this.children.length === 1
+    }
+
+    override toShortString(): string {
+        return `${super.toShortString()} level:${this.level}`
     }
 
     override toObject(): RstNodeObject {

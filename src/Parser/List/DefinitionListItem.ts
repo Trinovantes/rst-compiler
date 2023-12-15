@@ -31,7 +31,7 @@ export class DefinitionListItem extends RstNode {
         // Prints line numbers in 1-based counting for ease of reading
         const start = this.source.startLineIdx + 1
         const end = this.source.endLineIdx + 1
-        let str = selfTab + `[${this.label}] (${start}-${end})\n`
+        let str = selfTab + `[${this.toShortString()}] (${start}-${end})\n`
 
         str += selfTab + '  (Term)' + '\n'
         str += this.term.toString(depth + 2)

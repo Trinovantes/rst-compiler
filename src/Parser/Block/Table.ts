@@ -18,7 +18,7 @@ export class Table extends RstNode {
         // Prints line numbers in 1-based counting for ease of reading
         const start = this.source.startLineIdx + 1
         const end = this.source.endLineIdx + 1
-        let str = selfTab + `[${this.label}] (${start}-${end})\n`
+        let str = selfTab + `[${this.toShortString()}] (${start}-${end})\n`
 
         str += selfTab + `  (HeadRows len:${this.headRows.length})` + '\n'
         for (const row of this.headRows) {
@@ -66,8 +66,8 @@ export class TableCell extends RstNode {
         return this.children.length === 1 && this.children[0].isPlainTextContent
     }
 
-    protected override get label(): string {
-        return `${this.type} rowSpan:${this.rowSpan} colSpan:${this.colSpan} children:${this.children.length}`
+    override toShortString(): string {
+        return `${super.toShortString()} rowSpan:${this.rowSpan} colSpan:${this.colSpan}`
     }
 
     override toObject(): RstNodeObject {

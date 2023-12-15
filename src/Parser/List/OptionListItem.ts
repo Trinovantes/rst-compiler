@@ -24,7 +24,7 @@ export class OptionListItem extends RstNode {
         // Prints line numbers in 1-based counting for ease of reading
         const start = this.source.startLineIdx + 1
         const end = this.source.endLineIdx + 1
-        let str = selfTab + `[${this.label}] (${start}-${end})\n`
+        let str = selfTab + `[${this.toShortString()}] (${start}-${end})\n`
 
         str += selfTab + `  (Options len:${this.options.length})` + '\n'
         for (const option of this.options) {

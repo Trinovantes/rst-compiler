@@ -13,8 +13,8 @@ export class EnumeratedList extends RstNode {
         super(source, children)
     }
 
-    override get label(): string {
-        return `${this.type} "${this.listType}"`
+    override toShortString(): string {
+        return `${super.toShortString()} "${this.listType}"`
     }
 
     override toObject(): RstNodeObject {

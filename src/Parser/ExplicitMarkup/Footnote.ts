@@ -1,13 +1,13 @@
 import { RstNode, RstNodeObject, RstNodeSource, RstNodeType } from '../RstNode.js'
 
-export class BulletListItem extends RstNode {
-    type = RstNodeType.BulletListItem
+export class Footnote extends RstNode {
+    type = RstNodeType.FootNote
 
     constructor(
-        readonly bullet: string,
+        readonly label: string,
 
         source: RstNodeSource,
-        children: Array<RstNode> = [],
+        children: Array<RstNode>,
     ) {
         super(source, children)
     }
@@ -17,14 +17,14 @@ export class BulletListItem extends RstNode {
     }
 
     override toShortString(): string {
-        return `${super.toShortString()} "${this.bullet}"`
+        return `${super.toShortString()} label:"${this.label}"`
     }
 
     override toObject(): RstNodeObject {
         const root = super.toObject()
 
         root.meta = {
-            bullet: this.bullet,
+            label: this.label,
         }
 
         return root

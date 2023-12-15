@@ -22,6 +22,7 @@ import { LiteralBlock } from './Block/LiteralBlock.js'
 import { LineBlock } from './Block/LineBlock.js'
 import { DocktestBlock } from './Block/DoctestBlock.js'
 import { Table, TableRow, TableCell } from './Block/Table.js'
+import { Footnote } from './ExplicitMarkup/Footnote.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -85,6 +86,25 @@ export const gridTableHeadSepRe = /^([ ]*)(?:\+=*)+\+[ ]*$/
 
 export const simpleTableRe         = /^([ ]*)=+([ ]+[=]+)+$/
 export const simpleTableColSpanRe = /^([ ]*)-[ -]*$/
+
+export const footNoteRe = new RegExp(
+    '^' +
+    '(' +
+        '..' +
+        '[ ]+' +
+    ')' +
+    '\\[' +
+        '(' +
+            '[0-9]+' + // Any number
+            '|' +
+            '#\\w*' + // Auto number footnote with optional label
+            '|' +
+            '\\*' + // Auto symbol
+        ')' +
+    '\\]' +
+    '[ ]+' +
+    '(.+)$', // Any char to end of line
+)
 
 // ------------------------------------------------------------------------
 // Main Parser
@@ -225,6 +245,8 @@ export class RstParser {
                 this.parseDoctestBlock(indentSize) ??
                 this.parseGridTable(indentSize) ??
                 this.parseSimpleTable(indentSize) ??
+
+                this.parseFootnote(indentSize) ??
 
                 this.parseSection() ??
                 this.parseTransition() ??
@@ -1322,5 +1344,51 @@ export class RstParser {
 
         const endLineIdx = this._tokenIdx
         return new Table(headRows, bodyRows, { startLineIdx, endLineIdx })
+    }
+
+    private parseFootnote(indentSize: number): Footnote | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(footNoteRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        const label = firstLineMatches[2]
+        const bulletAndSpace = firstLineMatches[1]
+        const bodyIndentSize = indentSize + bulletAndSpace.length
+
+        // Need to extract first line with regex since it starts with bullet and space
+        // e.g. "-- [text]"
+        const firstLineText = firstLineMatches.at(-1) ?? ''
+
+        let footnoteText = firstLineText
+        while (this.peekIsContent() && this.peekIsIndented(bodyIndentSize)) {
+            const line = this.consume()
+            const lineText = line.str.substring(bodyIndentSize)
+            footnoteText += '\n' + lineText
+        }
+
+        const firstParagraph = new Paragraph(footnoteText.trim(), { startLineIdx, endLineIdx: this._tokenIdx })
+        const footnoteBodyNotes = this.parseBodyElements(bodyIndentSize, RstNodeType.FootNote)
+
+        const endLineIdx = this._tokenIdx
+        return new Footnote(
+            label,
+            {
+                startLineIdx,
+                endLineIdx,
+            }, [
+                firstParagraph,
+                ...footnoteBodyNotes,
+            ],
+        )
     }
 }
