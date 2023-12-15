@@ -7,6 +7,7 @@ export class Section extends RstNode {
     constructor(
         readonly level: number,
         readonly origText: string,
+
         source: RstNodeSource,
     ) {
         // TODO parse inline elements

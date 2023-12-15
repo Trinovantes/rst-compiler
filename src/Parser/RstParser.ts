@@ -25,6 +25,7 @@ import { Table, TableRow, TableCell } from './Block/Table.js'
 import { Footnote } from './ExplicitMarkup/Footnote.js'
 import { Citation } from './ExplicitMarkup/Citation.js'
 import { HyperlinkTarget } from './ExplicitMarkup/HyperlinkTarget.js'
+import { Comment } from './ExplicitMarkup/Comment.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -76,8 +77,6 @@ export const optionListItemRe = new RegExp(
     '.+$', // Any char to end of line
 )
 
-export const emptyCommentRe = /^\.\.\s*$/
-
 export const quotedLiteralBlockRe   = /^([ ]*)>+(?: .+)?$/
 export const lineBlockRe            = /^([ ]*)\| (.+)$/
 export const blockquoteAttributonRe = /^([ ]*)(---?[ ]+)(.+)$/
@@ -128,6 +127,9 @@ export const hyperlinkTargetRe = new RegExp(
 
 export const anonymousHyperlinkTargetRe = /^__ (.+)$/
 
+export const commentRe      = /^( *\.\. *)(.*)$/
+export const emptyCommentRe = /^\.\.$/
+
 // ------------------------------------------------------------------------
 // Main Parser
 // ------------------------------------------------------------------------
@@ -169,8 +171,8 @@ export class RstParser {
         return this._tokens[idx]
     }
 
-    private peekIsNewLine(): boolean {
-        const nextToken = this.peek()
+    private peekIsNewLine(offset = 0): boolean {
+        const nextToken = this.peek(offset)
         if (!nextToken) {
             return false
         }
@@ -236,7 +238,7 @@ export class RstParser {
             }
 
             // Exit if we are inside a construct and encounted an empty comment
-            if (parentType !== RstNodeType.Document && this.peekTest(emptyCommentRe)) {
+            if (parentType !== RstNodeType.Document && this.peekTest(emptyCommentRe) && this.peekIsNewLine(1)) {
                 this.consume() // Consume the empty comment
                 break
             }
@@ -254,6 +256,12 @@ export class RstParser {
             // Try and parse next line
             // If a function is not applicable, it returns null and we continue down the chain until we reach Paragraph as fallback
             const nextNode =
+                this.parseFootnote(indentSize) ??
+                this.parseCitation(indentSize) ??
+                this.parseHyperlinkTarget(indentSize) ??
+                this.parseAnonymousHyperlinkTarget(indentSize) ??
+                this.parseComment(indentSize) ??
+
                 this.parseBulletList(indentSize) ??
                 this.parseEnumeratedList(indentSize) ??
                 this.parseFieldList(indentSize) ??
@@ -267,11 +275,6 @@ export class RstParser {
                 this.parseDoctestBlock(indentSize) ??
                 this.parseGridTable(indentSize) ??
                 this.parseSimpleTable(indentSize) ??
-
-                this.parseFootnote(indentSize) ??
-                this.parseCitation(indentSize) ??
-                this.parseHyperlinkTarget(indentSize) ??
-                this.parseAnonymousHyperlinkTarget(indentSize) ??
 
                 this.parseSection() ??
                 this.parseTransition() ??
@@ -1534,5 +1537,63 @@ export class RstParser {
                 endLineIdx,
             },
         )
+    }
+
+    private parseComment(indentSize: number): Comment | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(commentRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        // Need to extract first line with regex since it starts with bullet and space
+        // e.g. ".. {text}"
+        const firstLineText = firstLineMatches.at(-1) ?? ''
+
+        // Comment can either be:
+        // - Single line (comment text on same line as ..)
+        // - Multi line (comment text must start after standalone ..)
+        if (firstLineText) {
+            const endLineIdx = this._tokenIdx
+            return new Comment(
+                firstLineText,
+                {
+                    startLineIdx,
+                    endLineIdx,
+                },
+            )
+        } else {
+            const commentLines = new Array<string>()
+            let commonIndentSize = Number.MAX_SAFE_INTEGER
+
+            while (this.peekIsContent()) {
+                const lineIndentSize = this.peekIndentSize()
+                const line = this.consume()
+                const lineText = line.str
+
+                commonIndentSize = Math.min(commonIndentSize, lineIndentSize)
+                commentLines.push(lineText)
+            }
+
+            // Trim all lines by common indent
+            const commentText = commentLines.map((line) => line.substring(commonIndentSize)).join('\n')
+
+            const endLineIdx = this._tokenIdx
+            return new Comment(
+                commentText,
+                {
+                    startLineIdx,
+                    endLineIdx,
+                },
+            )
+        }
     }
 }
