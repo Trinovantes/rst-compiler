@@ -126,6 +126,8 @@ export const hyperlinkTargetRe = new RegExp(
     '(.*)$', // Any char to end of line
 )
 
+export const anonymousHyperlinkTargetRe = /^__ (.+)$/
+
 // ------------------------------------------------------------------------
 // Main Parser
 // ------------------------------------------------------------------------
@@ -269,6 +271,7 @@ export class RstParser {
                 this.parseFootnote(indentSize) ??
                 this.parseCitation(indentSize) ??
                 this.parseHyperlinkTarget(indentSize) ??
+                this.parseAnonymousHyperlinkTarget(indentSize) ??
 
                 this.parseSection() ??
                 this.parseTransition() ??
@@ -1496,6 +1499,36 @@ export class RstParser {
         return new HyperlinkTarget(
             label,
             linkText,
+            {
+                startLineIdx,
+                endLineIdx,
+            },
+        )
+    }
+
+    private parseAnonymousHyperlinkTarget(indentSize: number): HyperlinkTarget | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(anonymousHyperlinkTargetRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        // Need to extract first line with regex since it starts with bullet and space
+        // e.g. "__ {text}"
+        const firstLineText = firstLineMatches.at(-1) ?? ''
+
+        const endLineIdx = this._tokenIdx
+        return new HyperlinkTarget(
+            '_',
+            firstLineText,
             {
                 startLineIdx,
                 endLineIdx,

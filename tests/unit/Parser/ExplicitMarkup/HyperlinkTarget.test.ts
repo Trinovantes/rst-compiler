@@ -34,6 +34,22 @@ test('anonymous hyperlink target', () => {
     ])
 })
 
+test('anonymous hyperlink target (short form)', () => {
+    const input = `
+        __ link
+    `
+
+    expectDocument(input, [
+        {
+            type: RstNodeType.HyperLinkTarget,
+            meta: {
+                isAnonymous: true,
+                link: 'link',
+            },
+        },
+    ])
+})
+
 test('external hyperlink target', () => {
     const input = `
         .. _label: https://google.ca
