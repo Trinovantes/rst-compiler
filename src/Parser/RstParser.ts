@@ -23,6 +23,7 @@ import { LineBlock } from './Block/LineBlock.js'
 import { DocktestBlock } from './Block/DoctestBlock.js'
 import { Table, TableRow, TableCell } from './Block/Table.js'
 import { Footnote } from './ExplicitMarkup/Footnote.js'
+import { Citation } from './ExplicitMarkup/Citation.js'
 
 // ------------------------------------------------------------------------
 // Regular expressions used for parsing lines (excluding \n)
@@ -87,7 +88,7 @@ export const gridTableHeadSepRe = /^([ ]*)(?:\+=*)+\+[ ]*$/
 export const simpleTableRe         = /^([ ]*)=+([ ]+[=]+)+$/
 export const simpleTableColSpanRe = /^([ ]*)-[ -]*$/
 
-export const footNoteRe = new RegExp(
+export const footnoteRe = new RegExp(
     '^' +
     '(' +
         '..' +
@@ -105,6 +106,8 @@ export const footNoteRe = new RegExp(
     '[ ]+' +
     '(.+)$', // Any char to end of line
 )
+
+export const citationRe = /^(.. +)\[([\w-.]+)\] +(.+)$/
 
 // ------------------------------------------------------------------------
 // Main Parser
@@ -247,6 +250,7 @@ export class RstParser {
                 this.parseSimpleTable(indentSize) ??
 
                 this.parseFootnote(indentSize) ??
+                this.parseCitation(indentSize) ??
 
                 this.parseSection() ??
                 this.parseTransition() ??
@@ -1353,7 +1357,7 @@ export class RstParser {
             return null
         }
 
-        const firstLineMatches = this.peekTest(footNoteRe)
+        const firstLineMatches = this.peekTest(footnoteRe)
         if (!firstLineMatches) {
             return null
         }
@@ -1377,7 +1381,7 @@ export class RstParser {
         }
 
         const firstParagraph = new Paragraph(footnoteText.trim(), { startLineIdx, endLineIdx: this._tokenIdx })
-        const footnoteBodyNotes = this.parseBodyElements(bodyIndentSize, RstNodeType.FootNote)
+        const footnoteBodyNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.FootNote)
 
         const endLineIdx = this._tokenIdx
         return new Footnote(
@@ -1387,7 +1391,53 @@ export class RstParser {
                 endLineIdx,
             }, [
                 firstParagraph,
-                ...footnoteBodyNotes,
+                ...footnoteBodyNodes,
+            ],
+        )
+    }
+
+    private parseCitation(indentSize: number): Footnote | null {
+        const startLineIdx = this._tokenIdx
+
+        if (!this.peekIsIndented(indentSize)) {
+            return null
+        }
+
+        const firstLineMatches = this.peekTest(citationRe)
+        if (!firstLineMatches) {
+            return null
+        }
+
+        // Consume first line that we've already peeked at and tested
+        this.consume()
+
+        const label = firstLineMatches[2]
+        const bulletAndSpace = firstLineMatches[1]
+        const bodyIndentSize = indentSize + bulletAndSpace.length
+
+        // Need to extract first line with regex since it starts with bullet and space
+        // e.g. "-- [text]"
+        const firstLineText = firstLineMatches.at(-1) ?? ''
+
+        let citationText = firstLineText
+        while (this.peekIsContent() && this.peekIsIndented(bodyIndentSize)) {
+            const line = this.consume()
+            const lineText = line.str.substring(bodyIndentSize)
+            citationText += '\n' + lineText
+        }
+
+        const firstParagraph = new Paragraph(citationText.trim(), { startLineIdx, endLineIdx: this._tokenIdx })
+        const citationBodyNodes = this.parseBodyElements(bodyIndentSize, RstNodeType.FootNote)
+
+        const endLineIdx = this._tokenIdx
+        return new Citation(
+            label,
+            {
+                startLineIdx,
+                endLineIdx,
+            }, [
+                firstParagraph,
+                ...citationBodyNodes,
             ],
         )
     }
