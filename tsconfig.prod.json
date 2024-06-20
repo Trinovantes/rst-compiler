@@ -4,6 +4,7 @@
         "node_modules",
         "dist",
         "tests",
+        "example",
         "vite.config.ts",
     ],
 }

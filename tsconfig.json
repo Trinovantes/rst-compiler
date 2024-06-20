@@ -1,4 +1,11 @@
 {
+    "ts-node": {
+        "transpileOnly": true,
+        "compilerOptions": {
+            "module": "CommonJS",
+            "moduleResolution": "Node10",
+        },
+    },
     "compilerOptions": {
         "strict": true,
         "sourceMap": true,
