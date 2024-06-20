@@ -6,11 +6,17 @@ import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import stylistic from '@stylistic/eslint-plugin'
 import nodePlugin from 'eslint-plugin-n'
+import vueParser from 'vue-eslint-parser'
+import { readFileSync } from 'node:fs'
+
+const inlineElementsJson = readFileSync('node_modules/eslint-plugin-vue/lib/utils/inline-non-void-elements.json').toString('utf-8')
+const inlineElements = JSON.parse(inlineElementsJson)
 
 export default tseslint.config(
     {
         ignores: [
             'dist/*',
+            '**/raw/**',
         ],
     },
     {
@@ -98,19 +104,22 @@ export default tseslint.config(
 
     ...tseslint.configs.recommendedTypeChecked.map((config) => ({
         ...config,
-        files: ['**/*.ts'],
+        files: ['**/*.ts', '**/*.vue'],
     })),
 
     {
-        files: ['**/*.ts'],
+        files: ['**/*.ts', '**/*.vue'],
 
         languageOptions: {
+            parser: vueParser,
             parserOptions: {
                 extraFileExtensions: ['.vue'],
                 parser: '@typescript-eslint/parser',
                 project: './tsconfig.json',
                 ecmaVersion: 'latest',
                 sourceType: 'module',
+                allowAutomaticSingleRunInference: false,
+                disallowAutomaticSingleRunInference: true,
             },
         },
 
@@ -178,6 +187,8 @@ export default tseslint.config(
             ],
             '@typescript-eslint/no-unused-vars': ['error', {
                 argsIgnorePattern: '^_',
+                caughtErrorsIgnorePattern: '^_',
+                destructuredArrayIgnorePattern: '^_',
             }],
             '@typescript-eslint/require-array-sort-compare': ['error', {
                 ignoreStringArrays: true,
@@ -216,7 +227,7 @@ export default tseslint.config(
                 order: ['script', 'template', 'style'],
             }],
             'vue/singleline-html-element-content-newline': ['error', {
-                ignores: ['ExternalLink', 'router-link', 'pre'],
+                ignores: ['ExternalLink', 'router-link', 'pre', ...inlineElements],
             }],
         },
     },
