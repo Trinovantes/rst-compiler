@@ -9,8 +9,8 @@
 const loadStorage = (groupKey) => {
     try {
         return window.localStorage.getItem(`LOCAL_STORAGE_KEY:${groupKey}`)
-    } catch (err) {
-        console.warn(err)
+    // eslint-disable-next-line no-unused-vars
+    } catch (_err) {
         return null
     }
 }
@@ -24,8 +24,8 @@ const saveStorage = (groupKey, value) => {
     try {
         window.localStorage.setItem(`LOCAL_STORAGE_KEY:${groupKey}`, value)
         return value
-    } catch (err) {
-        console.warn(err)
+    // eslint-disable-next-line no-unused-vars
+    } catch (_err) {
         return null
     }
 }
