@@ -157,8 +157,11 @@ export class RstCompiler {
         }
     }
 
-    compile(input: string, parserOptions?: Partial<RstParserOptions>, generatorOptions?: Partial<RstGeneratorOptions>): RstGeneratorOutput {
-        const parserOutput = this.parse(input, parserOptions)
+    compile(input: string | RstParserOutput, parserOptions?: Partial<RstParserOptions>, generatorOptions?: Partial<RstGeneratorOptions>): RstGeneratorOutput {
+        const parserOutput = typeof input === 'string'
+            ? this.parse(input, parserOptions)
+            : input
+
         const basePath = '/'
         const docPath = 'index'
         const generatorInput: RstGeneratorInput = {
