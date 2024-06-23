@@ -1,0 +1,28 @@
+diff --git a/node_modules/quasar/.package.json.swp b/node_modules/quasar/.package.json.swp
+new file mode 100644
+index 0000000..6ad7cb2
+Binary files /dev/null and b/node_modules/quasar/.package.json.swp differ
+diff --git a/node_modules/quasar/package.json b/node_modules/quasar/package.json
+index 72815fa..131bc67 100644
+--- a/node_modules/quasar/package.json
++++ b/node_modules/quasar/package.json
+@@ -2,11 +2,6 @@
+   "name": "quasar",
+   "version": "2.16.4",
+   "description": "Build high-performance VueJS user interfaces (SPA, PWA, SSR, Mobile and Desktop) in record time",
+-  "type": "module",
+-  "module": "dist/quasar.client.js",
+-  "unpkg": "dist/quasar.umd.prod.js",
+-  "jsdelivr": "dist/quasar.umd.prod.js",
+-  "typings": "dist/types/index.d.ts",
+   "files": [
+     "dist",
+     "lang",
+@@ -14,6 +9,7 @@
+     "src",
+     "wrappers"
+   ],
++  "type": "commonjs",
+   "exports": {
+     ".": {
+       "types": "./dist/types/index.d.ts",

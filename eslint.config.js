@@ -15,7 +15,7 @@ const inlineElements = JSON.parse(inlineElementsJson)
 export default tseslint.config(
     {
         ignores: [
-            'dist/*',
+            '**/dist*/*',
             '**/raw/**',
         ],
     },

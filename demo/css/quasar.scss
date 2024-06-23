@@ -1,0 +1,105 @@
+@use "sass:math";
+
+@import '@quasar/extras/roboto-font/roboto-font.css';
+@import '@quasar/extras/material-icons/material-icons.css';
+@import 'quasar/src/css/index.sass';
+
+body.mobile{
+    .q-focus-helper{
+        display: none;
+    }
+}
+
+$btn-padding: 10px;
+
+.q-btn:not(.q-btn--round):not(.q-btn-dropdown__arrow-container){
+    padding: $btn-padding ($btn-padding * 2);
+
+    .q-btn__content{
+        display: flex;
+        gap: $btn-padding;
+        align-content: center;
+
+        i.q-icon{
+            margin: 0;
+        }
+    }
+
+    &.small{
+        padding: math.div($btn-padding, 2) $btn-padding;
+
+        .q-btn__content{
+            gap: math.div($btn-padding, 2);
+        }
+    }
+}
+
+.q-btn.q-btn-dropdown__arrow-container{
+    padding: $btn-padding;
+}
+
+.q-date{
+    .q-date__calendar {
+        .q-btn{
+            padding: 0;
+        }
+    }
+}
+
+.q-field__before{
+    flex: 0;
+    display: flex;
+    gap: math.div($padding, 2);
+    padding-right: $padding;
+}
+
+.q-field__after{
+    flex: 0;
+    display: flex;
+    gap: math.div($padding, 2);
+    padding-left: $padding;
+}
+
+.q-pagination{
+    justify-content: center;
+
+    .q-btn{
+        font-size: 1.5rem;
+        margin: 0;
+
+        width: $padding * 4;
+        height: $padding * 4;
+    }
+}
+
+.q-tabs{
+    .q-tabs__content{
+        font-size: 1.5rem;
+
+        .q-tab{
+            flex: 1;
+            padding: 0;
+
+            .q-tab__content{
+                padding: 0;
+            }
+
+            .q-tab__label{
+                font-weight: bold;
+                padding: $btn-padding ($btn-padding * 2);
+            }
+        }
+    }
+}
+
+.q-table{
+    th,
+    td{
+        vertical-align: middle;
+        padding: $btn-padding ($btn-padding * 2);
+    }
+
+    th{
+        font-weight: bold;
+    }
+}
