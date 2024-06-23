@@ -62,6 +62,11 @@ export class RstCompiler {
         this._outputErrors.push(text)
     }
 
+    clearNotifications() {
+        this._outputWarnings.length = 0
+        this._outputErrors.length = 0
+    }
+
     get outputWarnings(): ReadonlyArray<string> {
         return this._outputWarnings
     }
@@ -85,6 +90,8 @@ export class RstCompiler {
     }
 
     parse(input: string, parserOptions?: Partial<RstParserOptions>): RstParserOutput {
+        this.clearNotifications()
+
         const opts = createDefaultParserOptions(parserOptions)
         for (const plugin of this.plugins) {
             plugin.onBeforeParse?.(opts)
@@ -107,6 +114,8 @@ export class RstCompiler {
     }
 
     parseJson(rootJson: RstNodeJson, parserOptions?: Partial<RstParserOptions>): RstParserOutput {
+        this.clearNotifications()
+
         const opts = createDefaultParserOptions(parserOptions)
         for (const plugin of this.plugins) {
             plugin.onBeforeParse?.(opts)
@@ -128,6 +137,8 @@ export class RstCompiler {
     }
 
     generate(generatorInput: RstGeneratorInput, generatorOptions?: Partial<RstGeneratorOptions>): RstGeneratorOutput {
+        this.clearNotifications()
+
         const opts = createDefaultGeneratorOptions(generatorOptions)
         for (const plugin of this.plugins) {
             plugin.onBeforeGenerate?.(opts)
