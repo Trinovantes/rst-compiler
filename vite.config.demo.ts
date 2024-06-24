@@ -6,7 +6,7 @@ import { commonConfig } from './vite.config.js'
 
 export default mergeConfig(commonConfig, defineConfig({
     root: path.resolve(__dirname, './demo'),
-    base: 'rst-compiler',
+    base: '/rst-compiler/',
 
     server: {
         port: 8080,
