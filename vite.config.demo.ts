@@ -9,6 +9,10 @@ export default mergeConfig(commonConfig, defineConfig({
     root: path.resolve(__dirname, './demo'),
     base: '/rst-compiler/',
 
+    build: {
+        sourcemap: true,
+    },
+
     server: {
         port: 8080,
     },
