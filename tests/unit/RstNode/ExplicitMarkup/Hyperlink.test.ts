@@ -732,6 +732,71 @@ describe('HyperlinkRef', () => {
         ])
     })
 
+    describe('when there are more HyperlinkRefs than HyperlinkTargets but sufficient anonymous Target/Ref matches, it resolves without error', () => {
+        const input = `
+            https://google.ca
+
+            See more on GitHub__
+
+            __ https://trinovantes.github.io/rst-compiler/
+        `
+
+        testParser(input, [
+            {
+                type: RstNodeType.Paragraph,
+                children: [
+                    {
+                        type: RstNodeType.HyperlinkRef,
+                        text: 'https://google.ca',
+                    },
+                ],
+            },
+            {
+                type: RstNodeType.Paragraph,
+                children: [
+                    {
+                        type: RstNodeType.Text,
+                        text: 'See more on ',
+                    },
+                    {
+                        type: RstNodeType.HyperlinkRef,
+                        text: 'GitHub',
+                        data: {
+                            isAnonymous: true,
+                            isAlias: true,
+                        },
+                    },
+                ],
+            },
+            {
+                type: RstNodeType.HyperlinkTarget,
+                data: {
+                    isAnonymous: true,
+                    label: '_',
+                    target: 'https://trinovantes.github.io/rst-compiler/',
+                },
+            },
+        ])
+
+        testGenerator(input, `
+            <p>
+                <a href="https://google.ca">https://google.ca</a>
+            </p>
+
+            <p>
+                See more on <a href="https://trinovantes.github.io/rst-compiler/">GitHub</a>
+            </p>
+
+            <!-- HyperlinkTarget id:6 children:0 label:"_" target:"https://trinovantes.github.io/rst-compiler/" isAnonymous:true resolvedUrl:"https://trinovantes.github.io/rst-compiler/" -->
+        `, `
+            [https://google.ca](https://google.ca)
+
+            See more on [GitHub](https://trinovantes.github.io/rst-compiler/)
+
+            [HyperlinkTarget id:6 children:0 label:"_" target:"https://trinovantes.github.io/rst-compiler/" isAnonymous:true resolvedUrl:"https://trinovantes.github.io/rst-compiler/"]: #
+        `)
+    })
+
     test('when HyperlinkRef with embeded target reference an embeded link in another HyperlinkRef, they should both resolve to same url', () => {
         const label = 'Python home page'
         const url = 'https://www.python.org'

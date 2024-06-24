@@ -421,7 +421,6 @@ export class SimpleNameResolver {
 
     private registerHyperlinks() {
         const hyperlinkTargets = this._root.findAllChildren(RstNodeType.HyperlinkTarget)
-        const hyperlinkTargetsAnonymous = hyperlinkTargets.filter((target) => target.isAnonymous)
         const inlineInternalTargets = this._root.findAllChildren(RstNodeType.InlineInternalTarget)
         const hyperlinkRefs = this._root.findAllChildren(RstNodeType.HyperlinkRef)
 
@@ -455,32 +454,6 @@ export class SimpleNameResolver {
             }
         }
 
-        const resolveInlineInternalTarget = (inlineInternalTarget: RstInlineInternalTarget): DocumentTarget | null => {
-            return {
-                target: `#${this.getSimpleName(inlineInternalTarget)}`,
-                isAlias: false,
-                targetNode: inlineInternalTarget,
-            }
-        }
-
-        const resolveHyperlinkRef = (hyperlinkRef: RstHyperlinkRef): DocumentTarget | null => {
-            // Anonymous HyperlinkRefs without embeded url e.g. `example`__ can only reference anonymous HyperlinkTargets
-            if (hyperlinkRef.isAnonymous && !hyperlinkRef.isEmbeded) {
-                const idx = hyperlinkRef.nthOfType - 1
-                if (idx < 0 || idx >= hyperlinkTargetsAnonymous.length) {
-                    return null
-                }
-
-                const hyperlinkTarget = hyperlinkTargetsAnonymous[idx]
-                return resolveHyperlinkTarget(hyperlinkTarget)
-            }
-
-            return {
-                target: hyperlinkRef.target,
-                isAlias: hyperlinkRef.isAlias,
-            }
-        }
-
         const registerHyperlinkTargets = () => {
             for (const hyperlinkTarget of hyperlinkTargets) {
                 const target = resolveHyperlinkTarget(hyperlinkTarget)
@@ -497,10 +470,10 @@ export class SimpleNameResolver {
 
         const registerInlineInternalTargets = () => {
             for (const inlineTarget of inlineInternalTargets) {
-                const target = resolveInlineInternalTarget(inlineTarget)
-                if (!target) {
-                    this._compiler.notifyWarning(`Failed to resolve [${inlineTarget.toShortString()}]`)
-                    continue
+                const target: DocumentTarget = {
+                    target: `#${this.getSimpleName(inlineTarget)}`,
+                    isAlias: false,
+                    targetNode: inlineTarget,
                 }
 
                 const simpleName = this.getSimpleName(inlineTarget)
@@ -510,6 +483,28 @@ export class SimpleNameResolver {
         }
 
         const registerHyperlinkRefs = () => {
+            let anonymousRefIdx = 0
+            const anonymousTargets = hyperlinkTargets.filter((target) => target.isAnonymous)
+            const resolveHyperlinkRef = (hyperlinkRef: RstHyperlinkRef): DocumentTarget | null => {
+                // Anonymous HyperlinkRefs without embeded url e.g. `example`__ can only reference anonymous HyperlinkTargets
+                // Anonymous HyperlinkRefs with embeded e.g. `example <url>`__ directly reference its target and we don't need any special treatment
+                if (!hyperlinkRef.isAnonymous || hyperlinkRef.isEmbeded) {
+                    return {
+                        target: hyperlinkRef.target,
+                        isAlias: hyperlinkRef.isAlias,
+                    }
+                }
+
+                const currRefIdx = anonymousRefIdx
+                const hyperlinkTarget = anonymousTargets.at(currRefIdx)
+                if (!hyperlinkTarget) {
+                    return null
+                }
+
+                anonymousRefIdx += 1
+                return resolveHyperlinkTarget(hyperlinkTarget)
+            }
+
             for (const hyperlinkRef of hyperlinkRefs) {
                 const target = resolveHyperlinkRef(hyperlinkRef)
                 if (!target) {
