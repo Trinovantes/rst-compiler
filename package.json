@@ -28,10 +28,11 @@
         "url": "https://www.stephenli.ca"
     },
     "scripts": {
+        "clean": "rm -rf ./dist ./demo/dist",
         "demoDev": "    vite         --config vite.config.demo.ts",
         "demoBuild": "  vite build   --config vite.config.demo.ts",
         "demoPreview": "vite preview --config vite.config.demo.ts",
-        "build": "rm -rf ./dist && vite build",
+        "build": "yarn clean && vite build",
         "prepublishOnly": "yarn build",
         "postinstall": "patch-package",
         "lint": "vue-tsc --noEmit && eslint",
