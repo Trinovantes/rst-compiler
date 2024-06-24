@@ -18,6 +18,7 @@
         "dist/*",
         "src/*"
     ],
+    "homepage": "https://trinovantes.github.io/rst-compiler/",
     "repository": {
         "type": "git",
         "url": "https://github.com/Trinovantes/rst-compiler"
