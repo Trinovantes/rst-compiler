@@ -77,6 +77,7 @@ const copyPermalink = () => {
             >
                 <img
                     class="icon"
+                    alt="NPM"
                     :src="npmIconPath"
                 >
             </q-btn>
@@ -89,6 +90,7 @@ const copyPermalink = () => {
             >
                 <img
                     class="icon"
+                    alt="GitHub"
                     :src="githubIconPath"
                 >
             </q-btn>
