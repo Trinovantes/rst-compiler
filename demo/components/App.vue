@@ -1,13 +1,24 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import CodeEditor from './CodeEditor.vue'
-import CodePreview from './CodePreview.vue'
+import { defineAsyncComponent, ref } from 'vue'
 import { useAppEvent } from './useAppEvent.js'
 import { getDefaultText } from './getDefaultText.js'
 import githubIconPath from '../img/github.svg'
 import npmIconPath from '../img/npm.svg'
 import { compressToBase64 } from 'lz-string'
 import { useQuasar } from 'quasar'
+import LoadingSpinner from './LoadingSpinner.vue'
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const CodeEditor = defineAsyncComponent({
+    loader: () => import('./CodeEditor.vue'),
+    loadingComponent: LoadingSpinner,
+})
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const CodePreview = defineAsyncComponent({
+    loader: () => import('./CodePreview.vue'),
+    loadingComponent: LoadingSpinner,
+})
 
 const appEvent = useAppEvent()
 const resetText = () => {
