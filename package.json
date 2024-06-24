@@ -50,6 +50,7 @@
         "shiki": "^1.5.2"
     },
     "devDependencies": {
+        "@eslint/compat": "^1.1.0",
         "@eslint/js": "^9.4.0",
         "@quasar/extras": "^1.16.11",
         "@quasar/vite-plugin": "^1.7.0",
