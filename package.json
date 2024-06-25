@@ -35,7 +35,7 @@
         "clean": "rm -rf ./dist ./demo/dist",
         "build": "yarn clean && vite build",
         "prepublishOnly": "yarn build",
-        "postinstall": "patch-package",
+        "prepare": "patch-package",
         "lint": "vue-tsc --noEmit && eslint",
         "test": "vitest",
         "playPy": "python3 ./tests/playground/run.py",
@@ -45,10 +45,7 @@
         "cloc": "cloc --vcs=git"
     },
     "dependencies": {
-        "date-fns": "^3.6.0",
         "katex": "^0.16.10",
-        "lodash.merge": "^4.6.2",
-        "patch-package": "^8.0.0",
         "shiki": "^1.5.2"
     },
     "devDependencies": {
@@ -64,14 +61,17 @@
         "@types/lodash.merge": "^4.6.9",
         "@types/node": "^20.7.0",
         "@vitejs/plugin-vue": "^5.0.5",
+        "date-fns": "^3.6.0",
         "eslint": "^9.4.0",
         "eslint-plugin-n": "^17.7.0",
         "eslint-plugin-vue": "^9.9.0",
         "globals": "^15.3.0",
         "lodash.debounce": "^4.0.8",
+        "lodash.merge": "^4.6.2",
         "lz-string": "^1.5.0",
         "mitt": "^3.0.1",
         "monaco-editor": "^0.50.0",
+        "patch-package": "^8.0.0",
         "quasar": "^2.16.4",
         "sass": "^1.77.6",
         "typescript": "^5.4.5",

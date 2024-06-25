@@ -33,6 +33,10 @@ export default mergeConfig(commonConfig, defineConfig({
             name: 'RstCompiler',
             fileName: 'index',
         },
+
+        rollupOptions: {
+            external: ['katex', 'shiki'],
+        },
     },
 
     plugins: [
