@@ -24,8 +24,8 @@ export class RstComment extends RstNode {
         super(registrar, source)
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstCommentData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstCommentData>
 
         root.data = {
             rawText: this._rawText,

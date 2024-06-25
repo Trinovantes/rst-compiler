@@ -25,8 +25,8 @@ export class RstDoctestBlock extends RstNode {
         super(registrar, source)
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstDoctestBlockData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstDoctestBlockData>
 
         root.data = {
             rawText: this._rawText,

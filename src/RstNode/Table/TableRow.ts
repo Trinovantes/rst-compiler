@@ -34,8 +34,8 @@ export class RstTableRow extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstTableRowData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstTableRowData>
 
         root.data = {
             isHeadRow: this.isHeadRow,

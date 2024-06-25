@@ -36,8 +36,8 @@ export class RstSection extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstSectionData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstSectionData>
 
         root.data = {
             level: this.level,

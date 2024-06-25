@@ -66,12 +66,12 @@ export abstract class RstNode {
         return root
     }
 
-    toJson(): RstNodeJson {
+    toJSON(): RstNodeJson {
         return {
             type: this.nodeType,
             data: {},
             source: this.source,
-            children: this.children.map((child) => child.toJson()),
+            children: this.children.map((child) => child.toJSON()),
         }
     }
 

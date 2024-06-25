@@ -28,8 +28,8 @@ export class RstText extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstTextData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstTextData>
 
         root.data = {
             rawText: this.rawText,

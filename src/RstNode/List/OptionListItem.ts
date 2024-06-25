@@ -38,8 +38,8 @@ export class RstOptionListItem extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<OptionListItemData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<OptionListItemData>
 
         root.data = {
             options: this.options,

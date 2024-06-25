@@ -266,9 +266,9 @@ Oh yes, the _\`Norwegian Blue\`.  What's, um, what's wrong with it?
 See https://www.python.org.
 `
 
-describe('toJson', () => {
+describe('toJSON', () => {
     const { root } = parseTestInput(input)
-    const rootClone = new RstNodeRegistrar().reviveRstNodeFromJson(root.toJson())
+    const rootClone = new RstNodeRegistrar().reviveRstNodeFromJson(root.toJSON())
 
     test('node can be converted to json and revived into equivalent node', () => {
         expect(rootClone.toObject()).toStrictEqual(root.toObject())

@@ -23,11 +23,11 @@ export class RstDocument extends RstNode {
         super(registrar, source, children)
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstDocumentData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstDocumentData>
 
         root.data = {
-            docMeta: this.docMeta?.toJson() ?? null,
+            docMeta: this.docMeta?.toJSON() ?? null,
         }
 
         return root

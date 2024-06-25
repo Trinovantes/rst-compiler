@@ -35,8 +35,8 @@ export class RstCitationDef extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstCitationDefData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstCitationDefData>
 
         root.data = {
             rawLabel: this._rawLabel,

@@ -35,8 +35,8 @@ export class RstBulletListItem extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstBulletListItemData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstBulletListItemData>
 
         root.data = {
             bullet: this.bullet,

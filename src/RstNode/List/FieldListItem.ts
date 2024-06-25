@@ -36,12 +36,12 @@ export class RstFieldListItem extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstFieldListItemData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstFieldListItemData>
 
         root.data = {
-            name: this.name.map((node) => node.toJson()),
-            body: this.body.map((node) => node.toJson()),
+            name: this.name.map((node) => node.toJSON()),
+            body: this.body.map((node) => node.toJSON()),
         }
 
         return root

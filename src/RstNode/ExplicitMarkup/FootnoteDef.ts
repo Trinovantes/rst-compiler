@@ -43,8 +43,8 @@ export class RstFootnoteDef extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstFootnoteDefData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstFootnoteDefData>
 
         root.data = {
             rawLabel: this._rawLabel,

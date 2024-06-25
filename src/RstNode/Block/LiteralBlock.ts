@@ -26,8 +26,8 @@ export class RstLiteralBlock extends RstNode {
         super(registrar, source)
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstLiteralBlockData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstLiteralBlockData>
 
         root.data = {
             rawText: this._rawText,

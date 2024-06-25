@@ -36,12 +36,12 @@ export class RstTable extends RstNode {
         this.isComplexTable = !hasHeaderRow || hasSpanningCells || hasNonParagraphCellContent
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstTableData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstTableData>
 
         root.data = {
-            headRows: this.headRows.map((child) => child.toJson()),
-            bodyRows: this.bodyRows.map((child) => child.toJson()),
+            headRows: this.headRows.map((child) => child.toJSON()),
+            bodyRows: this.bodyRows.map((child) => child.toJSON()),
         }
 
         return root

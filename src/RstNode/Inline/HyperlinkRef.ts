@@ -64,8 +64,8 @@ export class RstHyperlinkRef extends RstText {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstHyperlinkRefData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstHyperlinkRefData>
 
         root.data = {
             rawText: this.rawText,

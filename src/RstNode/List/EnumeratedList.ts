@@ -39,8 +39,8 @@ export class RstEnumeratedList extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstEnumeratedListData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstEnumeratedListData>
 
         root.data = {
             listType: this.listType,

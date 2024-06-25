@@ -37,13 +37,13 @@ export class RstDefinitionListItem extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstDefinitionListItemData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstDefinitionListItemData>
 
         root.data = {
-            term: this.term.map((node) => node.toJson()),
-            classifiers: this.classifiers.map((classifier) => classifier.map((node) => node.toJson())),
-            definition: this.definition.map((bodyNode) => bodyNode.toJson()),
+            term: this.term.map((node) => node.toJSON()),
+            classifiers: this.classifiers.map((classifier) => classifier.map((node) => node.toJSON())),
+            definition: this.definition.map((bodyNode) => bodyNode.toJSON()),
         }
 
         return root

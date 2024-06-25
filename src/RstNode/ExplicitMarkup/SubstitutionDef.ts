@@ -48,14 +48,14 @@ export class RstSubstitutionDef extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstSubstitutionDefData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstSubstitutionDefData>
 
         root.data = {
             rawNeedle: this._rawNeedle,
             rawDirective: this._rawDirective,
-            initContent: this.initContent.map((node) => node.toJson()),
-            config: this.config?.toJson() ?? null,
+            initContent: this.initContent.map((node) => node.toJSON()),
+            config: this.config?.toJSON() ?? null,
         }
 
         return root

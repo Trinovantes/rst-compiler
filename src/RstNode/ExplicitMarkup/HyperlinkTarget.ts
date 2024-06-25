@@ -72,8 +72,8 @@ export class RstHyperlinkTarget extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstHyperlinkTargetData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstHyperlinkTargetData>
 
         root.data = {
             rawLabel: this._rawLabel,

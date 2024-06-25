@@ -44,8 +44,8 @@ export class RstTableCell extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstTableCellData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstTableCellData>
 
         root.data = {
             rowSpan: this.rowSpan,

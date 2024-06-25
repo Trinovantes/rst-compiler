@@ -49,13 +49,13 @@ export class RstDirective extends RstNode {
         return root
     }
 
-    override toJson(): RstNodeJson {
-        const root = super.toJson() as RstNodeJson<RstDirectiveData>
+    override toJSON(): RstNodeJson {
+        const root = super.toJSON() as RstNodeJson<RstDirectiveData>
 
         root.data = {
             rawDirective: this._rawDirective,
-            initContent: this.initContent.map((node) => node.toJson()),
-            config: this.config?.toJson() ?? null,
+            initContent: this.initContent.map((node) => node.toJSON()),
+            config: this.config?.toJSON() ?? null,
             rawBodyText: this.rawBodyText,
         }
 

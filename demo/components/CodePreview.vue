@@ -64,7 +64,7 @@ watch(editorText, async(editorText) => {
 
     try {
         const parserOutput = htmlCompiler.parse(editorText, { disableWarnings: true })
-        outputAst.value = JSON.stringify(parserOutput.root.toJson(), undefined, 4)
+        outputAst.value = JSON.stringify(parserOutput.root.toJSON(), undefined, 4)
 
         const outputHtml = htmlCompiler.compile(parserOutput)
         renderedHtmlPre.value = await codeToHtml(outputHtml.body, {
