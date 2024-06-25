@@ -18,6 +18,12 @@ export default tseslint.config(
     includeIgnoreFile(path.resolve('.gitignore')),
 
     {
+        ignores: [
+            '**/raw/**/*',
+        ],
+    },
+
+    {
         languageOptions: {
             globals: {
                 ...eslintGlobals.browser,
