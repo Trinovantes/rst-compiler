@@ -70,7 +70,7 @@ MARK: Plugins
 -->
 ## Plugins
 
-If you wish to add additional functionality, you should should implement either custom Directives (for block-level output) or custom InterpretedTexts (for inline-level output).
+If you wish to add additional functionality, you should either implement custom Directives (for block-level output) or custom InterpretedTexts (for inline-level output).
 
 ```ts
 import { RstCompilerPlugin } from 'rst-compiler'
