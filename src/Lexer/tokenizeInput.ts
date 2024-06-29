@@ -15,7 +15,7 @@ export function tokenizeInput(input: string): Array<Token> {
 
         tokens.push({
             idx,
-            str: str.trimEnd(),
+            str,
         })
 
         idx = end + 1 // Skip \n character
