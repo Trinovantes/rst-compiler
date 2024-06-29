@@ -14,7 +14,6 @@ export class RstParserError extends Error {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     toJSON(): unknown {
         return {
             name: this.name,
