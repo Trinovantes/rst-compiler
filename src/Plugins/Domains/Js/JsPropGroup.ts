@@ -105,7 +105,7 @@ export function renderPropGroupAsHtml(generatorState: RstGeneratorState, propGro
                 const externalRef = generatorState.resolveExternalRef(propGroup.node, jsRefSimpleName)
                 propDataTypeHtml = `<a href="${externalRef.externalUrl}">${sanitizeHtml(externalRef.externalLabel ?? propDataType)}</a>`
             } else {
-                propDataTypeHtml = `<code>${propDataType}</code>`
+                propDataTypeHtml = `<code>${sanitizeHtml(propDataType)}</code>`
             }
 
             output += ` (${propDataTypeHtml})`
