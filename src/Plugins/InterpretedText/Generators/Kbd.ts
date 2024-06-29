@@ -11,6 +11,6 @@ export const kbdInterpretedTextGenerators = createInterpretedTextGenerators(
     },
 
     (generatorState, node) => {
-        generatorState.writeTextWithLinePrefix(`\`${sanitizeHtml(node.textContent)}\``)
+        generatorState.writeTextWithLinePrefix(`\`${node.textContent}\``) // Don't sanitize since this is written inside literal text
     },
 )

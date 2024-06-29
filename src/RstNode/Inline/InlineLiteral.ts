@@ -44,6 +44,6 @@ export const inlineLiteralGenerators = createNodeGenerators(
     },
 
     (generatorState, node) => {
-        generatorState.writeText(`\`${sanitizeHtml(node.textContent)}\``)
+        generatorState.writeText(`\`${node.textContent}\``) // Don't sanitize since this is written inside literal text
     },
 )
