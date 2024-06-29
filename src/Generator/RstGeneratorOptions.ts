@@ -85,6 +85,13 @@ export type RstGeneratorOptions = {
     }
 
     /**
+     * Default language for syntax highlighting LiteralBlock
+     *
+     * Default: `'txt'`
+     */
+    defaultLiteralBlockLanguage: string
+
+    /**
      * Default language for syntax highlighting
      *
      * Default: `''`
@@ -149,6 +156,7 @@ export function createDefaultGeneratorOptions(opts?: Partial<RstGeneratorOptions
             tocTree: 'toc-tree',
         } satisfies Required<RstGeneratorOptions['htmlClass']>,
 
+        defaultLiteralBlockLanguage: 'txt',
         defaultSyntaxLanguage: '',
     } satisfies RstGeneratorOptions, opts)
 }

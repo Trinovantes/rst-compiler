@@ -112,11 +112,13 @@ export const literalBlockGenerators = createNodeGenerators(
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTagWithAttr('div', node, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.literalBlock }), () => {
-            renderCodeBlockHtml(generatorState, 'txt', node.rawTextContent, node)
+            const language = generatorState.opts.defaultLiteralBlockLanguage
+            renderCodeBlockHtml(generatorState, language, node.rawTextContent, node)
         })
     },
 
     (generatorState, node) => {
-        renderCodeBlockMd(generatorState, 'txt', node.rawTextContent)
+        const language = generatorState.opts.defaultLiteralBlockLanguage
+        renderCodeBlockMd(generatorState, language, node.rawTextContent)
     },
 )
