@@ -150,7 +150,7 @@ export class RstParserState {
             return false
         }
 
-        return nextToken.str.length === 0
+        return nextToken.str.trim().length === 0
     }
 
     peekIsContent(offset = 0): boolean {
@@ -159,7 +159,7 @@ export class RstParserState {
             return false
         }
 
-        return nextToken.str.length > 0
+        return nextToken.str.trim().length > 0
     }
 
     peekTest(re: RegExp, offset = 0): RegExpExecArray | null {

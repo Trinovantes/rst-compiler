@@ -151,6 +151,7 @@ const directiveRe = new RegExp(
 export const directiveParser: RstNodeParser<RstNodeType.Directive> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
+
         if (!parserState.peekIsIndented(indentSize)) {
             return null
         }
