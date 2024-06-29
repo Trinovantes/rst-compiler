@@ -227,8 +227,6 @@ export class RstParserState {
     // ------------------------------------------------------------------------
 
     parseRstToAst(input: string, startingLineIdx: number): ReadonlyArray<RstNode> {
-        // Simulate lines above where this mini-Document is being parsed from
-        // so that the returned nodes' line numbers are correct
         const trimmedInput = trimCommonIndent(input)
         const tokens = tokenizeInput(trimmedInput)
         const subParserState = new RstParserState(this.opts, tokens, this._compiler, this.registrar, startingLineIdx)
