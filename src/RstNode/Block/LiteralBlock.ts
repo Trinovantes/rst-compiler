@@ -84,13 +84,13 @@ export const literalBlockParser: RstNodeParser<RstNodeType.LiteralBlock> = {
             return null
         }
 
-        const indentedBlockSize = indentSize + parserState.opts.inputIndentSize
+        const bodyIndentSize = parserState.peekNestedIndentSize(indentSize)
         let literalText = ''
 
-        if (parserState.peekIsIndented(indentedBlockSize)) {
+        if (parserState.peekIsAtleastIndented(bodyIndentSize)) {
             // Indented literal block must be on next level of indentation
-            literalText = parserState.parseBodyText(indentedBlockSize, RstNodeType.LiteralBlock)
-        } else if (parserState.peekTest(quotedLiteralBlockRe)) {
+            literalText = parserState.parseBodyText(bodyIndentSize, RstNodeType.LiteralBlock)
+        } else if (parserState.peekIsIndented(indentSize) && parserState.peekTest(quotedLiteralBlockRe)) {
             // Quoted literal block must be on same indentation as current body
             literalText = parserState.parseBodyText(indentSize, RstNodeType.LiteralBlock, quotedLiteralBlockRe)
         } else {

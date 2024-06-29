@@ -14,6 +14,11 @@ export type RstParserOptions = {
     /**
      * Number of spaces of input reStructuredText document use for indentation
      *
+     * Used to denote the start of:
+     * * Blockquote
+     * * LineBlock
+     * * DefinitionList
+     *
      * Default: `4`
      */
     inputIndentSize: number
