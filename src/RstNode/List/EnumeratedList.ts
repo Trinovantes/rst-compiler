@@ -88,7 +88,7 @@ const enumeratedListItemRe = new RegExp(
             romanLowerRe.source + // Roman Numerals (lowercase)
         ')' +
         '[)\\.]' + // Closing parenthesis or period
-        ' ' + // Space
+        '[ ]+' + // Space
     ')' +
     '(?<firstLineText>.+)$', // Any char to end of line
 )
