@@ -593,3 +593,103 @@ describe('complex grid table', () => {
         </table>
     `)
 })
+
+describe('when cell has multiple paragraphs, it renders as line breaks in markdown', () => {
+    const input = `
+        +-+-+
+        |A|B|
+        +=+=+
+        |C|D|
+        | |D|
+        |C|D|
+        +-+-+
+    `
+
+    testParser(input, [
+        {
+            type: RstNodeType.Table,
+            children: [
+                {
+                    type: RstNodeType.TableRow,
+                    data: {
+                        isHeadRow: true,
+                    },
+                    children: [
+                        {
+                            type: RstNodeType.TableCell,
+                            text: 'A',
+                        },
+                        {
+                            type: RstNodeType.TableCell,
+                            text: 'B',
+                        },
+                    ],
+                },
+                {
+                    type: RstNodeType.TableRow,
+                    children: [
+                        {
+                            type: RstNodeType.TableCell,
+                            children: [
+                                {
+                                    type: RstNodeType.Paragraph,
+                                    text: 'C',
+                                },
+                                {
+                                    type: RstNodeType.Paragraph,
+                                    text: 'C',
+                                },
+                            ],
+                        },
+                        {
+                            type: RstNodeType.TableCell,
+                            text: 'D\nD\nD',
+                        },
+                    ],
+                },
+            ],
+        },
+    ])
+
+    testGenerator(input, `
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <p>
+                            A
+                        </p>
+                    </th>
+                    <th>
+                        <p>
+                            B
+                        </p>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p>
+                            C
+                        </p>
+                        <p>
+                            C
+                        </p>
+                    </td>
+                    <td>
+                        <p>
+                            D
+                            D
+                            D
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    `, `
+        | A | B |
+        | --- | --- |
+        | C<br>C | D D D |
+    `)
+})

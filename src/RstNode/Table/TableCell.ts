@@ -88,15 +88,19 @@ export const tableCellGenerators = createNodeGenerators(
 
     (generatorState, node) => {
         const cellText = generatorState.getChildrenText(() => {
-            for (const child of node.children) {
+            for (let i = 0; i < node.children.length; i++) {
+                const child = node.children[i]
                 if (!(child instanceof RstParagraph)) {
                     throw new RstGeneratorError(generatorState, 'Cannot render non-paragraphs in Markdown tables')
+                }
+                if (i > 0) {
+                    generatorState.writeText('<br>')
                 }
 
                 generatorState.visitNodes(child.children)
             }
         })
 
-        generatorState.writeText(` ${cellText.replaceAll('\n', '<br>')} `)
+        generatorState.writeText(` ${cellText.replaceAll('\n', ' ')} `)
     },
 )

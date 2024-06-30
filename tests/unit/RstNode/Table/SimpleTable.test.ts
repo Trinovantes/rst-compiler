@@ -321,7 +321,7 @@ describe('when there is empty cell in second row in first column, it parses as s
             </tbody>
         </table>
     `, `
-        | col 1 | col 2<br>test |
+        | col 1 | col 2 test |
         | --- | --- |
         | test1 | test2 |
     `)
