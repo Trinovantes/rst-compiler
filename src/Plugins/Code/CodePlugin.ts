@@ -15,11 +15,13 @@ export const highlightDirectiveGenerators = createDirectiveGenerators(
     ],
 
     (generatorState, node) => {
+        generatorState.opts.defaultLiteralBlockLanguage = node.initContentText
         generatorState.opts.defaultSyntaxLanguage = node.initContentText
         generatorState.writeLineHtmlComment(node.toShortString())
     },
 
     (generatorState, node) => {
+        generatorState.opts.defaultLiteralBlockLanguage = node.initContentText
         generatorState.opts.defaultSyntaxLanguage = node.initContentText
         generatorState.writeLineMdComment(node.toShortString())
     },
