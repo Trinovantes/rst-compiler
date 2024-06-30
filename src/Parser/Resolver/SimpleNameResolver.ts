@@ -27,7 +27,6 @@ type FootnoteSymNum = Brand<number, 'FootnoteSymNum'> // For determining which s
 type DocumentTarget = {
     target: string // Either a url or ref (SimpleName)
     isAlias: boolean
-    targetNode?: RstNode // If targets a node inside this document
 }
 
 export class SimpleNameResolver {
@@ -97,14 +96,6 @@ export class SimpleNameResolver {
             return normalizeSimpleName(node.label)
         }
 
-        if (node instanceof RstHyperlinkRef) {
-            // Explicitly named HyperlinkRef that links elsewhere can be referenced by their label
-            // e.g. `label <url not same as label>`
-            if (node.isEmbeded) {
-                return normalizeSimpleName(node.label)
-            }
-        }
-
         if (node instanceof RstHyperlinkTarget) {
             if (node.isAnonymous) {
                 return normalizeSimpleName(`${node.nodeType}-anonymous-${node.nthOfType}`)
@@ -151,32 +142,31 @@ export class SimpleNameResolver {
         }
     }
 
-    registerNodeForwardTarget(simpleName: SimpleName, fowardTarget: DocumentTarget) {
+    registerNodeForwardTarget(simpleName: SimpleName, fowardTarget: DocumentTarget): void {
+        const existingTarget = this._simpleNameToTarget.get(simpleName)
+        if (existingTarget && !(existingTarget.target === fowardTarget.target && existingTarget.isAlias === fowardTarget.isAlias)) {
+            throw new Error(`Duplicate simpleName:"${simpleName}"`)
+        }
+
         this._simpleNameToTarget.set(simpleName, fowardTarget)
     }
 
-    registerNodeAsTargetable(node: RstNode): DocumentTarget {
+    registerNodeAsTargetable(node: RstNode): void {
         const simpleName = this.getSimpleName(node)
         const target = {
             target: `#${simpleName}`,
             isAlias: false,
         }
 
-        this._simpleNameToTarget.set(simpleName, target)
+        this.registerNodeForwardTarget(simpleName, target)
         this._htmlAttrResolver.markNodeAsTargeted(node)
-
-        return target
     }
 
     // ------------------------------------------------------------------------
     // MARK: External Targetable Nodes
     // ------------------------------------------------------------------------
 
-    registerExternalTargetableNode(simpleName: SimpleName, targetNode?: RstNode) {
-        if (!targetNode) {
-            return
-        }
-
+    registerExternalTargetableNode(simpleName: SimpleName, targetNode: RstNode) {
         this._nodesTargetableFromOutside.set(simpleName, targetNode)
         this._htmlAttrResolver.markNodeAsTargeted(targetNode)
     }
@@ -424,7 +414,7 @@ export class SimpleNameResolver {
         const inlineInternalTargets = this._root.findAllChildren(RstNodeType.InlineInternalTarget)
         const hyperlinkRefs = this._root.findAllChildren(RstNodeType.HyperlinkRef)
 
-        const resolveHyperlinkTarget = (hyperlinkTarget: RstHyperlinkTarget): DocumentTarget | null => {
+        const resolveHyperlinkTarget = (hyperlinkTarget: RstHyperlinkTarget): DocumentTarget & { targetNode?: RstNode } | null => {
             if (hyperlinkTarget.isTargetingNextNode) {
                 // Follow the chain to find an explicit name
                 let currNode: RstNode | null = hyperlinkTarget
@@ -441,7 +431,8 @@ export class SimpleNameResolver {
 
                     if (currNode.willRenderVisibleContent) {
                         return {
-                            ...this.registerNodeAsTargetable(currNode),
+                            target: `#${this.getSimpleName(currNode)}`,
+                            isAlias: false,
                             targetNode: currNode,
                         }
                     }
@@ -464,7 +455,10 @@ export class SimpleNameResolver {
 
                 const simpleName = this.getSimpleName(hyperlinkTarget)
                 this.registerNodeForwardTarget(simpleName, target)
-                this.registerExternalTargetableNode(simpleName, target.targetNode)
+
+                if (target.targetNode) {
+                    this.registerExternalTargetableNode(simpleName, target.targetNode)
+                }
             }
         }
 
@@ -473,12 +467,11 @@ export class SimpleNameResolver {
                 const target: DocumentTarget = {
                     target: `#${this.getSimpleName(inlineTarget)}`,
                     isAlias: false,
-                    targetNode: inlineTarget,
                 }
 
                 const simpleName = this.getSimpleName(inlineTarget)
                 this.registerNodeForwardTarget(simpleName, target)
-                this.registerExternalTargetableNode(simpleName, target.targetNode)
+                this.registerExternalTargetableNode(simpleName, inlineTarget)
             }
         }
 
@@ -517,8 +510,35 @@ export class SimpleNameResolver {
             }
         }
 
+        const registerTargetableHyperlinkRefs = () => {
+            for (const hyperlinkRef of hyperlinkRefs) {
+                // Explicitly named HyperlinkRef that links elsewhere can be referenced by their label
+                // e.g. `somelabel <url not same as label>`_ can be referenced by somelabel_
+                if (!hyperlinkRef.isEmbeded) {
+                    continue
+                }
+
+                // When embeded has label===target, it means there's no label e.g. `<url>`_
+                // Thus this cannot be targeted by other HyperlinkRefs
+                if (hyperlinkRef.label === hyperlinkRef.target) {
+                    continue
+                }
+
+                const candidateTargetName = normalizeSimpleName(hyperlinkRef.label)
+                if (this._simpleNameToTarget.has(candidateTargetName)) {
+                    continue
+                }
+
+                this.registerNodeForwardTarget(candidateTargetName, {
+                    target: hyperlinkRef.target,
+                    isAlias: hyperlinkRef.isAlias,
+                })
+            }
+        }
+
         registerHyperlinkTargets()
         registerInlineInternalTargets()
         registerHyperlinkRefs()
+        registerTargetableHyperlinkRefs()
     }
 }

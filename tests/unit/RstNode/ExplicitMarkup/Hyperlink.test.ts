@@ -829,4 +829,62 @@ describe('HyperlinkRef', () => {
 
         expect(() => generate()).toThrow(/Failed to resolveNodeToUrl/)
     })
+
+    describe('when HyperlinkRef has angled brackets as part of its label, it prioritizes HyperlinkTarget with angle brackets', () => {
+        const goodUrl = 'https://google.ca'
+        const badUrl = 'https://bing.ca'
+        const input = `
+            \`Foo<Bar>\`_
+
+            .. _Foo: ${badUrl}
+            .. _Foo<Bar>: ${goodUrl}
+        `
+
+        testParser(input, [
+            {
+                type: RstNodeType.Paragraph,
+                children: [
+                    {
+                        type: RstNodeType.HyperlinkRef,
+                        text: 'Foo',
+                        data: {
+                            label: 'Foo',
+                            target: 'Bar',
+                            isEmbeded: true,
+                        },
+                    },
+                ],
+            },
+            {
+                type: RstNodeType.HyperlinkTarget,
+                data: {
+                    label: 'Foo',
+                    target: badUrl,
+                },
+            },
+            {
+                type: RstNodeType.HyperlinkTarget,
+                data: {
+                    label: 'Foo<Bar>',
+                    target: goodUrl,
+                },
+            },
+        ])
+
+        testGenerator(input, `
+            <p>
+                <a href="${goodUrl}">Foo</a>
+            </p>
+
+            <!-- HyperlinkTarget id:3 children:0 label:"Foo" target:"${badUrl}" resolvedUrl:"${badUrl}" -->
+
+            <!-- HyperlinkTarget id:4 children:0 label:"Foo<Bar>" target:"${goodUrl}" resolvedUrl:"${goodUrl}" -->
+        `, `
+            [Foo](${goodUrl})
+
+            [HyperlinkTarget id:3 children:0 label:"Foo" target:"${badUrl}" resolvedUrl:"${badUrl}"]: #
+
+            [HyperlinkTarget id:4 children:0 label:"Foo<Bar>" target:"${goodUrl}" resolvedUrl:"${goodUrl}"]: #
+        `)
+    })
 })

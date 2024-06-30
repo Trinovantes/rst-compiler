@@ -257,6 +257,17 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
         return url
     }
 
+    resolveMultipleSimpleNamesToUrl(srcNode: RstNode, simpleNames: Array<SimpleName>): string {
+        for (const simpleName of simpleNames) {
+            const url = this._currentParserOutput.simpleNameResolver.resolveSimpleNameToUrl(simpleName)
+            if (url) {
+                return url
+            }
+        }
+
+        throw new RstGeneratorError(this, srcNode, 'Failed to resolveMultipleSimpleNamesToUrl')
+    }
+
     resolveFootnoteDefLabel(footnoteDef: RstFootnoteDef): string {
         const label = this._currentParserOutput.simpleNameResolver.resolveFootnoteDefLabel(footnoteDef)
         if (!label) {
