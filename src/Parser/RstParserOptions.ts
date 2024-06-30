@@ -60,7 +60,7 @@ export type RstParserOptions = {
 }
 
 export function createDefaultParserOptions(opts?: Partial<RstParserOptions>): RstParserOptions {
-    return merge({
+    const defaultOpts: RstParserOptions = {
         disableWarnings: false,
         disableErrors: false,
 
@@ -72,5 +72,7 @@ export function createDefaultParserOptions(opts?: Partial<RstParserOptions>): Rs
         directivesWithInitContent: [],
 
         epilog: '',
-    } satisfies RstParserOptions, opts)
+    }
+
+    return merge(defaultOpts, opts)
 }

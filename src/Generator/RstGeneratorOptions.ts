@@ -113,7 +113,7 @@ export type RstGeneratorOptions = {
 }
 
 export function createDefaultGeneratorOptions(opts?: Partial<RstGeneratorOptions>): RstGeneratorOptions {
-    return merge({
+    const defaultOpts: RstGeneratorOptions = {
         disableWarnings: false,
         disableErrors: false,
 
@@ -158,5 +158,7 @@ export function createDefaultGeneratorOptions(opts?: Partial<RstGeneratorOptions
 
         defaultLiteralBlockLanguage: 'txt',
         defaultSyntaxLanguage: '',
-    } satisfies RstGeneratorOptions, opts)
+    }
+
+    return merge(defaultOpts, opts)
 }
