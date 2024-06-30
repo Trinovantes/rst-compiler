@@ -887,4 +887,50 @@ describe('HyperlinkRef', () => {
             [HyperlinkTarget id:4 children:0 label:"Foo<Bar>" target:"${goodUrl}" resolvedUrl:"${goodUrl}"]: #
         `)
     })
+
+    describe('when HyperlinkRef seems to be alias but target resolves to an existing local SimpleName, it prioritizes the local SimpleName', () => {
+        const input = `
+            See \`if/else/elif\`_
+
+            if/else/elif
+            ^^^^^^^^^^^^
+        `
+
+        testParser(input, [
+            {
+                type: RstNodeType.Paragraph,
+                children: [
+                    {
+                        type: RstNodeType.Text,
+                        text: 'See ',
+                    },
+                    {
+                        type: RstNodeType.HyperlinkRef,
+                        text: 'if/else/elif',
+                    },
+                ],
+            },
+            {
+                type: RstNodeType.Section,
+                text: 'if/else/elif',
+                data: {
+                    level: 1,
+                },
+            },
+        ])
+
+        testGenerator(input, `
+            <p>
+                See <a href="#if-else-elif">if/else/elif</a>
+            </p>
+
+            <h1 id="if-else-elif">
+                if/else/elif
+            </h1>
+        `, `
+            See [if/else/elif](#if-else-elif)
+
+            # if/else/elif {#if-else-elif}
+        `)
+    })
 })

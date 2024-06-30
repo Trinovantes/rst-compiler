@@ -128,17 +128,19 @@ export class SimpleNameResolver {
                 return null
             }
 
-            const target = this._simpleNameToTarget.get(simpleName)
-            if (!target) {
+            const docTarget = this._simpleNameToTarget.get(simpleName)
+            if (!docTarget) {
                 return null
             }
 
-            if (!target.isAlias) {
-                return target.target
+            const candidateTargetName = normalizeSimpleName(docTarget.target)
+            const isTargetTangible = (!docTarget.isAlias && docTarget.target.startsWith('#')) || (!docTarget.isAlias && !this._simpleNameToTarget.has(candidateTargetName))
+            if (isTargetTangible) {
+                return docTarget.target
             }
 
             seenSimpleNames.add(simpleName)
-            simpleName = normalizeSimpleName(target.target)
+            simpleName = candidateTargetName
         }
     }
 
