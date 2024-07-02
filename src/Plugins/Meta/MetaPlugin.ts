@@ -13,7 +13,13 @@ export const metaDirectiveGenerators = createDirectiveGenerators(
     ],
 
     (generatorState, node) => {
+        generatorState.writeLineHtmlComment(node.toShortString())
+
         const metaInfos = getMetaInfo(node)
+        if (metaInfos.length === 0) {
+            return
+        }
+
         const headerKey = `meta-${node.id}`
         let headerText = ''
 
@@ -28,11 +34,16 @@ export const metaDirectiveGenerators = createDirectiveGenerators(
         }
 
         generatorState.registerGlobalHeader(headerKey, headerText)
-        generatorState.writeLineHtmlComment(node.toShortString())
     },
 
     (generatorState, node) => {
+        generatorState.writeLineMdComment(node.toShortString())
+
         const metaInfos = getMetaInfo(node)
+        if (metaInfos.length === 0) {
+            return
+        }
+
         const headerKey = `meta-${node.id}`
         let headerText = ''
 
@@ -62,7 +73,6 @@ export const metaDirectiveGenerators = createDirectiveGenerators(
         headerText += '---\n'
 
         generatorState.registerGlobalHeader(headerKey, headerText)
-        generatorState.writeLineMdComment(node.toShortString())
     },
 )
 

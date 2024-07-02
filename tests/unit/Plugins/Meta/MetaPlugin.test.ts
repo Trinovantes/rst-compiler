@@ -19,9 +19,6 @@ describe('no config', () => {
 
     testGeneratorHeader(input, `
     `, `
-        ---
-        head:
-        ---
     `)
 })
 
