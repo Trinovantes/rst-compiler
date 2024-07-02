@@ -5,6 +5,7 @@ import { RstFieldList } from '@/RstNode/List/FieldList.js'
 import { RstFieldListItem } from '@/RstNode/List/FieldListItem.js'
 import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { normalizeSimpleName } from '@/SimpleName.js'
+import { assertNode } from '@/utils/assertNode.js'
 import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
 
 export type JsPropGroupType = Brand<string, 'JsPropGroupType'> // "param", "throw", "return", etc.
@@ -19,7 +20,7 @@ export function getJsPropGroups(generatorState: RstGeneratorState, fieldList: Rs
     const jsProps = new Map<JsPropGroupType, Array<JsPropGroup>>() // Maps prop type ("param", "throw", "return") to corresponding FieldListItems that describe them
 
     for (const fieldListItem of fieldList.children) {
-        generatorState.assertNode(fieldListItem, RstNodeType.FieldListItem)
+        assertNode(generatorState, fieldListItem, RstNodeType.FieldListItem)
 
         const fieldName = fieldListItem.name.map((textNode) => textNode.textContent).join(' ')
         const fieldNameParts = fieldName.split(' ')

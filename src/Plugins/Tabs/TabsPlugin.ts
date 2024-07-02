@@ -9,6 +9,7 @@ import browserCode from './Tabs.browser.js?raw' with { type: 'text' }
 import { renderCodeBlockHtml } from '../Code/renderCodeBlockHtml.js'
 import { renderCodeBlockMd } from '../Code/renderCodeBlockMd.js'
 import { bundledLanguagesInfo } from 'shiki'
+import { assertNode } from '@/utils/assertNode.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Constants
@@ -89,7 +90,7 @@ function getTabsGroupKey(generatorState: RstGeneratorState, node: RstDirective):
     let childrenDirective: string | null = null
 
     for (const child of node.children) {
-        generatorState.assertNode(child, RstNodeType.Directive)
+        assertNode(generatorState, child, RstNodeType.Directive)
 
         if (childrenDirective !== null && childrenDirective !== child.directive) {
             throw new Error(`Child [${child.toShortString()}] does not match other childrens' directive:"${childrenDirective}"`)

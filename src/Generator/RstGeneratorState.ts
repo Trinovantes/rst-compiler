@@ -15,7 +15,6 @@ import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { HtmlAttributeStore } from './HtmlAttributeStore.js'
 import { RstGeneratorError } from './RstGeneratorError.js'
 import { sha1 } from '@/utils/sha1.js'
-import { RstNodeMap } from '@/RstNode/RstNodeMap.js'
 import { SimpleNameResolver } from '@/Parser/Resolver/SimpleNameResolver.js'
 import { RstFootnoteDef } from '@/RstNode/ExplicitMarkup/FootnoteDef.js'
 import { RstFootnoteRef } from '@/RstNode/Inline/FootnoteRef.js'
@@ -140,6 +139,10 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
         }
     }
 
+    // ------------------------------------------------------------------------
+    // MARK: Getters
+    // ------------------------------------------------------------------------
+
     get generatorOutput(): RstGeneratorOutput {
         if (this._outputBuffers.length !== 1) {
             throw new RstGeneratorError(this, 'Corrupt outputBuffer')
@@ -179,6 +182,10 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
     get htmlAttrResolver(): HtmlAttrResolver {
         return this._currentParserOutput.htmlAttrResolver
     }
+
+    // ------------------------------------------------------------------------
+    // MARK: Resolvers
+    // ------------------------------------------------------------------------
 
     resolveExternalDoc(srcNode: RstNode, targetPath: string): { externalUrl: string; externalLabel?: string } {
         const docFilePath = targetPath.startsWith('/')
@@ -293,20 +300,6 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
         }
 
         return footnoteDef
-    }
-
-    assertNode<T extends keyof RstNodeMap>(node: RstNode | null | undefined, expectedNodeType: T, expectedNumChildren?: number): asserts node is RstNodeMap[T] {
-        if (!node) {
-            throw new RstGeneratorError(this, 'Invalid node')
-        }
-
-        if (node.nodeType !== expectedNodeType) {
-            throw new RstGeneratorError(this, node, `Is not ${expectedNodeType}`)
-        }
-
-        if (expectedNumChildren !== undefined && node.children.length !== expectedNumChildren) {
-            throw new RstGeneratorError(this, node, `Does not have exactly ${expectedNumChildren} child`)
-        }
     }
 
     // ------------------------------------------------------------------------

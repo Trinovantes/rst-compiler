@@ -8,6 +8,7 @@ import { RstDirective } from '../ExplicitMarkup/Directive.js'
 import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
 import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
 import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
+import { assertNode } from '@/utils/assertNode.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -179,13 +180,13 @@ function getColWidths(generatorState: RstGeneratorState, directiveNode: RstDirec
 
     if (allowGridValue && rawWidths === 'grid') {
         const table = directiveNode?.children.at(0)
-        generatorState.assertNode(table, RstNodeType.Table)
+        assertNode(generatorState, table, RstNodeType.Table)
 
         let totalWidth = 0
         const cellWidths = new Array<number>()
 
         for (const cell of table.children[0].children) {
-            generatorState.assertNode(cell, RstNodeType.TableCell)
+            assertNode(generatorState, cell, RstNodeType.TableCell)
 
             totalWidth += cell.characterWidth
             cellWidths.push(cell.characterWidth)
@@ -199,11 +200,11 @@ function getColWidths(generatorState: RstGeneratorState, directiveNode: RstDirec
 
 function generateTableRows(generatorState: RstGeneratorState, rowNodes: ReadonlyArray<RstNode>, cellTag: 'th' | 'td', colWidths: Array<string>, tableAlign: string | null): void {
     for (const rowNode of rowNodes) {
-        generatorState.assertNode(rowNode, RstNodeType.TableRow)
+        assertNode(generatorState, rowNode, RstNodeType.TableRow)
 
         generatorState.writeLineHtmlTag('tr', rowNode, () => {
             for (const [idx, cellNode] of rowNode.children.entries()) {
-                generatorState.assertNode(cellNode, RstNodeType.TableCell)
+                assertNode(generatorState, cellNode, RstNodeType.TableCell)
 
                 const attrs = new HtmlAttributeStore()
 
@@ -230,10 +231,10 @@ function generateTableRows(generatorState: RstGeneratorState, rowNodes: Readonly
 
 function generateListTableRows(generatorState: RstGeneratorState, rowNodes: ReadonlyArray<RstNode>, cellTag: 'th' | 'td', colWidths: Array<string>, tableAlign: string | null): void {
     for (const rowNode of rowNodes) {
-        generatorState.assertNode(rowNode, RstNodeType.BulletListItem, 1)
+        assertNode(generatorState, rowNode, RstNodeType.BulletListItem, 1)
 
-        const colList: RstNode = rowNode.children[0]
-        generatorState.assertNode(colList, RstNodeType.BulletList)
+        const colList = rowNode.children[0]
+        assertNode(generatorState, colList, RstNodeType.BulletList)
 
         if (colWidths.length > 0 && colList.children.length !== colWidths.length) {
             throw new RstGeneratorError(generatorState, `Expected ${colList.children.length} widths but only got ${colWidths.length}`)

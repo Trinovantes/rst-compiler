@@ -5,6 +5,7 @@ import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
 import { RstBulletList } from '@/RstNode/List/BulletList.js'
 import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { RstTable, listTableGenerators, tableGenerators } from '@/RstNode/Table/Table.js'
+import { assertNode } from '@/utils/assertNode.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive
@@ -67,19 +68,19 @@ export const tableDirectivePlugin = createRstCompilerPlugins({
 // ----------------------------------------------------------------------------
 
 function getTableNode(generatorState: RstGeneratorState, directiveNode: RstDirective): RstTable {
-    generatorState.assertNode(directiveNode, RstNodeType.Directive, 1)
+    assertNode(generatorState, directiveNode, RstNodeType.Directive, 1)
 
     const table = directiveNode.children[0]
-    generatorState.assertNode(table, RstNodeType.Table)
+    assertNode(generatorState, table, RstNodeType.Table)
 
     return table
 }
 
 function getListTableNode(generatorState: RstGeneratorState, directiveNode: RstDirective): RstBulletList {
-    generatorState.assertNode(directiveNode, RstNodeType.Directive, 1)
+    assertNode(generatorState, directiveNode, RstNodeType.Directive, 1)
 
     const list = directiveNode.children[0]
-    generatorState.assertNode(list, RstNodeType.BulletList)
+    assertNode(generatorState, list, RstNodeType.BulletList)
 
     return list
 }
