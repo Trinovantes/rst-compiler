@@ -314,7 +314,7 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
         const handleNode = () => {
             switch (true) {
                 case node instanceof RstInterpretedText: {
-                    const generator = this._compiler.interpretedTextGenerators.get(node.role)
+                    const generator = this._compiler.interpretedTextGenerators.get(node.role.toLowerCase())
                     if (!generator) {
                         throw new RstGeneratorError(this, node, 'Missing generator')
                     }
@@ -324,7 +324,7 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
                 }
 
                 case node instanceof RstDirective: {
-                    const generator = this._compiler.directiveGenerators.get(node.directive)
+                    const generator = this._compiler.directiveGenerators.get(node.directive.toLowerCase())
                     if (!generator) {
                         throw new RstGeneratorError(this, node, 'Missing generator')
                     }

@@ -39,13 +39,13 @@ export class RstCompiler {
 
     useDirectiveGenerator(generator: RstDirectiveGenerator) {
         for (const directive of generator.directives) {
-            this.directiveGenerators.set(directive, generator)
+            this.directiveGenerators.set(directive.toLowerCase(), generator)
         }
     }
 
     useInterpretedTextGenerator(generator: RstInterpretedTextGenerator) {
         for (const role of generator.roles) {
-            this.interpretedTextGenerators.set(role, generator)
+            this.interpretedTextGenerators.set(role.toLowerCase(), generator)
         }
     }
 
