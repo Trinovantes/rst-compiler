@@ -156,6 +156,9 @@ export class RstCompiler {
     }
 
     createParserOutput(root: RstDocument) {
+        // Need to create a bundle around root (with resolves) after parse() instead of before generate()
+        // because plugins' onParse hook need access to resolvers
+
         const htmlAttrResolver = new HtmlAttrResolver()
         const substitutionResolver = new SubstitutionResolver(root.findAllChildren(RstNodeType.SubstitutionDef))
         const simpleNameResolver = new SimpleNameResolver(this, htmlAttrResolver, root)
