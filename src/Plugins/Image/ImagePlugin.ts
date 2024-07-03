@@ -3,6 +3,7 @@ import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
 import { getImageInfo } from './getImageInfo.js'
 import { createImgTagMd } from './createImgTagMd.js'
 import { createImgTagHtml } from './createImgTagHtml.js'
+import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive
@@ -36,7 +37,7 @@ export const imageDirectiveGenerators = createDirectiveGenerators(
             }
 
             default: {
-                throw new Error(`Unhandled directive:"${node.directive}"`)
+                throw new RstGeneratorError(generatorState, node, `Unhandled directive:"${node.directive}"`)
             }
         }
     },

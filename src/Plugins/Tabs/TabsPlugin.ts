@@ -10,6 +10,7 @@ import { renderCodeBlockHtml } from '../Code/renderCodeBlockHtml.js'
 import { renderCodeBlockMd } from '../Code/renderCodeBlockMd.js'
 import { bundledLanguagesInfo } from 'shiki'
 import { assertNode } from '@/utils/assertNode.js'
+import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Constants
@@ -93,14 +94,14 @@ function getTabsGroupKey(generatorState: RstGeneratorState, node: RstDirective):
         assertNode(generatorState, child, RstNodeType.Directive)
 
         if (childrenDirective !== null && childrenDirective !== child.directive) {
-            throw new Error(`Child [${child.toShortString()}] does not match other childrens' directive:"${childrenDirective}"`)
+            throw new RstGeneratorError(generatorState, child, `Expected "${childrenDirective}" but got "${child.directive}"`)
         }
 
         childrenDirective = child.directive
     }
 
     if (!childrenDirective) {
-        throw new Error('Failed to get childrenDirective')
+        throw new RstGeneratorError(generatorState, node, 'Failed to get childrenDirective')
     }
 
     switch (childrenDirective) {
@@ -114,7 +115,7 @@ function getTabsGroupKey(generatorState: RstGeneratorState, node: RstDirective):
             return TAB_PANEL_CODEGROUP_DIRECTIVE
 
         default:
-            throw new Error(`Unexpected directive:"${childrenDirective}"`)
+            throw new RstGeneratorError(generatorState, node, `Unexpected directive:"${childrenDirective}"`)
     }
 }
 

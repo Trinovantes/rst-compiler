@@ -1,4 +1,5 @@
 import { Brand } from '@/@types/Brand.js'
+import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
 import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
 import { RstParagraph } from '@/RstNode/Block/Paragraph.js'
 import { RstFieldList } from '@/RstNode/List/FieldList.js'
@@ -63,7 +64,7 @@ export function getJsPropGroups(generatorState: RstGeneratorState, fieldList: Rs
             }
 
             default:
-                throw new Error(`Unhandled fieldName:"${fieldName}"`)
+                throw new RstGeneratorError(generatorState, fieldListItem, `Unhandled fieldName:"${fieldName}"`)
         }
     }
 
