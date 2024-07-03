@@ -21,6 +21,10 @@ export function getParentModules(node: RstDirective): Array<string> {
         }
 
         const localName = getJsLocalName(parent.initContentText)
+        if (!localName) {
+            continue
+        }
+
         nameChain.unshift(localName)
     }
 
