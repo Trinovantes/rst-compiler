@@ -160,7 +160,7 @@ function getHyperlinkRefUrl(generatorState: RstGeneratorState, node: RstHyperlin
     if (node.isEmbeded) {
         const simpleName = generatorState.simpleNameResolver.getSimpleName(node)
         const altSimpleName = normalizeSimpleName(`${node.label}<${node.target}>`)
-        return generatorState.resolveMultipleSimpleNamesToUrl(node, [altSimpleName, simpleName])
+        return generatorState.resolveNodeWithMultipleSimpleNamesToUrl(node, [altSimpleName, simpleName])
     } else {
         return generatorState.resolveNodeToUrl(node)
     }

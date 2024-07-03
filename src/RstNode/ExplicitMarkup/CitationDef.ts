@@ -80,7 +80,7 @@ export const citationDefGenerators = createNodeGenerators(
     RstNodeType.CitationDef,
 
     (generatorState, node) => {
-        const backlinks = generatorState.simpleNameResolver.getCitationDefBacklinks(node)
+        const backlinks = generatorState.resolveCitationDefBacklinks(node)
 
         generatorState.writeLineHtmlTag('dt', node, () => {
             generatorState.writeLineHtmlTagWithAttr('span', null, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.citationDef }), () => {

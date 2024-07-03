@@ -2,7 +2,7 @@ import { normalizeSimpleName } from '@/SimpleName.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe, expect, test } from 'vitest'
-import { parseTestInput } from 'tests/fixtures/parseTestInput.js'
+import { parseTestInputForGeneratorState } from 'tests/fixtures/parseTestInput.js'
 import { RstToHtmlCompiler } from '@/RstCompiler.js'
 import { RstNodeType } from '@/RstNode/RstNodeType.js'
 
@@ -44,11 +44,11 @@ describe('InlineInternalTarget', () => {
     `)
 
     test('resolves SimpleName to normalized form of own text', () => {
-        const { root, simpleNameResolver } = parseTestInput(input)
-        const internalTarget = root.findAllChildren(RstNodeType.InlineInternalTarget)[0]
+        const generatorState = parseTestInputForGeneratorState(input)
+        const internalTarget = generatorState.root.findAllChildren(RstNodeType.InlineInternalTarget)[0]
 
-        expect(simpleNameResolver.getSimpleName(internalTarget)).toBe('norwegian-blue')
-        expect(simpleNameResolver.resolveNodeToUrl(internalTarget)).toBe('#norwegian-blue')
+        expect(generatorState.simpleNameResolver.getSimpleName(internalTarget)).toBe('norwegian-blue')
+        expect(generatorState.resolveNodeToUrl(internalTarget)).toBe('#norwegian-blue')
     })
 
     test('other HyperlinkRef can reference InlineInternalTarget', () => {
@@ -58,11 +58,11 @@ describe('InlineInternalTarget', () => {
             .. _alias: Norwegian Blue_
         `
 
-        const { root, simpleNameResolver } = parseTestInput(input)
-        const hyperlinkTarget = root.findAllChildren(RstNodeType.HyperlinkTarget)[0]
+        const generatorState = parseTestInputForGeneratorState(input)
+        const hyperlinkTarget = generatorState.root.findAllChildren(RstNodeType.HyperlinkTarget)[0]
 
-        expect(simpleNameResolver.getSimpleName(hyperlinkTarget)).toBe('alias')
-        expect(simpleNameResolver.resolveNodeToUrl(hyperlinkTarget)).toBe('#norwegian-blue')
+        expect(generatorState.simpleNameResolver.getSimpleName(hyperlinkTarget)).toBe('alias')
+        expect(generatorState.resolveNodeToUrl(hyperlinkTarget)).toBe('#norwegian-blue')
     })
 })
 
@@ -291,11 +291,11 @@ describe('HyperlinkTarget', () => {
             .. _Doc-SIG: https://mail.python.org/pipermail/doc-sig/
         `
 
-        const { simpleNameResolver } = parseTestInput(input)
+        const generatorState = parseTestInputForGeneratorState(input)
 
-        expect(simpleNameResolver.resolveSimpleNameToUrl(normalizeSimpleName('target1'))).toBe('https://mail.python.org/pipermail/doc-sig/')
-        expect(simpleNameResolver.resolveSimpleNameToUrl(normalizeSimpleName('target2'))).toBe('https://mail.python.org/pipermail/doc-sig/')
-        expect(simpleNameResolver.resolveSimpleNameToUrl(normalizeSimpleName('Doc-SIG'))).toBe('https://mail.python.org/pipermail/doc-sig/')
+        expect(generatorState.resolveSimpleNameToUrl(normalizeSimpleName('target1'))).toBe('https://mail.python.org/pipermail/doc-sig/')
+        expect(generatorState.resolveSimpleNameToUrl(normalizeSimpleName('target2'))).toBe('https://mail.python.org/pipermail/doc-sig/')
+        expect(generatorState.resolveSimpleNameToUrl(normalizeSimpleName('Doc-SIG'))).toBe('https://mail.python.org/pipermail/doc-sig/')
     })
 
     describe('indirect targets', () => {
@@ -806,13 +806,13 @@ describe('HyperlinkRef', () => {
             This \`link <${label}_>\`_ is an alias to the link above.
         `
 
-        const { root, simpleNameResolver } = parseTestInput(input)
-        const refs = root.findAllChildren(RstNodeType.HyperlinkRef)
-        const ref1SimpleName = simpleNameResolver.getSimpleName(refs[0])
-        const ref2SimpleName = simpleNameResolver.getSimpleName(refs[1])
+        const generatorState = parseTestInputForGeneratorState(input)
+        const refs = generatorState.root.findAllChildren(RstNodeType.HyperlinkRef)
+        const ref1SimpleName = generatorState.simpleNameResolver.getSimpleName(refs[0])
+        const ref2SimpleName = generatorState.simpleNameResolver.getSimpleName(refs[1])
 
-        expect(simpleNameResolver.resolveSimpleNameToUrl(ref1SimpleName)).toBe(url)
-        expect(simpleNameResolver.resolveSimpleNameToUrl(ref2SimpleName)).toBe(url)
+        expect(generatorState.resolveSimpleNameToUrl(ref1SimpleName)).toBe(url)
+        expect(generatorState.resolveSimpleNameToUrl(ref2SimpleName)).toBe(url)
     })
 
     test('when anonymous HyperlinkRef without embeded target does not have matching anonymous HyperlinkTarget, it throws error', () => {

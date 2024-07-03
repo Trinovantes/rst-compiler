@@ -109,7 +109,7 @@ export const footnoteDefGenerators = createNodeGenerators(
 
     (generatorState, node) => {
         const label = generatorState.resolveFootnoteDefLabel(node)
-        const backlinks = generatorState.simpleNameResolver.getFootnoteDefBacklinks(node)
+        const backlinks = generatorState.resolveFootnoteDefBacklinks(node)
 
         generatorState.writeLineHtmlTag('dt', node, () => {
             generatorState.writeLineHtmlTagWithAttr('span', null, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.footnoteDef }), () => {

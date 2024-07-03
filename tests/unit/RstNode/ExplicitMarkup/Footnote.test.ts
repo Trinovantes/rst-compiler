@@ -4,7 +4,7 @@ import { RstFootnoteDef } from '@/RstNode/ExplicitMarkup/FootnoteDef.js'
 import { RstFootnoteRef } from '@/RstNode/Inline/FootnoteRef.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
-import { parseTestInput } from 'tests/fixtures/parseTestInput.js'
+import { parseTestInput, parseTestInputForGeneratorState } from 'tests/fixtures/parseTestInput.js'
 import { RstToHtmlCompiler } from '@/RstCompiler.js'
 import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
 import { RstNodeType } from '@/RstNode/RstNodeType.js'
@@ -359,7 +359,7 @@ describe('RstResolverSimpleName', () => {
             return new RstToHtmlCompiler().compile(input, opts, opts)
         }
 
-        expect(() => generate()).toThrow(/Failed to resolveFootnoteRefToDef/)
+        expect(() => generate()).toThrow(/Failed to resolveFootnoteDef/)
     })
 
     describe('getSimpleName(FootnoteDef)', () => {
@@ -424,9 +424,9 @@ describe('RstResolverSimpleName', () => {
                 .. [1] footnote
             `
 
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const ref = root.findAllChildren(RstNodeType.FootnoteRef)[0]
-            expect(simpleNameResolver.resolveFootnoteRefLabel(ref)).toBe('1')
+            const generatorState = parseTestInputForGeneratorState(input)
+            const ref = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)[0]
+            expect(generatorState.resolveFootnoteRefLabel(ref)).toBe('1')
         })
 
         test('when FootnoteRef is auto number, it returns the labelNum', () => {
@@ -436,9 +436,9 @@ describe('RstResolverSimpleName', () => {
                 .. [#] footnote
             `
 
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const ref = root.findAllChildren(RstNodeType.FootnoteRef)[0]
-            expect(simpleNameResolver.resolveFootnoteRefLabel(ref)).toBe('1')
+            const generatorState = parseTestInputForGeneratorState(input)
+            const ref = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)[0]
+            expect(generatorState.resolveFootnoteRefLabel(ref)).toBe('1')
         })
 
         test('when FootnoteRef is auto number with label, it returns the labelNum', () => {
@@ -448,9 +448,9 @@ describe('RstResolverSimpleName', () => {
                 .. [#] footnote
             `
 
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const ref = root.findAllChildren(RstNodeType.FootnoteRef)[0]
-            expect(simpleNameResolver.resolveFootnoteRefLabel(ref)).toBe('1')
+            const generatorState = parseTestInputForGeneratorState(input)
+            const ref = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)[0]
+            expect(generatorState.resolveFootnoteRefLabel(ref)).toBe('1')
         })
 
         test('when FootnoteRef is auto symbol, it returns the symbol', () => {
@@ -460,9 +460,9 @@ describe('RstResolverSimpleName', () => {
                 .. [*] footnote
             `
 
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const ref = root.findAllChildren(RstNodeType.FootnoteRef)[0]
-            expect(simpleNameResolver.resolveFootnoteRefLabel(ref)).toBe('*')
+            const generatorState = parseTestInputForGeneratorState(input)
+            const ref = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)[0]
+            expect(generatorState.resolveFootnoteRefLabel(ref)).toBe('*')
         })
     })
 
@@ -472,9 +472,9 @@ describe('RstResolverSimpleName', () => {
                 .. [1] footnote
             `
 
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const def = root.findAllChildren(RstNodeType.FootnoteDef)[0]
-            expect(simpleNameResolver.resolveFootnoteDefLabel(def)).toBe('1')
+            const generatorState = parseTestInputForGeneratorState(input)
+            const def = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            expect(generatorState.resolveFootnoteDefLabel(def)).toBe('1')
         })
 
         test('when FootnoteDef is auto number, it returns the labelNum', () => {
@@ -482,9 +482,9 @@ describe('RstResolverSimpleName', () => {
                 .. [#] footnote
             `
 
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const def = root.findAllChildren(RstNodeType.FootnoteDef)[0]
-            expect(simpleNameResolver.resolveFootnoteDefLabel(def)).toBe('1')
+            const generatorState = parseTestInputForGeneratorState(input)
+            const def = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            expect(generatorState.resolveFootnoteDefLabel(def)).toBe('1')
         })
 
         test('when FootnoteDef is auto number with label, it returns the labelNum', () => {
@@ -492,9 +492,9 @@ describe('RstResolverSimpleName', () => {
                 .. [#label] footnote
             `
 
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const def = root.findAllChildren(RstNodeType.FootnoteDef)[0]
-            expect(simpleNameResolver.resolveFootnoteDefLabel(def)).toBe('1')
+            const generatorState = parseTestInputForGeneratorState(input)
+            const def = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            expect(generatorState.resolveFootnoteDefLabel(def)).toBe('1')
         })
 
         test('when FootnoteDef is auto symbol, it returns the symbol', () => {
@@ -502,9 +502,9 @@ describe('RstResolverSimpleName', () => {
                 .. [*] footnote
             `
 
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const def = root.findAllChildren(RstNodeType.FootnoteDef)[0]
-            expect(simpleNameResolver.resolveFootnoteDefLabel(def)).toBe('*')
+            const generatorState = parseTestInputForGeneratorState(input)
+            const def = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            expect(generatorState.resolveFootnoteDefLabel(def)).toBe('*')
         })
     })
 
@@ -518,11 +518,10 @@ describe('RstResolverSimpleName', () => {
             .. [#note] This is the footnote labeled "note".
         `
 
-        const { root, simpleNameResolver } = parseTestInput(input)
-
-        const defs = root.findAllChildren(RstNodeType.FootnoteDef)
-        const refs = root.findAllChildren(RstNodeType.FootnoteRef)
-        const hyperlinkRefs = root.findAllChildren(RstNodeType.HyperlinkRef)
+        const generatorState = parseTestInputForGeneratorState(input)
+        const defs = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)
+        const refs = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)
+        const hyperlinkRefs = generatorState.root.findAllChildren(RstNodeType.HyperlinkRef)
 
         test('Document has 1 FootnoteDef and 2 FootnoteRefs', () => {
             expect(defs.length).toBe(1)
@@ -531,20 +530,20 @@ describe('RstResolverSimpleName', () => {
         })
 
         test('both FootnoteRefs link to same FootnoteDef', () => {
-            expect(simpleNameResolver.resolveFootnoteRefToDef(refs[0])?.label).toBe('#note')
-            expect(simpleNameResolver.resolveFootnoteRefToDef(refs[1])?.label).toBe('#note')
+            expect(generatorState.resolveFootnoteDef(refs[0])?.label).toBe('#note')
+            expect(generatorState.resolveFootnoteDef(refs[1])?.label).toBe('#note')
         })
 
         test('HyperlinkRef `note`_ resolves to same FootnoteDef', () => {
             const ref = hyperlinkRefs[0]
-            const refSimpleName = simpleNameResolver.getSimpleName(ref)
-            expect(simpleNameResolver.resolveSimpleNameToUrl(refSimpleName)).toBe('#note')
+            const refSimpleName = generatorState.simpleNameResolver.getSimpleName(ref)
+            expect(generatorState.resolveSimpleNameToUrl(refSimpleName)).toBe('#note')
         })
 
         test('FootnoteDef backlinks back to both FootnoteRefs', () => {
-            expect(simpleNameResolver.getFootnoteDefBacklinks(defs[0])).toStrictEqual([
-                simpleNameResolver.getSimpleName(refs[0]),
-                simpleNameResolver.getSimpleName(refs[1]),
+            expect(generatorState.resolveFootnoteDefBacklinks(defs[0])).toStrictEqual([
+                generatorState.simpleNameResolver.getSimpleName(refs[0]),
+                generatorState.simpleNameResolver.getSimpleName(refs[1]),
             ])
         })
 
@@ -596,9 +595,9 @@ describe('RstResolverSimpleName', () => {
         `
 
         test('resolveFootnoteRefLabel(FootnoteRef) resolves correctly', () => {
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const defs = root.findAllChildren(RstNodeType.FootnoteDef)
-            const refs = root.findAllChildren(RstNodeType.FootnoteRef)
+            const generatorState = parseTestInputForGeneratorState(input)
+            const defs = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)
+            const refs = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)
 
             expect(defs.length).toBe(3)
             expect(refs.length).toBe(3)
@@ -607,9 +606,9 @@ describe('RstResolverSimpleName', () => {
             expect(defs[1].toString()).toContain('This is footnote 2.')
             expect(defs[2].toString()).toContain('This is footnote 3.')
 
-            expect(simpleNameResolver.resolveFootnoteRefLabel(refs[0])).toBe('1')
-            expect(simpleNameResolver.resolveFootnoteRefLabel(refs[1])).toBe('2')
-            expect(simpleNameResolver.resolveFootnoteRefLabel(refs[2])).toBe('3')
+            expect(generatorState.resolveFootnoteRefLabel(refs[0])).toBe('1')
+            expect(generatorState.resolveFootnoteRefLabel(refs[1])).toBe('2')
+            expect(generatorState.resolveFootnoteRefLabel(refs[2])).toBe('3')
         })
 
         testGenerator(input, `
@@ -700,9 +699,9 @@ describe('RstResolverSimpleName', () => {
         `
 
         test('resolveFootnoteRefLabel(FootnoteRef) resolves correctly', () => {
-            const { root, simpleNameResolver } = parseTestInput(input)
-            const defs = root.findAllChildren(RstNodeType.FootnoteDef)
-            const refs = root.findAllChildren(RstNodeType.FootnoteRef)
+            const generatorState = parseTestInputForGeneratorState(input)
+            const defs = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)
+            const refs = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)
 
             expect(defs.length).toBe(3)
             expect(refs.length).toBe(3)
@@ -711,13 +710,13 @@ describe('RstResolverSimpleName', () => {
             expect(defs[1].toString()).toContain('This autonumber-labeled footnote will be labeled "1"')
             expect(defs[2].toString()).toContain('This footnote will be labeled "3"')
 
-            expect(simpleNameResolver.resolveFootnoteDefLabel(defs[0])).toBe('2')
-            expect(simpleNameResolver.resolveFootnoteDefLabel(defs[1])).toBe('1')
-            expect(simpleNameResolver.resolveFootnoteDefLabel(defs[2])).toBe('3')
+            expect(generatorState.resolveFootnoteDefLabel(defs[0])).toBe('2')
+            expect(generatorState.resolveFootnoteDefLabel(defs[1])).toBe('1')
+            expect(generatorState.resolveFootnoteDefLabel(defs[2])).toBe('3')
 
-            expect(simpleNameResolver.resolveFootnoteRefLabel(refs[0])).toBe('2')
-            expect(simpleNameResolver.resolveFootnoteRefLabel(refs[1])).toBe('3')
-            expect(simpleNameResolver.resolveFootnoteRefLabel(refs[2])).toBe('1')
+            expect(generatorState.resolveFootnoteRefLabel(refs[0])).toBe('2')
+            expect(generatorState.resolveFootnoteRefLabel(refs[1])).toBe('3')
+            expect(generatorState.resolveFootnoteRefLabel(refs[2])).toBe('1')
         })
 
         testGenerator(input, `

@@ -7,7 +7,6 @@ import { RstFootnoteRef } from '@/RstNode/Inline/FootnoteRef.js'
 import { RstHyperlinkRef } from '@/RstNode/Inline/HyperlinkRef.js'
 import { RstInlineInternalTarget } from '@/RstNode/Inline/InlineInternalTarget.js'
 import { RstNode } from '@/RstNode/RstNode.js'
-import { getAutoFootnoteSymbol } from '@/utils/getAutoFootnoteSymbol.js'
 import { SimpleName, normalizeSimpleName } from '@/SimpleName.js'
 import { RstCompiler } from '@/RstCompiler.js'
 import { RstSection } from '@/RstNode/Block/Section.js'
@@ -29,11 +28,15 @@ type DocumentTarget = {
     isAlias: boolean
 }
 
+/**
+ * Caches data that need to be filled after parsing
+ *
+ * Data in this container class is consumed by RstGeneratorState
+ */
 export class SimpleNameResolver {
     private readonly _simpleNameToTarget = new Map<SimpleName, DocumentTarget>()
     private readonly _nodesTargetableFromOutside = new Map<SimpleName, RstNode>() // Other Documents can use these SimpleNames to reference a link inside here
 
-    // Cached data that need to be filled after parsing
     private readonly _sectionSimpleNames = new Map<RstSection, SimpleName>()
     private readonly _footnoteDefToLabelNum = new Map<RstFootnoteDef, FootnoteLabelNum>()
     private readonly _footnoteDefToSymNum = new Map<RstFootnoteDef, FootnoteSymNum>()
@@ -111,38 +114,45 @@ export class SimpleNameResolver {
         return normalizeSimpleName(`${node.nodeType}-${node.nthOfType}`)
     }
 
+    get simpleNameToTarget(): ReadonlyMap<SimpleName, DocumentTarget> {
+        return this._simpleNameToTarget
+    }
+
+    get nodesTargetableFromOutside(): ReadonlyMap<SimpleName, RstNode> {
+        return this._nodesTargetableFromOutside
+    }
+
+    get sectionSimpleNames(): ReadonlyMap<RstSection, SimpleName> {
+        return this._sectionSimpleNames
+    }
+
+    get footnoteDefToLabelNum(): ReadonlyMap<RstFootnoteDef, FootnoteLabelNum> {
+        return this._footnoteDefToLabelNum
+    }
+
+    get footnoteDefToSymNum(): ReadonlyMap<RstFootnoteDef, FootnoteSymNum> {
+        return this._footnoteDefToSymNum
+    }
+
+    get footnoteDefBacklinks(): ReadonlyMap<RstFootnoteDef, ReadonlyArray<RstFootnoteRef>> {
+        return this._footnoteDefBacklinks
+    }
+
+    get footnoteRefToDef(): ReadonlyMap<RstFootnoteRef, RstFootnoteDef> {
+        return this._footnoteRefToDef
+    }
+
+    get citationDefBacklinks(): ReadonlyMap<RstCitationDef, ReadonlyArray<RstCitationRef>> {
+        return this._citationDefBacklinks
+    }
+
+    get citationRefToDef(): ReadonlyMap<RstCitationRef, RstCitationDef> {
+        return this._citationRefToDef
+    }
+
     // ------------------------------------------------------------------------
     // MARK: Internal Targetable Nodes
     // ------------------------------------------------------------------------
-
-    resolveNodeToUrl(node: RstNode): string | null {
-        const simpleName = this.getSimpleName(node)
-        return this.resolveSimpleNameToUrl(simpleName)
-    }
-
-    resolveSimpleNameToUrl(simpleName: SimpleName): string | null {
-        const seenSimpleNames = new Set<SimpleName>() // To avoid infinite loops
-
-        while (true) {
-            if (seenSimpleNames.has(simpleName)) {
-                return null
-            }
-
-            const docTarget = this._simpleNameToTarget.get(simpleName)
-            if (!docTarget) {
-                return null
-            }
-
-            const candidateTargetName = normalizeSimpleName(docTarget.target)
-            const isTargetTangible = (!docTarget.isAlias && docTarget.target.startsWith('#')) || (!docTarget.isAlias && !this._simpleNameToTarget.has(candidateTargetName))
-            if (isTargetTangible) {
-                return docTarget.target
-            }
-
-            seenSimpleNames.add(simpleName)
-            simpleName = candidateTargetName
-        }
-    }
 
     registerNodeForwardTarget(simpleName: SimpleName, fowardTarget: DocumentTarget): void {
         const existingTarget = this._simpleNameToTarget.get(simpleName)
@@ -171,10 +181,6 @@ export class SimpleNameResolver {
     registerExternalTargetableNode(simpleName: SimpleName, targetNode: RstNode) {
         this._nodesTargetableFromOutside.set(simpleName, targetNode)
         this._htmlAttrResolver.markNodeAsTargeted(targetNode)
-    }
-
-    resolveSimpleNameFromOutside(simpleName: SimpleName): RstNode | null {
-        return this._nodesTargetableFromOutside.get(simpleName) ?? null
     }
 
     get simpleNamesTargetableFromOutside(): Array<SimpleName> {
@@ -217,42 +223,6 @@ export class SimpleNameResolver {
     // ------------------------------------------------------------------------
     // MARK: Footnote
     // ------------------------------------------------------------------------
-
-    getFootnoteDefBacklinks(footnoteDef: RstFootnoteDef): Array<SimpleName> {
-        const footnoteRefs = this._footnoteDefBacklinks.get(footnoteDef) ?? []
-        return footnoteRefs.map((footnoteRef) => this.getSimpleName(footnoteRef))
-    }
-
-    resolveFootnoteDefLabel(footnoteDef: RstFootnoteDef): string | null {
-        if (footnoteDef.isAutoSymbol) {
-            const symNum = this._footnoteDefToSymNum.get(footnoteDef)
-            if (!symNum) {
-                return null
-            }
-
-            return getAutoFootnoteSymbol(symNum)
-        }
-
-        const labelNum = this._footnoteDefToLabelNum.get(footnoteDef)
-        if (!labelNum) {
-            return null
-        }
-
-        return labelNum.toString()
-    }
-
-    resolveFootnoteRefLabel(footnoteRef: RstFootnoteRef): string | null {
-        const footnoteDef = this._footnoteRefToDef.get(footnoteRef)
-        if (!footnoteDef) {
-            return null
-        }
-
-        return this.resolveFootnoteDefLabel(footnoteDef)
-    }
-
-    resolveFootnoteRefToDef(footnoteRef: RstFootnoteRef): RstFootnoteDef | null {
-        return this._footnoteRefToDef.get(footnoteRef) ?? null
-    }
 
     private registerFootnotes() {
         const footnoteDefs = this._root.findAllChildren(RstNodeType.FootnoteDef)
@@ -359,20 +329,6 @@ export class SimpleNameResolver {
     // ------------------------------------------------------------------------
     // MARK: Citation
     // ------------------------------------------------------------------------
-
-    getCitationDefBacklinks(citationDef: RstCitationDef): Array<SimpleName> {
-        const refs = this._citationDefBacklinks.get(citationDef) ?? []
-        return refs.map((citationRef) => this.getSimpleName(citationRef))
-    }
-
-    getCitationDef(citationRef: RstCitationRef): RstCitationDef {
-        const citationDef = this._citationRefToDef.get(citationRef)
-        if (!citationDef) {
-            throw new Error(`Failed to get citationDef for [${citationRef.toShortString()}]`)
-        }
-
-        return citationDef
-    }
 
     private registerCitations() {
         const citationDefs = this._root.findAllChildren(RstNodeType.CitationDef)

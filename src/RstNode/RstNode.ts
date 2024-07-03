@@ -174,13 +174,13 @@ export abstract class RstNode {
     // MARK: Tree Traversal
     // ------------------------------------------------------------------------
 
-    getParent<T extends keyof RstNodeMap>(expectedParentType: T): RstNodeMap[T] {
+    getParent<T extends keyof RstNodeMap>(expectedParentType: T): RstNodeMap[T] | null {
         if (!this._parent) {
-            throw new Error(`[${this.toShortString()}] does not have a parent`)
+            return null
         }
 
         if (this._parent.nodeType !== expectedParentType) {
-            throw new Error(`[${this.toShortString()}] is not a child of ${expectedParentType}`)
+            return null
         }
 
         return this._parent as RstNodeMap[T]
@@ -194,10 +194,10 @@ export abstract class RstNode {
         return this._parent.children.at(0) === this
     }
 
-    getMyIndexInParent(): number {
+    getMyIndexInParent(): number | null {
         const idx = this._parent?.children.findIndex((child) => child === this)
-        if (idx === undefined) {
-            throw new Error(`[${this.toShortString()}] Failed to getMyIndexInParent`)
+        if (idx === undefined || idx < 0) {
+            return null
         }
 
         return idx

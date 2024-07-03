@@ -1,4 +1,4 @@
-import { SimpleName } from '../SimpleName.js'
+import { normalizeSimpleName, SimpleName } from '../SimpleName.js'
 import { RstNode } from '@/RstNode/RstNode.js'
 import { convertUnicode } from '@/utils/convertUnicode.js'
 import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
@@ -19,6 +19,9 @@ import { SimpleNameResolver } from '@/Parser/Resolver/SimpleNameResolver.js'
 import { RstFootnoteDef } from '@/RstNode/ExplicitMarkup/FootnoteDef.js'
 import { RstFootnoteRef } from '@/RstNode/Inline/FootnoteRef.js'
 import { RstParserOutput } from '@/Parser/RstParserState.js'
+import { RstCitationRef } from '@/RstNode/Inline/CitationRef.js'
+import { RstCitationDef } from '@/RstNode/ExplicitMarkup/CitationDef.js'
+import { getAutoFootnoteSymbol } from '@/utils/getAutoFootnoteSymbol.js'
 
 export type RstGeneratorInput = {
     basePath: string // Base url all pages will be deployed to (default /)
@@ -50,22 +53,7 @@ type OutputBuffer = {
 
 type VisitChildren = () => void
 
-type ErrorableResolvers =
-    'resolveNodeToUrl' |
-    'resolveSimpleNameToUrl' |
-    'resolveFootnoteDefLabel' |
-    'resolveFootnoteRefLabel' |
-    'resolveFootnoteRefToDef'
-
-type SimpleNameResolverProxy = {
-    [K in ErrorableResolvers]: (
-        ...args: Parameters<SimpleNameResolver[K]>[0] extends RstNode
-            ? Parameters<SimpleNameResolver[K]>
-            : [RstNode, ...Parameters<SimpleNameResolver[K]>]
-    ) => Exclude<ReturnType<SimpleNameResolver[K]>, null>
-}
-
-export class RstGeneratorState implements SimpleNameResolverProxy {
+export class RstGeneratorState {
     private _globalHeaderBuffer = new Map<string, string>() // Content to write to top of output e.g. <script> <link> (indexed by string key so multiple nodes don't output the same content)
     private _downloads = new Map<string, string>() // Maps source of download file (relative to basePath) to expected location to be served
     private _outputBuffers: Array<OutputBuffer> = [
@@ -117,31 +105,13 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
         this.visitNode(this._currentParserOutput.root)
     }
 
-    registerGlobalHeader(key: string, text: string) {
-        this._globalHeaderBuffer.set(key, text)
-    }
-
-    registerDownload(targetPath: string) {
-        const downloadSrc = targetPath.startsWith('/')
-            ? joinFilePath(this._basePath, targetPath) // If given abs path, assume we want to search from basePath
-            : resolveFilePath(this._currentDocPath, targetPath) // Otherwise, assume we want to search relative from current doc
-
-        const fileHash = sha1(downloadSrc)
-        const fileName = downloadSrc.split('/').at(-1) ?? downloadSrc
-        const downloadDest = joinFilePath(this._basePath, '_downloads', fileHash, fileName)
-
-        this._downloads.set(downloadSrc, downloadDest)
-
-        return {
-            downloadSrc,
-            downloadDest,
-            fileName,
-        }
-    }
-
     // ------------------------------------------------------------------------
     // MARK: Getters
     // ------------------------------------------------------------------------
+
+    get root(): RstDocument {
+        return this._currentParserOutput.root
+    }
 
     get generatorOutput(): RstGeneratorOutput {
         if (this._outputBuffers.length !== 1) {
@@ -171,7 +141,7 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
         return str
     }
 
-    get simpleNameResolver(): Omit<SimpleNameResolver, ErrorableResolvers> {
+    get simpleNameResolver(): SimpleNameResolver {
         return this._currentParserOutput.simpleNameResolver
     }
 
@@ -224,7 +194,7 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
             throw new RstGeneratorError(this, srcNode, `Failed to resolveExternalRef "${targetRef}"`)
         }
 
-        const targetNode = parserOutput.simpleNameResolver.resolveSimpleNameFromOutside(targetRef)
+        const targetNode = parserOutput.simpleNameResolver.nodesTargetableFromOutside.get(targetRef)
         if (!targetNode) {
             throw new RstGeneratorError(this, srcNode, `Failed to resolveExternalRef "${targetRef}"`)
         }
@@ -247,7 +217,8 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
     }
 
     resolveNodeToUrl(node: RstNode): string {
-        const url = this._currentParserOutput.simpleNameResolver.resolveNodeToUrl(node)
+        const simpleName = this.simpleNameResolver.getSimpleName(node)
+        const url = this.resolveSimpleNameToUrl(simpleName)
         if (!url) {
             throw new RstGeneratorError(this, node, 'Failed to resolveNodeToUrl')
         }
@@ -255,51 +226,94 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
         return url
     }
 
-    resolveSimpleNameToUrl(srcNode: RstNode, simpleName: SimpleName): string {
-        const url = this._currentParserOutput.simpleNameResolver.resolveSimpleNameToUrl(simpleName)
-        if (!url) {
-            throw new RstGeneratorError(this, srcNode, 'Failed to resolveSimpleNameToUrl')
-        }
-
-        return url
-    }
-
-    resolveMultipleSimpleNamesToUrl(srcNode: RstNode, simpleNames: Array<SimpleName>): string {
+    resolveNodeWithMultipleSimpleNamesToUrl(node: RstNode, simpleNames: Array<SimpleName>): string {
         for (const simpleName of simpleNames) {
-            const url = this._currentParserOutput.simpleNameResolver.resolveSimpleNameToUrl(simpleName)
+            const url = this.resolveSimpleNameToUrl(simpleName)
             if (url) {
                 return url
             }
         }
 
-        throw new RstGeneratorError(this, srcNode, 'Failed to resolveMultipleSimpleNamesToUrl')
+        throw new RstGeneratorError(this, node, 'Failed to resolveNodeWithMultipleSimpleNamesToUrl')
     }
 
-    resolveFootnoteDefLabel(footnoteDef: RstFootnoteDef): string {
-        const label = this._currentParserOutput.simpleNameResolver.resolveFootnoteDefLabel(footnoteDef)
-        if (!label) {
-            throw new RstGeneratorError(this, footnoteDef, 'Failed to resolveFootnoteDefLabel')
+    resolveSimpleNameToUrl(simpleName: SimpleName): string | null {
+        const seenSimpleNames = new Set<SimpleName>() // To avoid infinite loops
+
+        while (true) {
+            if (seenSimpleNames.has(simpleName)) {
+                return null
+            }
+
+            const docTarget = this.simpleNameResolver.simpleNameToTarget.get(simpleName)
+            if (!docTarget) {
+                return null
+            }
+
+            const candidateTargetName = normalizeSimpleName(docTarget.target)
+            const isTargetTangible = (!docTarget.isAlias && docTarget.target.startsWith('#')) || (!docTarget.isAlias && !this.simpleNameResolver.simpleNameToTarget.has(candidateTargetName))
+            if (isTargetTangible) {
+                return docTarget.target
+            }
+
+            seenSimpleNames.add(simpleName)
+            simpleName = candidateTargetName
+        }
+    }
+
+    resolveCitationDef(citationRef: RstCitationRef): RstCitationDef {
+        const citationDef = this.simpleNameResolver.citationRefToDef.get(citationRef)
+        if (!citationDef) {
+            throw new RstGeneratorError(this, citationRef, 'Failed to resolveCitationDef')
         }
 
-        return label
+        return citationDef
     }
 
-    resolveFootnoteRefLabel(footnoteRef: RstFootnoteRef): string {
-        const label = this._currentParserOutput.simpleNameResolver.resolveFootnoteRefLabel(footnoteRef)
-        if (!label) {
-            throw new RstGeneratorError(this, footnoteRef, 'Failed to resolveFootnoteRefLabel')
-        }
-
-        return label
+    resolveCitationDefBacklinks(citationDef: RstCitationDef): Array<SimpleName> {
+        const refs = this.simpleNameResolver.citationDefBacklinks.get(citationDef) ?? []
+        return refs.map((citationRef) => this.simpleNameResolver.getSimpleName(citationRef))
     }
 
-    resolveFootnoteRefToDef(footnoteRef: RstFootnoteRef): RstFootnoteDef {
-        const footnoteDef =  this._currentParserOutput.simpleNameResolver.resolveFootnoteRefToDef(footnoteRef)
+    resolveFootnoteDef(footnoteRef: RstFootnoteRef): RstFootnoteDef {
+        const footnoteDef =  this.simpleNameResolver.footnoteRefToDef.get(footnoteRef)
         if (!footnoteDef) {
-            throw new RstGeneratorError(this, footnoteRef, 'Failed to resolveFootnoteRefToDef')
+            throw new RstGeneratorError(this, footnoteRef, 'Failed to resolveFootnoteDef')
         }
 
         return footnoteDef
+    }
+
+    resolveFootnoteDefBacklinks(footnoteDef: RstFootnoteDef): Array<SimpleName> {
+        const footnoteRefs = this.simpleNameResolver.footnoteDefBacklinks.get(footnoteDef) ?? []
+        return footnoteRefs.map((footnoteRef) => this.simpleNameResolver.getSimpleName(footnoteRef))
+    }
+
+    resolveFootnoteDefLabel(footnoteDef: RstFootnoteDef): string {
+        if (footnoteDef.isAutoSymbol) {
+            const symNum = this.simpleNameResolver.footnoteDefToSymNum.get(footnoteDef)
+            if (!symNum) {
+                throw new RstGeneratorError(this, footnoteDef, 'Failed to resolveFootnoteDefLabel')
+            }
+
+            return getAutoFootnoteSymbol(symNum)
+        }
+
+        const labelNum = this.simpleNameResolver.footnoteDefToLabelNum.get(footnoteDef)
+        if (!labelNum) {
+            throw new RstGeneratorError(this, footnoteDef, 'Failed to resolveFootnoteDefLabel')
+        }
+
+        return labelNum.toString()
+    }
+
+    resolveFootnoteRefLabel(footnoteRef: RstFootnoteRef): string {
+        const footnoteDef = this.simpleNameResolver.footnoteRefToDef.get(footnoteRef)
+        if (!footnoteDef) {
+            throw new RstGeneratorError(this, footnoteRef, 'Failed to resolveFootnoteRefLabel')
+        }
+
+        return this.resolveFootnoteDefLabel(footnoteDef)
     }
 
     // ------------------------------------------------------------------------
@@ -524,6 +538,32 @@ export class RstGeneratorState implements SimpleNameResolverProxy {
 
     get isUsingNoCommentMarkup(): boolean {
         return this._disableCommentMarkup
+    }
+
+    // ------------------------------------------------------------------------
+    // MARK: Alt Writers
+    // ------------------------------------------------------------------------
+
+    registerGlobalHeader(key: string, text: string) {
+        this._globalHeaderBuffer.set(key, text)
+    }
+
+    registerDownload(targetPath: string) {
+        const downloadSrc = targetPath.startsWith('/')
+            ? joinFilePath(this._basePath, targetPath) // If given abs path, assume we want to search from basePath
+            : resolveFilePath(this._currentDocPath, targetPath) // Otherwise, assume we want to search relative from current doc
+
+        const fileHash = sha1(downloadSrc)
+        const fileName = downloadSrc.split('/').at(-1) ?? downloadSrc
+        const downloadDest = joinFilePath(this._basePath, '_downloads', fileHash, fileName)
+
+        this._downloads.set(downloadSrc, downloadDest)
+
+        return {
+            downloadSrc,
+            downloadDest,
+            fileName,
+        }
     }
 
     // ------------------------------------------------------------------------

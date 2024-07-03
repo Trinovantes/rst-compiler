@@ -70,7 +70,7 @@ export const footnoteRefGenerators = createNodeGenerators(
     RstNodeType.FootnoteRef,
 
     (generatorState, node) => {
-        const targetDef = generatorState.resolveFootnoteRefToDef(node)
+        const targetDef = generatorState.resolveFootnoteDef(node)
         const targetDefUrl = generatorState.resolveNodeToUrl(targetDef)
         const refSimpleName = generatorState.simpleNameResolver.getSimpleName(node)
         const refLabel = generatorState.resolveFootnoteRefLabel(node)

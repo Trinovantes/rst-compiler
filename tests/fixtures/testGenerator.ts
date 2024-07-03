@@ -3,7 +3,7 @@ import { trimCommonIndent } from '@/utils/trimCommonIndent.js'
 import { RstGeneratorOptions } from '@/Generator/RstGeneratorOptions.js'
 import { RstToHtmlCompiler, RstToMdCompiler } from '@/RstCompiler.js'
 import { RstGeneratorInput } from '@/Generator/RstGeneratorState.js'
-import { parseTestInputForGenerator } from './parseTestInput.js'
+import { parseTestInputForGeneratorInput } from './parseTestInput.js'
 import { RstParserOptions } from '@/Parser/RstParserOptions.js'
 
 type OptionsOverride = Partial<{
@@ -25,7 +25,7 @@ function createTestGenerator(outputKey: 'body' | 'header') {
         }
 
         test(htmlTestName, () => {
-            const generatorInput = parseTestInputForGenerator(input, optionsOverride?.parserOptions)
+            const generatorInput = parseTestInputForGeneratorInput(input, optionsOverride?.parserOptions)
             const compiler = new RstToHtmlCompiler()
             const htmlOutput = trimCommonIndent(compiler.generate(generatorInput, generatorOptions)[outputKey])
             const htmlOutputExpected = trimCommonIndent(expectedHtml)
@@ -33,7 +33,7 @@ function createTestGenerator(outputKey: 'body' | 'header') {
         })
 
         test(mdTestName, () => {
-            const generatorInput = parseTestInputForGenerator(input, optionsOverride?.parserOptions)
+            const generatorInput = parseTestInputForGeneratorInput(input, optionsOverride?.parserOptions)
             const compiler = new RstToMdCompiler()
             const mdOutput = trimCommonIndent(compiler.generate(generatorInput, generatorOptions)[outputKey])
             const mdOutputExpected = trimCommonIndent(expectedMd ?? expectedHtml.replaceAll(/\n+/g, '\n'))

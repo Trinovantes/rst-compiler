@@ -1,8 +1,9 @@
 import { RstToHtmlCompiler } from '@/RstCompiler.js'
 import { trimCommonIndent } from '@/utils/trimCommonIndent.js'
-import { RstGeneratorInput } from '@/Generator/RstGeneratorState.js'
+import { RstGeneratorInput, RstGeneratorState } from '@/Generator/RstGeneratorState.js'
 import { RstParserOptions } from '@/Parser/RstParserOptions.js'
 import { RstParserOutput } from '@/Parser/RstParserState.js'
+import { createDefaultGeneratorOptions } from '@/Generator/RstGeneratorOptions.js'
 
 export function parseTestInput(input: string, parserOptionsOverride?: Partial<RstParserOptions>): RstParserOutput {
     const parserOptions: Partial<RstParserOptions> = {
@@ -19,7 +20,7 @@ export function parseTestInput(input: string, parserOptionsOverride?: Partial<Rs
     return parserOutput
 }
 
-export function parseTestInputForGenerator(input: string | RstGeneratorInput, parserOptionsOverride?: Partial<RstParserOptions>): RstGeneratorInput {
+export function parseTestInputForGeneratorInput(input: string | RstGeneratorInput, parserOptionsOverride?: Partial<RstParserOptions>): RstGeneratorInput {
     if (typeof input !== 'string') {
         return input
     }
@@ -38,4 +39,10 @@ export function parseTestInputForGenerator(input: string | RstGeneratorInput, pa
             },
         ],
     }
+}
+
+export function parseTestInputForGeneratorState(input: string | RstGeneratorInput, parserOptionsOverride?: Partial<RstParserOptions>): RstGeneratorState {
+    const generatorInput = parseTestInputForGeneratorInput(input, parserOptionsOverride)
+    const generatorState = new RstGeneratorState(createDefaultGeneratorOptions(), generatorInput, new RstToHtmlCompiler())
+    return generatorState
 }
