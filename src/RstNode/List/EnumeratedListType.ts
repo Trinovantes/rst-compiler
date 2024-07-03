@@ -8,7 +8,7 @@ export const enum RstEnumeratedListType {
     RomanLower = 'RomanLower',
 }
 
-export function getEnumeratedListType(bulletValue: string): RstEnumeratedListType {
+export function getEnumeratedListType(bulletValue: string): RstEnumeratedListType | null {
     switch (true) {
         case romanUpperRe.test(bulletValue):
             return RstEnumeratedListType.RomanUpper
@@ -27,7 +27,7 @@ export function getEnumeratedListType(bulletValue: string): RstEnumeratedListTyp
             return RstEnumeratedListType.AlphabetLower
 
         default:
-            throw new Error('Failed to getEnumeratedListType')
+            return null
     }
 }
 

@@ -116,6 +116,10 @@ export const enumeratedListParser: RstNodeParser<RstNodeType.EnumeratedList> = {
         }
 
         const listType = getEnumeratedListType(listItems[0].bullet)
+        if (listType === null) {
+            return null
+        }
+
         const endLineIdx = parserState.lineIdx
         return new RstEnumeratedList(parserState.registrar, { startLineIdx, endLineIdx }, listItems, listType)
     },

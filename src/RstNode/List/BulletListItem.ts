@@ -1,11 +1,13 @@
 import { romanToInt } from '@/utils/romanToInt.js'
 import { RstNode, RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
 import { RstEnumeratedList } from './EnumeratedList.js'
-import { RstEnumeratedListType } from './EnumeratedListType.js'
 import { createNodeGenerators } from '@/Generator/RstGenerator.js'
 import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
 import { RstNodeType } from '../RstNodeType.js'
 import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
+import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
+import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
+import { RstEnumeratedListType } from './EnumeratedListType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -77,25 +79,34 @@ export class RstBulletListItem extends RstNode {
         return false
     }
 
-    getEnumeratedListValue(): number {
+    getEnumeratedListValue(generatorState: RstGeneratorState): number {
         if (this.bullet === '#') {
-            return this.getMyIndexInParent() + 1
-        }
-
-        const parent = this.getParent(RstNodeType.EnumeratedList)
-        switch (parent.listType) {
-            case RstEnumeratedListType.AlphabetUpper:
-            case RstEnumeratedListType.AlphabetLower: {
-                const letter = this.bullet.toLowerCase()
-                return letter.charCodeAt(0) - 'a'.charCodeAt(0) + 1
+            const idx = this.getMyIndexInParent()
+            if (idx === null) {
+                throw new RstGeneratorError(generatorState, this, 'Failed to getEnumeratedListValue (failed to getMyIndexInParent)')
             }
 
-            case RstEnumeratedListType.RomanUpper:
-            case RstEnumeratedListType.RomanLower:
-                return romanToInt(this.bullet)
+            return idx + 1
+        } else {
+            const parent = this.getParent(RstNodeType.EnumeratedList)
+            if (!parent) {
+                throw new RstGeneratorError(generatorState, this, 'Failed to getEnumeratedListValue (failed to getParent)')
+            }
 
-            default:
-                return parseInt(this.bullet)
+            switch (parent.listType) {
+                case RstEnumeratedListType.AlphabetUpper:
+                case RstEnumeratedListType.AlphabetLower: {
+                    const letter = this.bullet.toLowerCase()
+                    return letter.charCodeAt(0) - 'a'.charCodeAt(0) + 1
+                }
+
+                case RstEnumeratedListType.RomanUpper:
+                case RstEnumeratedListType.RomanLower:
+                    return romanToInt(this.bullet)
+
+                default:
+                    return parseInt(this.bullet)
+            }
         }
     }
 }
@@ -110,7 +121,7 @@ export const bulletListItemGenerators = createNodeGenerators(
     (generatorState, node) => {
         const attrs = new HtmlAttributeStore()
         if (node.parent instanceof RstEnumeratedList && node.isFirstChild() && !node.isEnumeratedListFirstValue()) {
-            attrs.set('value', node.getEnumeratedListValue().toString())
+            attrs.set('value', node.getEnumeratedListValue(generatorState).toString())
         }
 
         generatorState.writeLineHtmlTagWithAttr('li', node, attrs, () => {
@@ -120,7 +131,7 @@ export const bulletListItemGenerators = createNodeGenerators(
 
     (generatorState, node) => {
         const bullet = node.parent instanceof RstEnumeratedList
-            ? `${node.getEnumeratedListValue()}. `
+            ? `${node.getEnumeratedListValue(generatorState)}. `
             : `${node.bullet} `
         const bulletWhitespace = ' '.repeat(bullet.length)
 
