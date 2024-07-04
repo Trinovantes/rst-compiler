@@ -41,6 +41,7 @@ export const htmlClassDirectivePlugins = createRstCompilerPlugins({
     onBeforeParse: (parserOption) => {
         for (const directive of htmlClassDirectiveGenerators.directives) {
             parserOption.directivesWithInitContent.push(directive)
+            parserOption.directivesWithInvisibleContent.push(directive)
         }
     },
 

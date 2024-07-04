@@ -19,6 +19,7 @@ describe('next visible node gets html class', () => {
             type: RstNodeType.Directive,
             data: {
                 directive: 'class',
+                isInvisibleContent: true,
                 initContent: [
                     {
                         type: RstNodeType.Paragraph,
@@ -51,7 +52,7 @@ describe('next visible node gets html class', () => {
     ])
 
     testGenerator(input, `
-        <!-- Directive id:3 children:0 directive:"class" initContentText:"special" -->
+        <!-- Directive id:3 children:0 directive:"class" initContentText:"special" isInvisibleContent:true -->
 
         <!-- invisible -->
 
@@ -61,7 +62,7 @@ describe('next visible node gets html class', () => {
             Hello World
         </p>
     `, `
-        [Directive id:3 children:0 directive:"class" initContentText:"special"]: #
+        [Directive id:3 children:0 directive:"class" initContentText:"special" isInvisibleContent:true]: #
 
         [invisible]: #
 
@@ -100,6 +101,7 @@ describe('when Directive is last child inside another block, next visible node o
                             type: RstNodeType.Directive,
                             data: {
                                 directive: 'class',
+                                isInvisibleContent: true,
                                 initContent: [
                                     {
                                         type: RstNodeType.Paragraph,
@@ -127,7 +129,7 @@ describe('when Directive is last child inside another block, next visible node o
                 <p>
                     item 1
                 </p>
-                <!-- Directive id:5 children:0 directive:"class" initContentText:"special" -->
+                <!-- Directive id:5 children:0 directive:"class" initContentText:"special" isInvisibleContent:true -->
             </li>
             <li class="special">
                 <p>
@@ -141,7 +143,7 @@ describe('when Directive is last child inside another block, next visible node o
                 <p>
                     item 1
                 </p>
-                <!-- Directive id:5 children:0 directive:"class" initContentText:"special" -->
+                <!-- Directive id:5 children:0 directive:"class" initContentText:"special" isInvisibleContent:true -->
             </li>
             <li class="special">
                 <p>
@@ -165,6 +167,7 @@ describe('when next node is Blockquote, the Directive must be followed by empty 
             type: RstNodeType.Directive,
             data: {
                 directive: 'class',
+                isInvisibleContent: true,
                 initContent: [
                     {
                         type: RstNodeType.Paragraph,
@@ -180,7 +183,7 @@ describe('when next node is Blockquote, the Directive must be followed by empty 
     ])
 
     testGenerator(input, `
-        <!-- Directive id:3 children:0 directive:"class" initContentText:"special" -->
+        <!-- Directive id:3 children:0 directive:"class" initContentText:"special" isInvisibleContent:true -->
 
         <blockquote class="special">
             <p>
@@ -188,7 +191,7 @@ describe('when next node is Blockquote, the Directive must be followed by empty 
             </p>
         </blockquote>
     `, `
-        [Directive id:3 children:0 directive:"class" initContentText:"special"]: #
+        [Directive id:3 children:0 directive:"class" initContentText:"special" isInvisibleContent:true]: #
 
         <blockquote class="special">
             <p>
@@ -214,6 +217,7 @@ describe('when Directive has nested blocks, all children get html class', () => 
             type: RstNodeType.Directive,
             data: {
                 directive: 'class',
+                isInvisibleContent: true,
                 initContent: [
                     {
                         type: RstNodeType.Paragraph,
@@ -230,6 +234,7 @@ describe('when Directive has nested blocks, all children get html class', () => 
                     type: RstNodeType.Directive,
                     data: {
                         directive: 'class',
+                        isInvisibleContent: true,
                         initContent: [
                             {
                                 type: RstNodeType.Paragraph,
@@ -247,22 +252,22 @@ describe('when Directive has nested blocks, all children get html class', () => 
     ])
 
     testGenerator(input, `
-        <!-- Directive id:10 children:3 directive:"class" initContentText:"special" -->
+        <!-- Directive id:10 children:3 directive:"class" initContentText:"special" isInvisibleContent:true -->
 
         <p class="special">
             Hello
         </p>
-        <!-- Directive id:7 children:0 directive:"class" initContentText:"another-special" -->
+        <!-- Directive id:7 children:0 directive:"class" initContentText:"another-special" isInvisibleContent:true -->
         <p class="another-special special">
             World
         </p>
     `, `
-        <!-- Directive id:10 children:3 directive:"class" initContentText:"special" -->
+        <!-- Directive id:10 children:3 directive:"class" initContentText:"special" isInvisibleContent:true -->
 
         <p class="special">
             Hello
         </p>
-        <!-- Directive id:7 children:0 directive:"class" initContentText:"another-special" -->
+        <!-- Directive id:7 children:0 directive:"class" initContentText:"another-special" isInvisibleContent:true -->
         <p class="another-special special">
             World
         </p>
@@ -283,6 +288,7 @@ describe('when next node is LiteralBlock with predefined class, it combines html
             type: RstNodeType.Directive,
             data: {
                 directive: 'rst-class',
+                isInvisibleContent: true,
                 initContent: [
                     {
                         type: RstNodeType.Paragraph,
@@ -302,7 +308,7 @@ describe('when next node is LiteralBlock with predefined class, it combines html
     ])
 
     testGenerator(input, `
-        <!-- Directive id:3 children:0 directive:"rst-class" initContentText:"code-example-bad" -->
+        <!-- Directive id:3 children:0 directive:"rst-class" initContentText:"code-example-bad" isInvisibleContent:true -->
 
         <!-- :: -->
 
@@ -310,7 +316,7 @@ describe('when next node is LiteralBlock with predefined class, it combines html
             <pre class="code code-example-bad">enum Tiles {TILE_BRICK, TILE_FLOOR, TILE_SPIKE, TILE_TELEPORT,}</pre>
         </div>
     `, `
-        [Directive id:3 children:0 directive:"rst-class" initContentText:"code-example-bad"]: #
+        [Directive id:3 children:0 directive:"rst-class" initContentText:"code-example-bad" isInvisibleContent:true]: #
 
         [::]: #
 
@@ -332,6 +338,7 @@ describe('when next node is CitationDef with predefined class, it combines html 
             type: RstNodeType.Directive,
             data: {
                 directive: 'rst-class',
+                isInvisibleContent: true,
                 initContent: [
                     {
                         type: RstNodeType.Paragraph,
@@ -355,7 +362,7 @@ describe('when next node is CitationDef with predefined class, it combines html 
     ])
 
     testGenerator(input, `
-        <!-- Directive id:3 children:0 directive:"rst-class" initContentText:"special" -->
+        <!-- Directive id:3 children:0 directive:"rst-class" initContentText:"special" isInvisibleContent:true -->
 
         <dl class="citations special">
             <dt id="label">
@@ -370,7 +377,7 @@ describe('when next node is CitationDef with predefined class, it combines html 
             </dd>
         </dl>
     `, `
-        [Directive id:3 children:0 directive:"rst-class" initContentText:"special"]: #
+        [Directive id:3 children:0 directive:"rst-class" initContentText:"special" isInvisibleContent:true]: #
 
         <dl class="citations special">
             <dt id="label">
@@ -399,6 +406,7 @@ describe('when next node is FootnoteDef with predefined class, it combines html 
             type: RstNodeType.Directive,
             data: {
                 directive: 'rst-class',
+                isInvisibleContent: true,
                 initContent: [
                     {
                         type: RstNodeType.Paragraph,
@@ -423,7 +431,7 @@ describe('when next node is FootnoteDef with predefined class, it combines html 
     ])
 
     testGenerator(input, `
-        <!-- Directive id:3 children:0 directive:"rst-class" initContentText:"special" -->
+        <!-- Directive id:3 children:0 directive:"rst-class" initContentText:"special" isInvisibleContent:true -->
 
         <dl class="footnotes special">
             <dt id="footnotedef-1">
@@ -438,7 +446,7 @@ describe('when next node is FootnoteDef with predefined class, it combines html 
             </dd>
         </dl>
     `, `
-        [Directive id:3 children:0 directive:"rst-class" initContentText:"special"]: #
+        [Directive id:3 children:0 directive:"rst-class" initContentText:"special" isInvisibleContent:true]: #
 
         <dl class="footnotes special">
             <dt id="footnotedef-1">
@@ -461,8 +469,64 @@ describe('when there is no next node, it does nothing', () => {
     `
 
     testGenerator(input, `
-        <!-- Directive id:3 children:0 directive:"class" initContentText:"special" -->
+        <!-- Directive id:3 children:0 directive:"class" initContentText:"special" isInvisibleContent:true -->
     `, `
-        [Directive id:3 children:0 directive:"class" initContentText:"special"]: #
+        [Directive id:3 children:0 directive:"class" initContentText:"special" isInvisibleContent:true]: #
+    `)
+})
+
+describe('when a node needs to target next node but is class Directive, it targets the node after the Directive', () => {
+    const input = `
+        .. _mytarget:
+
+        .. class:: special
+
+        Hello World
+    `
+
+    testParser(input, [
+        {
+            type: RstNodeType.HyperlinkTarget,
+            data: {
+                isTargetingNextNode: true,
+                label: 'mytarget',
+                target: '',
+            },
+        },
+        {
+            type: RstNodeType.Directive,
+            data: {
+                directive: 'class',
+                isInvisibleContent: true,
+                initContent: [
+                    {
+                        type: RstNodeType.Paragraph,
+                        text: 'special',
+                    },
+                ],
+            },
+        },
+        {
+            type: RstNodeType.Paragraph,
+            text: 'Hello World',
+        },
+    ])
+
+    testGenerator(input, `
+        <!-- HyperlinkTarget id:1 children:0 label:"mytarget" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-2" -->
+
+        <!-- Directive id:4 children:0 directive:"class" initContentText:"special" isInvisibleContent:true -->
+
+        <p id="paragraph-2" class="special">
+            Hello World
+        </p>
+    `, `
+        [HyperlinkTarget id:1 children:0 label:"mytarget" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-2"]: #
+
+        [Directive id:4 children:0 directive:"class" initContentText:"special" isInvisibleContent:true]: #
+
+        <p id="paragraph-2" class="special">
+            Hello World
+        </p>
     `)
 })

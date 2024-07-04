@@ -50,6 +50,11 @@ export type RstParserOptions = {
     directivesWithInitContent: Array<string>
 
     /**
+     * Directives that will not render anything visible (i.e. control directives like "rst-class")
+     */
+    directivesWithInvisibleContent: Array<string>
+
+    /**
      * String that will be included at the end of every source file
      *
      * This is a possible place to add substitutions that should be available in every file
@@ -70,6 +75,7 @@ export function createDefaultParserOptions(opts?: Partial<RstParserOptions>): Rs
         enableCharacterLevelInlineMarkup: opts?.enableCharacterLevelInlineMarkup ?? false,
         directivesWithRawText: [],
         directivesWithInitContent: [],
+        directivesWithInvisibleContent: [],
 
         epilog: '',
     }
