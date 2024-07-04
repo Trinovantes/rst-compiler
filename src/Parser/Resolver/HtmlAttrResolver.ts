@@ -10,12 +10,6 @@ export class HtmlAttrResolver {
         this._nodesNeedIdAttr.add(node)
     }
 
-    markNodesAsTargeted(nodes: ReadonlyArray<RstNode>) {
-        for (const node of nodes) {
-            this.markNodeAsTargeted(node)
-        }
-    }
-
     hasForcedHtmlId(node: RstNode): boolean {
         return this._nodesNeedIdAttr.has(node)
     }
