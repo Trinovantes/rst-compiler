@@ -251,7 +251,7 @@ console.log(html.header) // Will contain <script> needed to make tabs interactiv
 
 See [sphinx-tabs](https://pypi.org/project/sphinx-tabs/) for more information.
 
-**Note:** If you are using the Markdown output in Vitepress, you will need to install [`vitepress-plugin-tabs`](https://vitepress-plugins.sapphi.red/tabs/)
+**Note:** If you are using the Markdown output in VitePress, you will need to install [`vitepress-plugin-tabs`](https://vitepress-plugins.sapphi.red/tabs/)
 
 <!--
 ===============================================================================
