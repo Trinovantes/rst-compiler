@@ -90,7 +90,7 @@ const plugin: RstCompilerPlugin = {
 }
 
 const compiler = new RstToHtmlCompiler()
-this.usePlugin(plugin)
+compiler.usePlugin(plugin)
 ```
 
 All of the built-in Directives and InterpretedText in the compiler are implemented as plugins as well.
