@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { RstToHtmlCompiler, RstToMdCompiler } from '@/RstCompiler.js'
 import { ref, watch } from 'vue'
-import { codeToHtml } from 'shiki'
+import { codeToHtml, getHighlighter } from 'shiki'
 import { useQuasar } from 'quasar'
+import { RstGeneratorOptions, RstParserOptions, RstToHtmlCompiler, RstToMdCompiler } from '@/index.js'
 
 type Tab = 'HTML_RENDER' | 'RAW_HTML' | 'RAW_MARKDOWN' | 'AST'
 const currentTab = ref<Tab>('HTML_RENDER')
@@ -66,13 +66,25 @@ watch(editorText, async(editorText) => {
         const parserOutput = htmlCompiler.parse(editorText, { disableWarnings: true })
         outputAst.value = JSON.stringify(parserOutput.root.toJSON(), undefined, 4)
 
-        const outputHtml = htmlCompiler.compile(parserOutput)
+        const parserOptions: Partial<RstParserOptions> = {}
+        const generatorOptions: Partial<RstGeneratorOptions> = {
+            shiki: {
+                theme: 'github-light',
+                transformers: [],
+                highlighter: await getHighlighter({
+                    langs: ['python', 'js'],
+                    themes: ['github-light'],
+                }),
+            },
+        }
+
+        const outputHtml = htmlCompiler.compile(parserOutput, parserOptions, generatorOptions)
         renderedHtmlPre.value = await codeToHtml(outputHtml.body, {
             lang: 'html',
             theme: 'vitesse-light',
         })
 
-        const outputMd = mdCompiler.compile(parserOutput)
+        const outputMd = mdCompiler.compile(parserOutput, parserOptions, generatorOptions)
         renderedMdPre.value = await codeToHtml(outputMd.body, {
             lang: 'markdown',
             theme: 'vitesse-light',
@@ -85,6 +97,9 @@ watch(editorText, async(editorText) => {
                 <style>
                 *:last-child{
                     margin-bottom:0;
+                }
+                pre{
+                    border: 1px solid #ccc;
                 }
                 </style>
                 ${outputHtml.header}

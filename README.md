@@ -195,10 +195,14 @@ See [sphinx](https://www.sphinx-doc.org/en/master/usage/restructuredtext/directi
        print(8/2)
 ```
 
+By default, the HTML compiler will simply output plaintext inside `<pre>` tags.
+If you wish to enable syntax highlighting, you will need to provide a `shiki` object in `RstGeneratorOptions`:
+
 ```ts
 import { getHighlighter } from 'shiki'
+import { RstToHtmlCompiler, RstGeneratorOptions } from 'rst-compiler'
 
-RstToHtmlCompiler.compile(rst, {}, {
+const generatorOptions: Partial<RstGeneratorOptions> = {
     shiki: {
         defaultLanguage: 'python',
         theme: 'min-dark',
@@ -208,7 +212,9 @@ RstToHtmlCompiler.compile(rst, {}, {
             themes: ['min-dark'],
         }),
     },
-})
+}
+
+RstToHtmlCompiler.compile(rst, {}, generatorOptions)
 ```
 
 See [docutils](https://docutils.sourceforge.io/docs/ref/rst/directives.html#code) for more information.

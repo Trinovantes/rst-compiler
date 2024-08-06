@@ -25,8 +25,44 @@ by a blank line.
 
     -- Firefly
 
+Code
++++
+
+By default, code will be generated as plaintext inside :code:`<pre>` tags
+
+However, this demo is configured to use :code:`shiki` for syntax highlighting:
+
+.. code:: js
+
+    import { getHighlighter } from 'shiki'
+    import { RstToHtmlCompiler, RstGeneratorOptions } from 'rst-compiler'
+
+    const generatorOptions: Partial<RstGeneratorOptions> = {
+        shiki: {
+            defaultLanguage: 'python',
+            theme: 'min-dark',
+            transformers: [],
+            highlighter: await getHighlighter({
+                langs: ['py', 'js', 'cpp'],
+                themes: ['min-dark'],
+            }),
+        },
+    }
+
+    RstToHtmlCompiler.compile(rst, {}, generatorOptions)
+
+Trying to render a language not specified in your :code:`shiki` options will trigger an error:
+
+.. code::
+
+    .. code:: csharp
+
+        Console.WriteLine("Hello World!");
+
 Math Equations
 +++
+
+Math equations are rendered using :code:`katex` out-of-the-box:
 
 .. container:: my-custom-class
 
