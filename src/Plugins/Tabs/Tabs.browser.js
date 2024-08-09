@@ -142,11 +142,17 @@ class TabContainer extends HTMLElement {
     }
 
     /**
+     * Iterates all tab containers of current groupKey and selects the heading that matches current heading
+     *
      * @param {string} selectedHeadingName
      * @returns void
      */
     selectTabForEveryoneElse(selectedHeadingName) {
         const groupKey = this.getAttribute('ATTR_TAB_GROUP_NAME')
+        if (!groupKey) {
+            return
+        }
+
         const allTabContainers = document.querySelectorAll(`ELEMENT_CONTAINER[ATTR_TAB_GROUP_NAME="${groupKey}"]`)
 
         for (const otherContainer of allTabContainers) {
@@ -157,7 +163,7 @@ class TabContainer extends HTMLElement {
                 continue
             }
 
-            const otherContainerHeading = otherContainer.querySelector(`ELEMENT_HEADING[ATTR_HEADING_NAME=${selectedHeadingName}]`)
+            const otherContainerHeading = otherContainer.querySelector(`ELEMENT_HEADING[ATTR_HEADING_NAME="${selectedHeadingName}"]`)
             otherContainer.selectTab(otherContainerHeading)
         }
 
