@@ -37,21 +37,6 @@ export enum TabsClientConstant {
     LOCAL_STORAGE_KEY = 'rst-compiler:tabs-plugin',
 }
 
-const tabsClientScript = (() => {
-    let output = `
-<script type="text/javascript">
-(() => {
-${browserCode}
-})()
-</script>`
-
-    for (const [origText, replacement] of Object.entries(TabsClientConstant)) {
-        output = output.replaceAll(origText, replacement)
-    }
-
-    return output
-})()
-
 // ----------------------------------------------------------------------------
 // MARK: Container Directive
 // ----------------------------------------------------------------------------
@@ -65,7 +50,7 @@ export const tabContainerDirectiveGenerators = createDirectiveGenerators(
         const attrs = new HtmlAttributeStore()
         attrs.append(TabsClientConstant.ATTR_TAB_GROUP_NAME, getTabsGroupKey(generatorState, node))
 
-        generatorState.registerGlobalHeader(GENERATOR_GLOBAL_HEADER_KEY, tabsClientScript)
+        generatorState.registerGlobalHeader(GENERATOR_GLOBAL_HEADER_KEY, getTabsClientScript())
         generatorState.writeLineHtmlTagWithAttr(TabsClientConstant.ELEMENT_CONTAINER, node, attrs, () => {
             generatorState.visitNodes(node.children)
         })
@@ -73,17 +58,15 @@ export const tabContainerDirectiveGenerators = createDirectiveGenerators(
 
     (generatorState, node) => {
         const groupKey = getTabsGroupKey(generatorState, node)
-        if (groupKey) {
-            generatorState.writeLine(`:::tabs key:${groupKey}`)
-        } else {
-            generatorState.writeLine(':::tabs')
-        }
+        const containerLabel = groupKey
+            ? `tabs key:${groupKey}`
+            : 'tabs'
 
-        generatorState.useNoLineBreaksBetweenBlocks(() => {
-            generatorState.visitNodes(node.children)
+        generatorState.writeLineMdContainer(containerLabel, node, () => {
+            generatorState.useNoLineBreaksBetweenBlocks(() => {
+                generatorState.visitNodes(node.children)
+            })
         })
-
-        generatorState.writeLine(':::')
     },
 )
 
@@ -204,6 +187,10 @@ export const tabsDirectivePlugins = createRstCompilerPlugins({
         parserOption.directivesWithInitContent.push(TAB_PANEL_GROUP_DIRECTIVE)
         parserOption.directivesWithInitContent.push(TAB_PANEL_CODEGROUP_DIRECTIVE)
     },
+
+    onBeforeGenerate: (generatorOptions) => {
+        generatorOptions.directivesWillOutputMdContainers.push(TAB_CONTAINER_DIRECTIVE)
+    },
 })
 
 // ----------------------------------------------------------------------------
@@ -232,4 +219,20 @@ function getCodeTabInfo(node: RstDirective) {
         language: 'txt',
         label: origLabel,
     }
+}
+
+function getTabsClientScript() {
+    let output = `
+<script type="text/javascript">
+(() => {
+${browserCode}
+})()
+</script>
+    `
+
+    for (const [origText, replacement] of Object.entries(TabsClientConstant)) {
+        output = output.replaceAll(origText, replacement)
+    }
+
+    return output
 }

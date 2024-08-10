@@ -625,6 +625,35 @@ export class RstGeneratorState {
         this.writeText('\n')
     }
 
+    // VitePress uses `markdown-it-container` for custom block-level container
+    // When nesting containers, we need the outer blocks to have more colons than the inner containers
+    //
+    //      :::::: outer
+    //      ::: inner
+    //      Content
+    //      :::
+    //      ::::::
+    //
+    writeLineMdContainer(label: string, root: RstNode, visitChildren: VisitChildren): void {
+        const getMaxMdContainerDepth = (node: RstNode): number => {
+            const selfIsMdContainer = node instanceof RstDirective && this.opts.directivesWillOutputMdContainers.includes(node.directive)
+
+            let maxChildMdContainerDepth = 0
+            for (const child of node.children) {
+                maxChildMdContainerDepth = Math.max(maxChildMdContainerDepth, getMaxMdContainerDepth(child))
+            }
+
+            return maxChildMdContainerDepth + (selfIsMdContainer ? 1 : 0)
+        }
+
+        const numNestedContainers = getMaxMdContainerDepth(root)
+        const dots = ':::'.repeat(numNestedContainers)
+
+        this.writeLine(`${dots} ${label}`)
+        visitChildren()
+        this.writeLine(dots)
+    }
+
     writeLineHtmlTag(tag: string, node: RstNode | null, visitChildren?: VisitChildren): void {
         this.writeLineHtmlTagWithAttr(tag, node, new HtmlAttributeStore(), visitChildren)
     }

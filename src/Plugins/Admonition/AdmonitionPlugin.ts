@@ -7,20 +7,22 @@ import { normalizeSimpleName } from '@/SimpleName.js'
 // MARK: Directive
 // ----------------------------------------------------------------------------
 
+const RST_ADMONITION_DIRECTIVES = [
+    'info',
+    'attention',
+    'caution',
+    'danger',
+    'error',
+    'hint',
+    'important',
+    'seealso',
+    'note',
+    'tip',
+    'warning',
+]
+
 export const specificAdmonitionDirectiveGenerators = createDirectiveGenerators(
-    [
-        'info',
-        'attention',
-        'caution',
-        'danger',
-        'error',
-        'hint',
-        'important',
-        'seealso',
-        'note',
-        'tip',
-        'warning',
-    ],
+    RST_ADMONITION_DIRECTIVES,
 
     (generatorState, node) => {
         const attrs = new HtmlAttributeStore()
@@ -59,9 +61,9 @@ export const specificAdmonitionDirectiveGenerators = createDirectiveGenerators(
             }
         })()
 
-        generatorState.writeLine(`::: ${containerType}`)
-        generatorState.visitNodes(node.children)
-        generatorState.writeLine(':::')
+        generatorState.writeLineMdContainer(containerType, node, () => {
+            generatorState.visitNodes(node.children)
+        })
     },
 )
 
@@ -85,9 +87,10 @@ export const genericAdmonitionDirectiveGenerators = createDirectiveGenerators(
     },
 
     (generatorState, node) => {
-        generatorState.writeLine(`::: ${normalizeSimpleName(node.initContentText)}`)
-        generatorState.visitNodes(node.children)
-        generatorState.writeLine(':::')
+        const admonition = normalizeSimpleName(node.initContentText)
+        generatorState.writeLineMdContainer(admonition, node, () => {
+            generatorState.visitNodes(node.children)
+        })
     },
 )
 
@@ -103,5 +106,10 @@ export const admonitionDirectivePlugins = createRstCompilerPlugins({
 
     onBeforeParse: (parserOption) => {
         parserOption.directivesWithInitContent.push(GENERIC_ADMONITION_DIRECTIVE)
+    },
+
+    onBeforeGenerate: (generatorOptions) => {
+        generatorOptions.directivesWillOutputMdContainers.push(GENERIC_ADMONITION_DIRECTIVE)
+        generatorOptions.directivesWillOutputMdContainers.push(...RST_ADMONITION_DIRECTIVES)
     },
 })

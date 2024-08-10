@@ -46,3 +46,132 @@ describe.each([
         :::
     `)
 })
+
+describe('nested admonitions', () => {
+    const input = `
+        .. info:: Outer 1
+
+            .. warning:: Inner 1
+
+                .. error:: Hello World
+
+            .. warning:: Inner 2
+
+        .. info:: Outer 2
+    `
+
+    testParser(input, [
+        {
+            type: RstNodeType.Directive,
+            data: {
+                directive: 'info',
+            },
+            children: [
+                {
+                    type: RstNodeType.Paragraph,
+                    text: 'Outer 1',
+                },
+                {
+                    type: RstNodeType.Directive,
+                    data: {
+                        directive: 'warning',
+                    },
+                    children: [
+                        {
+                            type: RstNodeType.Paragraph,
+                            text: 'Inner 1',
+                        },
+                        {
+                            type: RstNodeType.Directive,
+                            data: {
+                                directive: 'error',
+                            },
+                            children: [
+                                {
+                                    type: RstNodeType.Paragraph,
+                                    text: 'Hello World',
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: RstNodeType.Directive,
+                    data: {
+                        directive: 'warning',
+                    },
+                    children: [
+                        {
+                            type: RstNodeType.Paragraph,
+                            text: 'Inner 2',
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            type: RstNodeType.Directive,
+            data: {
+                directive: 'info',
+            },
+            children: [
+                {
+                    type: RstNodeType.Paragraph,
+                    text: 'Outer 2',
+                },
+            ],
+        },
+    ])
+
+    testGenerator(input, `
+        <div class="admonition info">
+            <p>
+                Outer 1
+            </p>
+
+            <div class="admonition warning">
+                <p>
+                    Inner 1
+                </p>
+
+                <div class="admonition error">
+                    <p>
+                        Hello World
+                    </p>
+                </div>
+            </div>
+
+            <div class="admonition warning">
+                <p>
+                    Inner 2
+                </p>
+            </div>
+        </div>
+
+        <div class="admonition info">
+            <p>
+                Outer 2
+            </p>
+        </div>
+    `, `
+        ::::::::: info
+        Outer 1
+
+        :::::: warning
+        Inner 1
+
+        ::: danger
+        Hello World
+        :::
+        ::::::
+
+        ::: warning
+        Inner 2
+        :::
+        :::::::::
+
+        ::: info
+        Outer 2
+        :::
+    `)
+})

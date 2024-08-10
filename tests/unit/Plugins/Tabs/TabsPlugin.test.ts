@@ -84,7 +84,7 @@ describe('normal tabs', () => {
             </rst-tab-panel>
         </rst-tabs-container>
     `, `
-        :::tabs
+        ::: tabs
         == Label A
         Text A
         == Label B
@@ -174,7 +174,7 @@ describe('group tabs', () => {
             </rst-tab-panel>
         </rst-tabs-container>
     `, `
-        :::tabs key:group-tab
+        ::: tabs key:group-tab
         == Label A
         Text A
         == Label B
@@ -250,7 +250,7 @@ describe('group tabs (code)', () => {
             </rst-tab-panel>
         </rst-tabs-container>
     `, `
-        :::tabs key:code-tab
+        ::: tabs key:code-tab
         == JavaScript
         \`\`\`js
         Text A
@@ -330,7 +330,7 @@ describe('when code-group does not have a valid language label, it generates mar
             </rst-tab-panel>
         </rst-tabs-container>
     `, `
-        :::tabs key:code-tab
+        ::: tabs key:code-tab
         == Label A
         \`\`\`txt
         Text A

@@ -110,6 +110,15 @@ export type RstGeneratorOptions = {
         transformers: Array<ShikiTransformer>
         highlighter: Awaited<ReturnType<typeof getHighlighter>>
     }
+
+    /**
+     * Directives that will output markdown containers as defined by `markdown-it-container`
+     *
+     *      ::: warning
+     *      Hello World
+     *      :::
+     */
+    directivesWillOutputMdContainers: Array<string>
 }
 
 export function createDefaultGeneratorOptions(opts?: Partial<RstGeneratorOptions>): RstGeneratorOptions {
@@ -158,6 +167,8 @@ export function createDefaultGeneratorOptions(opts?: Partial<RstGeneratorOptions
 
         defaultLiteralBlockLanguage: 'txt',
         defaultSyntaxLanguage: '',
+
+        directivesWillOutputMdContainers: [],
     }
 
     return merge(defaultOpts, opts)
