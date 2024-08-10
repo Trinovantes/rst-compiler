@@ -92,7 +92,7 @@ export type RstGeneratorOptions = {
     defaultLiteralBlockLanguage: string
 
     /**
-     * Default language for syntax highlighting
+     * Default language for syntax highlighting in `code` and `code-block` Directive
      *
      * Default: `''`
      */
