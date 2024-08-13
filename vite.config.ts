@@ -12,9 +12,7 @@ export const commonConfig = defineConfig({
     },
 
     plugins: [
-        nodePolyfills({
-            include: ['path'],
-        }),
+        nodePolyfills(),
     ],
 })
 

@@ -9,6 +9,7 @@ with open(os.path.join(script_dir, './playground.rst'), 'r') as file:
 
 writer = Writer()
 writer.translater_class = HTMLTranslator
+
 html_str = publish_string(rst, writer = writer).decode('utf-8')
 print(html_str)
 

@@ -1,0 +1,21 @@
+diff --git a/node_modules/@vitejs/plugin-vue/package.json b/node_modules/@vitejs/plugin-vue/package.json
+index 9b4c38d..5352c61 100644
+--- a/node_modules/@vitejs/plugin-vue/package.json
++++ b/node_modules/@vitejs/plugin-vue/package.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "@vitejs/plugin-vue",
+   "version": "5.1.2",
+-  "type": "commonjs",
++  "type": "module",
+   "license": "MIT",
+   "author": "Evan You",
+   "files": [
+@@ -12,6 +12,7 @@
+   "types": "./dist/index.d.ts",
+   "exports": {
+     ".": {
++      "types": "./dist/index.d.ts",
+       "import": "./dist/index.mjs",
+       "require": "./dist/index.cjs"
+     }
