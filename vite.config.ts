@@ -1,6 +1,5 @@
 import path from 'node:path'
 import { defineConfig, mergeConfig } from 'vitest/config'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import dts from 'vite-plugin-dts'
 
 export const commonConfig = defineConfig({
@@ -10,10 +9,6 @@ export const commonConfig = defineConfig({
             'tests': path.resolve(__dirname, 'tests'),
         },
     },
-
-    plugins: [
-        nodePolyfills(),
-    ],
 })
 
 export default mergeConfig(commonConfig, defineConfig({

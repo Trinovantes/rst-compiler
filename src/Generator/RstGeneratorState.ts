@@ -9,7 +9,7 @@ import { SubstitutionResolver } from '@/Parser/Resolver/SubstitutionResolver.js'
 import { HtmlAttrResolver } from '@/Parser/Resolver/HtmlAttrResolver.js'
 import { RstDocument } from '@/RstNode/Block/Document.js'
 import { RstNodeGenerator } from './RstGenerator.js'
-import { FilePathWithoutRst, getFilePathWithoutRst, joinFilePath, normalizeFilePath, resolveFilePath } from './FilePath.js'
+import { FilePathWithoutRst, getFilePathWithoutRst } from './FilePathWithoutRst.js'
 import { RstSection } from '@/RstNode/Block/Section.js'
 import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { HtmlAttributeStore } from './HtmlAttributeStore.js'
@@ -22,6 +22,7 @@ import { RstParserOutput } from '@/Parser/RstParserState.js'
 import { RstCitationRef } from '@/RstNode/Inline/CitationRef.js'
 import { RstCitationDef } from '@/RstNode/ExplicitMarkup/CitationDef.js'
 import { getAutoFootnoteSymbol } from '@/utils/getAutoFootnoteSymbol.js'
+import { getPathDirname, joinFilePath, normalizeFilePath, resolveFilePath } from '@/utils/path.js'
 
 export type RstGeneratorInput = {
     basePath: string // Base url all pages will be deployed to (default /)
@@ -160,7 +161,7 @@ export class RstGeneratorState {
     resolveExternalDoc(srcNode: RstNode, targetPath: string): { externalUrl: string; externalLabel?: string } {
         const docFilePath = targetPath.startsWith('/')
             ? joinFilePath(this._basePath, targetPath) // If given abs path, assume we want to search from basePath
-            : resolveFilePath(this._currentDocPath, targetPath) // Otherwise, assume we want to search relative from current doc
+            : resolveFilePath(getPathDirname(this._currentDocPath), targetPath) // Otherwise, assume we want to search relative from current doc
 
         const docPath = getFilePathWithoutRst(docFilePath)
         const externalUrl = `${docPath}.html`
@@ -551,7 +552,7 @@ export class RstGeneratorState {
     registerDownload(targetPath: string) {
         const downloadSrc = targetPath.startsWith('/')
             ? joinFilePath(this._basePath, targetPath) // If given abs path, assume we want to search from basePath
-            : resolveFilePath(this._currentDocPath, targetPath) // Otherwise, assume we want to search relative from current doc
+            : resolveFilePath(getPathDirname(this._currentDocPath), targetPath) // Otherwise, assume we want to search relative from current doc
 
         const fileHash = sha1(downloadSrc)
         const fileName = downloadSrc.split('/').at(-1) ?? downloadSrc
