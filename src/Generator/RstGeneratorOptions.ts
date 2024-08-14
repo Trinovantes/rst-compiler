@@ -92,18 +92,18 @@ export type RstGeneratorOptions = {
     defaultLiteralBlockLanguage: string
 
     /**
-     * Default language for syntax highlighting in `code` and `code-block` Directive
+     * Default language for syntax highlighting in `code` and `code-block` Directives
      *
-     * Default: `''`
+     * Default: `'txt'`
      */
-    defaultSyntaxLanguage: string
+    defaultCodeDirectiveLanguage: string
 
     /**
      * ### HTML ONLY
      *
-     * Options for syntax highlighting with shiki
+     * Options for syntax highlighting `code` and `code-block` Directives with shiki
      *
-     * If not set, code blocks will output as `<pre>` and inline code will output as `<code>`
+     * If not set, `code` and `code-block` Directives will output code inside plain `<pre>`
      */
     shiki?: {
         highlighter: Awaited<ReturnType<typeof createHighlighter>>
@@ -166,7 +166,7 @@ export function createDefaultGeneratorOptions(opts?: Partial<RstGeneratorOptions
         } satisfies Required<RstGeneratorOptions['htmlClass']>,
 
         defaultLiteralBlockLanguage: 'txt',
-        defaultSyntaxLanguage: '',
+        defaultCodeDirectiveLanguage: 'txt',
 
         directivesWillOutputMdContainers: [],
     }

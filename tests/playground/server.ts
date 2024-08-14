@@ -14,7 +14,7 @@ Bun.serve({
         const dirname = path.dirname(filename)
         const rst = fs.readFileSync(path.join(dirname, 'playground.rst')).toString('utf-8')
         const { body, header } = new RstToHtmlCompiler().compile(rst, {}, {
-            defaultSyntaxLanguage: 'python',
+            defaultCodeDirectiveLanguage: 'python',
             shiki: {
                 theme: 'github-light',
                 highlighter: await createHighlighter({

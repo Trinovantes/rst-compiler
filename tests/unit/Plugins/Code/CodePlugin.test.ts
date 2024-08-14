@@ -52,7 +52,7 @@ describe('highlight Directive changes default language of code Directive', () =>
 
         <pre class="code">text 2</pre>
     `, `
-        \`\`\`
+        \`\`\`txt
         text 1
         \`\`\`
 

@@ -16,13 +16,13 @@ export const highlightDirectiveGenerators = createDirectiveGenerators(
 
     (generatorState, node) => {
         generatorState.opts.defaultLiteralBlockLanguage = node.initContentText
-        generatorState.opts.defaultSyntaxLanguage = node.initContentText
+        generatorState.opts.defaultCodeDirectiveLanguage = node.initContentText
         generatorState.writeLineHtmlComment(node.toShortString())
     },
 
     (generatorState, node) => {
         generatorState.opts.defaultLiteralBlockLanguage = node.initContentText
-        generatorState.opts.defaultSyntaxLanguage = node.initContentText
+        generatorState.opts.defaultCodeDirectiveLanguage = node.initContentText
         generatorState.writeLineMdComment(node.toShortString())
     },
 )
@@ -34,12 +34,12 @@ export const codeDirectiveGenerators = createDirectiveGenerators(
     ],
 
     (generatorState, node) => {
-        const language = getCodeLanguage(node) ?? generatorState.opts.defaultSyntaxLanguage
+        const language = getCodeLanguage(node) ?? generatorState.opts.defaultCodeDirectiveLanguage
         renderCodeBlockHtml(generatorState, language, node.rawBodyText, node)
     },
 
     (generatorState, node) => {
-        const language = getCodeLanguage(node) ?? generatorState.opts.defaultSyntaxLanguage
+        const language = getCodeLanguage(node) ?? generatorState.opts.defaultCodeDirectiveLanguage
         renderCodeBlockMd(generatorState, language, node.rawBodyText)
     },
 )
