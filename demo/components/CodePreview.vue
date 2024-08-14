@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import { codeToHtml, getHighlighter } from 'shiki'
+import { codeToHtml, createHighlighter } from 'shiki'
 import { useQuasar } from 'quasar'
 import { RstGeneratorOptions, RstParserOptions, RstToHtmlCompiler, RstToMdCompiler } from '@/index.js'
 
@@ -70,8 +70,7 @@ watch(editorText, async(editorText) => {
         const generatorOptions: Partial<RstGeneratorOptions> = {
             shiki: {
                 theme: 'github-light',
-                transformers: [],
-                highlighter: await getHighlighter({
+                highlighter: await createHighlighter({
                     langs: ['python', 'js'],
                     themes: ['github-light'],
                 }),

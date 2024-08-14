@@ -10,11 +10,21 @@ export function renderCodeBlockHtml(generatorState: RstGeneratorState, language:
             return
         }
 
-        const renderedCode = generatorState.opts.shiki.highlighter.codeToHtml(rawCode, {
-            lang: language,
-            theme: generatorState.opts.shiki.theme,
-            transformers: generatorState.opts.shiki.transformers,
-        })
+        let renderedCode: string
+
+        if (typeof generatorState.opts.shiki.theme === 'string') {
+            renderedCode = generatorState.opts.shiki.highlighter.codeToHtml(rawCode, {
+                lang: language,
+                theme: generatorState.opts.shiki.theme,
+                transformers: generatorState.opts.shiki.transformers,
+            })
+        } else {
+            renderedCode = generatorState.opts.shiki.highlighter.codeToHtml(rawCode, {
+                lang: language,
+                themes: generatorState.opts.shiki.theme,
+                transformers: generatorState.opts.shiki.transformers,
+            })
+        }
 
         generatorState.writeText(renderedCode)
     })

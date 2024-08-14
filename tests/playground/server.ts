@@ -2,7 +2,7 @@ import { RstToHtmlCompiler } from '@/RstCompiler.js'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { getHighlighter } from 'shiki'
+import { createHighlighter } from 'shiki'
 
 const port = 8080
 
@@ -16,11 +16,10 @@ Bun.serve({
         const { body, header } = new RstToHtmlCompiler().compile(rst, {}, {
             defaultSyntaxLanguage: 'python',
             shiki: {
-                theme: 'min-dark',
-                transformers: [],
-                highlighter: await getHighlighter({
-                    langs: ['py', 'js', 'cpp', 'csharp'],
-                    themes: ['min-dark'],
+                theme: 'github-light',
+                highlighter: await createHighlighter({
+                    langs: ['python', 'js'],
+                    themes: ['github-light'],
                 }),
             },
         })

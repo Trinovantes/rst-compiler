@@ -204,12 +204,10 @@ import { RstToHtmlCompiler, RstGeneratorOptions } from 'rst-compiler'
 
 const generatorOptions: Partial<RstGeneratorOptions> = {
     shiki: {
-        defaultLanguage: 'python',
-        theme: 'min-dark',
-        transformers: [],
-        highlighter: await getHighlighter({
-            langs: ['py', 'js', 'cpp'],
-            themes: ['min-dark'],
+        theme: 'github-light',
+        highlighter: await createHighlighter({
+            langs: ['python', 'js'],
+            themes: ['github-light'],
         }),
     },
 }

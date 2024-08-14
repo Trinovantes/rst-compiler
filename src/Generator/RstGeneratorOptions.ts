@@ -1,6 +1,6 @@
 import merge from 'lodash.merge'
 import { KatexOptions } from 'katex'
-import { ShikiTransformer, getHighlighter } from 'shiki'
+import { createHighlighter, ShikiTransformer, CodeOptionsMultipleThemes } from 'shiki'
 
 export type RstGeneratorOptions = {
     disableWarnings: boolean
@@ -106,9 +106,9 @@ export type RstGeneratorOptions = {
      * If not set, code blocks will output as `<pre>` and inline code will output as `<code>`
      */
     shiki?: {
-        theme: string
-        transformers: Array<ShikiTransformer>
-        highlighter: Awaited<ReturnType<typeof getHighlighter>>
+        highlighter: Awaited<ReturnType<typeof createHighlighter>>
+        theme: string | CodeOptionsMultipleThemes['themes']
+        transformers?: Array<ShikiTransformer>
     }
 
     /**
