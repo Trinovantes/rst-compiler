@@ -155,7 +155,7 @@ export class RstCompiler {
         return generatorOutput
     }
 
-    createParserOutput(root: RstDocument) {
+    createParserOutput(root: RstDocument): RstParserOutput {
         // Need to create a bundle around root (with resolves) after parse() instead of before generate()
         // because plugins' onParse hook need access to resolvers
 
