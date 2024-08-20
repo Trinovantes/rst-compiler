@@ -72,9 +72,9 @@ export const footnoteRefGenerators = createNodeGenerators(
     (generatorState, node) => {
         const targetDef = generatorState.resolveFootnoteDef(node)
         const targetDefUrl = generatorState.resolveNodeToUrl(targetDef)
-        const refSimpleName = generatorState.simpleNameResolver.getSimpleName(node)
+        const refId = generatorState.htmlAttrResolver.getNodeHtmlId(node)
         const refLabel = generatorState.resolveFootnoteRefLabel(node)
-        generatorState.writeTextWithLinePrefix(`<a href="${targetDefUrl}" id="${refSimpleName}" class="${generatorState.opts.htmlClass.footnoteRef}">${refLabel}</a>`)
+        generatorState.writeTextWithLinePrefix(`<a href="${targetDefUrl}" id="${refId}" class="${generatorState.opts.htmlClass.footnoteRef}">${refLabel}</a>`)
     },
 
     (generatorState, node) => {

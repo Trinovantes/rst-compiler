@@ -536,14 +536,14 @@ describe('RstResolverSimpleName', () => {
 
         test('HyperlinkRef `note`_ resolves to same FootnoteDef', () => {
             const ref = hyperlinkRefs[0]
-            const refSimpleName = generatorState.simpleNameResolver.getSimpleName(ref)
-            expect(generatorState.resolveSimpleNameToUrl(refSimpleName)).toBe('#note')
+            const refUrl = generatorState.resolveHyperlinkRefToUrl(ref)
+            expect(refUrl).toBe('#note')
         })
 
         test('FootnoteDef backlinks back to both FootnoteRefs', () => {
             expect(generatorState.resolveFootnoteDefBacklinks(defs[0])).toStrictEqual([
-                generatorState.simpleNameResolver.getSimpleName(refs[0]),
-                generatorState.simpleNameResolver.getSimpleName(refs[1]),
+                '#' + generatorState.simpleNameResolver.getSimpleName(refs[0]),
+                '#' + generatorState.simpleNameResolver.getSimpleName(refs[1]),
             ])
         })
 

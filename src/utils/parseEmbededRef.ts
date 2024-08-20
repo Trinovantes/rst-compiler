@@ -45,7 +45,7 @@ export function parseEmbededRef(rawText: string, targetMightBeEmail = false) {
         : escapedTarget
 
     const isAlias = (() => {
-        // If it's this form `label <embeded url>`, then check if embeded url ends with non-escaped underscore
+        // Embeded target can only be an alias if it ends with non-escaped underscore
         if (isEmbeded) {
             return rawTarget.endsWith('_') && !rawTarget.endsWith('\\_')
         }
@@ -55,7 +55,7 @@ export function parseEmbededRef(rawText: string, targetMightBeEmail = false) {
             return false
         }
 
-        // Anything else is treated as an alias to a targetable node (e.g. HyperlinkTarget, Citation, etc.)
+        // Anything else is treated as an alias to a linkable node (e.g. HyperlinkTarget, Citation, etc.)
         return true
     })()
 

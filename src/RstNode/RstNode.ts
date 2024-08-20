@@ -75,6 +75,10 @@ export abstract class RstNode {
         }
     }
 
+    equals(other: RstNode) {
+        return this === other
+    }
+
     abstract clone(registrar: RstNodeRegistrar): RstNode
 
     abstract get nodeType(): RstNodeType

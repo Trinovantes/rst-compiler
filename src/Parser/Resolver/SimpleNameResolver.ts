@@ -4,29 +4,23 @@ import { RstFootnoteDef } from '@/RstNode/ExplicitMarkup/FootnoteDef.js'
 import { RstHyperlinkTarget } from '@/RstNode/ExplicitMarkup/HyperlinkTarget.js'
 import { RstCitationRef } from '@/RstNode/Inline/CitationRef.js'
 import { RstFootnoteRef } from '@/RstNode/Inline/FootnoteRef.js'
-import { RstHyperlinkRef } from '@/RstNode/Inline/HyperlinkRef.js'
 import { RstInlineInternalTarget } from '@/RstNode/Inline/InlineInternalTarget.js'
 import { RstNode } from '@/RstNode/RstNode.js'
 import { SimpleName, normalizeSimpleName } from '@/SimpleName.js'
 import { RstCompiler } from '@/RstCompiler.js'
-import { RstSection } from '@/RstNode/Block/Section.js'
 import { HtmlAttrResolver } from './HtmlAttrResolver.js'
 import { RstDocument } from '@/RstNode/Block/Document.js'
 import { RstNodeType } from '@/RstNode/RstNodeType.js'
+import { RstSection } from '@/RstNode/Block/Section.js'
+import { RstHyperlinkRef } from '@/RstNode/Inline/HyperlinkRef.js'
+import { trimCommonIndent } from '@/utils/trimCommonIndent.js'
 
 type FootnoteLabelNum = Brand<number, 'FootnoteLabelNum'> // For identifying/referencing footnote in document
 type FootnoteSymNum = Brand<number, 'FootnoteSymNum'> // For determining which symbol to render
 
-/**
- * A target in current Document
- *
- * If alias = true, then it needs to be recursively resolved
- * If alias = false, then target can be used as literal url (e.g. inside <a>)
- */
-type DocumentTarget = {
-    target: string // Either a url or ref (SimpleName)
-    isAlias: boolean
-}
+// ------------------------------------------------------------------------
+// MARK: SimpleNameResolver
+// ------------------------------------------------------------------------
 
 /**
  * Caches data that need to be filled after parsing
@@ -34,96 +28,33 @@ type DocumentTarget = {
  * Data in this container class is consumed by RstGeneratorState
  */
 export class SimpleNameResolver {
-    private readonly _simpleNameToTarget = new Map<SimpleName, DocumentTarget>()
-    private readonly _nodesTargetableFromOutside = new Map<SimpleName, RstNode>() // Other Documents can use these SimpleNames to reference a link inside here
+    private readonly _nodesLinkableFromOutside = new Map<SimpleName, RstNode>() // Other Documents can use these SimpleNames to reference a node inside this Document
+    private readonly _explicitSimpleNames = new Map<SimpleName, RstNode>()
+    private readonly _explicitNodes = new Map<RstNode, SimpleName>()
+    private readonly _implicitSimpleNames = new Map<SimpleName, RstNode>()
+    private readonly _implicitNodes = new Map<RstNode, SimpleName>()
 
-    private readonly _sectionSimpleNames = new Map<RstSection, SimpleName>()
     private readonly _footnoteDefToLabelNum = new Map<RstFootnoteDef, FootnoteLabelNum>()
     private readonly _footnoteDefToSymNum = new Map<RstFootnoteDef, FootnoteSymNum>()
     private readonly _footnoteDefBacklinks = new Map<RstFootnoteDef, Array<RstFootnoteRef>>()
     private readonly _footnoteRefToDef = new Map<RstFootnoteRef, RstFootnoteDef>()
     private readonly _citationDefBacklinks = new Map<RstCitationDef, Array<RstCitationRef>>()
     private readonly _citationRefToDef = new Map<RstCitationRef, RstCitationDef>()
+    private readonly _anonymousHyperlinkRefToTarget = new Map<RstHyperlinkRef, RstHyperlinkTarget>()
 
     constructor(
         private readonly _compiler: RstCompiler,
         private readonly _htmlAttrResolver: HtmlAttrResolver,
         private readonly _root: RstDocument,
     ) {
-        this.registerSections()
-        this.registerFootnotes()
-        this.registerCitations()
-        this.registerHyperlinks()
+        this.processSections()
+        this.processFootnotes()
+        this.processCitations()
+        this.processHyperlinks()
     }
 
-    getSimpleName(node: RstNode): SimpleName {
-        for (const plugin of this._compiler.plugins) {
-            const simpleName = plugin.getSimpleName?.(node)
-            if (simpleName) {
-                return simpleName
-            }
-        }
-
-        if (node instanceof RstSection) {
-            const simpleName = this._sectionSimpleNames.get(node)
-            if (!simpleName) {
-                throw new Error(`Failed to getSimpleName for [${node.toShortString()}]`)
-            }
-
-            return simpleName
-        }
-
-        if (node instanceof RstFootnoteRef) {
-            return normalizeSimpleName(`${node.nodeType}-${node.nthOfType}`)
-        }
-
-        if (node instanceof RstFootnoteDef) {
-            const autoNumLabel = /^#(?<autoNumLabel>.+)$/.exec(node.label)?.groups?.autoNumLabel
-            if (autoNumLabel) {
-                return normalizeSimpleName(autoNumLabel)
-            }
-
-            const labelNum = this._footnoteDefToLabelNum.get(node)
-            if (labelNum) {
-                return normalizeSimpleName(`${node.nodeType}-${labelNum}`)
-            }
-
-            throw new Error(`Failed to getSimpleName for [${node.toShortString()}]`)
-        }
-
-        if (node instanceof RstCitationRef) {
-            return normalizeSimpleName(`${node.nodeType}-${node.nthOfType}`)
-        }
-
-        if (node instanceof RstCitationDef) {
-            return normalizeSimpleName(node.label)
-        }
-
-        if (node instanceof RstHyperlinkTarget) {
-            if (node.isAnonymous) {
-                return normalizeSimpleName(`${node.nodeType}-anonymous-${node.nthOfType}`)
-            } else {
-                return normalizeSimpleName(node.label)
-            }
-        }
-
-        if (node instanceof RstInlineInternalTarget) {
-            return normalizeSimpleName(node.textContent)
-        }
-
-        return normalizeSimpleName(`${node.nodeType}-${node.nthOfType}`)
-    }
-
-    get simpleNameToTarget(): ReadonlyMap<SimpleName, DocumentTarget> {
-        return this._simpleNameToTarget
-    }
-
-    get nodesTargetableFromOutside(): ReadonlyMap<SimpleName, RstNode> {
-        return this._nodesTargetableFromOutside
-    }
-
-    get sectionSimpleNames(): ReadonlyMap<RstSection, SimpleName> {
-        return this._sectionSimpleNames
+    get nodesLinkableFromOutside(): ReadonlyMap<SimpleName, RstNode> {
+        return this._nodesLinkableFromOutside
     }
 
     get footnoteDefToLabelNum(): ReadonlyMap<RstFootnoteDef, FootnoteLabelNum> {
@@ -150,81 +81,138 @@ export class SimpleNameResolver {
         return this._citationRefToDef
     }
 
+    get anonymousHyperlinkRefToTarget(): ReadonlyMap<RstHyperlinkRef, RstHyperlinkTarget> {
+        return this._anonymousHyperlinkRefToTarget
+    }
+
     // ------------------------------------------------------------------------
-    // MARK: Internal Targetable Nodes
+    // MARK: SimpleName
     // ------------------------------------------------------------------------
 
-    registerNodeForwardTarget(simpleName: SimpleName, fowardTarget: DocumentTarget): void {
-        const existingTarget = this._simpleNameToTarget.get(simpleName)
-        if (existingTarget && !(existingTarget.target === fowardTarget.target && existingTarget.isAlias === fowardTarget.isAlias)) {
-            throw new Error(`Duplicate simpleName:"${simpleName}"`)
+    getSimpleName(node: RstNode): SimpleName {
+        for (const plugin of this._compiler.plugins) {
+            const simpleName = plugin.getSimpleName?.(node)
+            if (simpleName) {
+                return simpleName
+            }
         }
 
-        this._simpleNameToTarget.set(simpleName, fowardTarget)
-    }
-
-    registerNodeAsTargetable(node: RstNode): void {
-        const simpleName = this.getSimpleName(node)
-        const target = {
-            target: `#${simpleName}`,
-            isAlias: false,
+        const simpleName = this._explicitNodes.get(node) ?? this._implicitNodes.get(node)
+        if (!simpleName) {
+            throw new Error(`Failed to getSimpleName for [${node.toShortString()}]`)
         }
 
-        this.registerNodeForwardTarget(simpleName, target)
-        this._htmlAttrResolver.markNodeAsTargeted(node)
+        return simpleName
+    }
+
+    private getSimpleNameCandidate(node: RstNode, forceUnique = false): SimpleName {
+        let simpleName = (() => {
+            if (node instanceof RstSection) {
+                return normalizeSimpleName(node.textContent)
+            }
+
+            if (node instanceof RstFootnoteDef) {
+                const autoNumLabel = /^#(?<autoNumLabel>.+)$/.exec(node.label)?.groups?.autoNumLabel
+                if (autoNumLabel) {
+                    return normalizeSimpleName(autoNumLabel)
+                }
+
+                const labelNum = this._footnoteDefToLabelNum.get(node)
+                if (labelNum) {
+                    return normalizeSimpleName(`${node.nodeType}-${labelNum}`)
+                }
+
+                throw new Error(`Failed to getSimpleNameCandidate for [${node.toShortString()}]`)
+            }
+
+            if (node instanceof RstCitationDef) {
+                return normalizeSimpleName(node.label)
+            }
+
+            if (node instanceof RstHyperlinkTarget) {
+                return node.isAnonymous
+                    ? normalizeSimpleName(`anonymous-${node.nodeType}-${node.nthOfType}`)
+                    : normalizeSimpleName(node.label)
+            }
+
+            if (node instanceof RstInlineInternalTarget) {
+                return normalizeSimpleName(node.textContent)
+            }
+
+            return normalizeSimpleName(`${node.nodeType}-${node.nthOfType}`)
+        })()
+
+        if (forceUnique) {
+            let counter = 1
+            while (this._explicitSimpleNames.has(simpleName) || this._implicitSimpleNames.has(simpleName)) {
+                simpleName = normalizeSimpleName(`${simpleName}-${counter}`)
+                counter += 1
+            }
+        }
+
+        return simpleName
     }
 
     // ------------------------------------------------------------------------
-    // MARK: External Targetable Nodes
+    // MARK: Registrations
     // ------------------------------------------------------------------------
 
-    registerExternalTargetableNode(simpleName: SimpleName, targetNode: RstNode) {
-        this._nodesTargetableFromOutside.set(simpleName, targetNode)
-        this._htmlAttrResolver.markNodeAsTargeted(targetNode)
+    registerExplicitNode(node: RstNode, simpleName: SimpleName): void {
+        const existingTargetedNode = this._explicitSimpleNames.get(simpleName)
+        if (existingTargetedNode && !existingTargetedNode.equals(node)) {
+            throw new Error(trimCommonIndent(`
+                SimpleName:"${simpleName}" already exists
+                    new: [${node.toShortString()}]
+                    old: [${existingTargetedNode.toShortString()}]
+            `))
+        }
+
+        this._explicitSimpleNames.set(simpleName, node)
+        this._explicitNodes.set(node, simpleName)
     }
 
-    get simpleNamesTargetableFromOutside(): Array<SimpleName> {
-        return [...this._nodesTargetableFromOutside.keys()]
+    registerImplicitNode(node: RstNode, simpleName: SimpleName): void {
+        this._implicitSimpleNames.set(simpleName, node)
+        this._implicitNodes.set(node, simpleName)
+    }
+
+    registerNodeAsLinkable(node: RstNode, idAttr: SimpleName, linkableFromOutside = true): void {
+        this._htmlAttrResolver.registerNodeAsLinkable(node, idAttr)
+
+        if (linkableFromOutside) {
+            const existingTargetedNode = this._nodesLinkableFromOutside.get(idAttr)
+            const existingTargetedNodeIsExplict = existingTargetedNode && this._explicitNodes.has(existingTargetedNode)
+            if (existingTargetedNodeIsExplict) {
+                throw new Error(trimCommonIndent(`
+                    id:"${idAttr}" already exists
+                        new: [${node.toShortString()}]
+                        old: [${existingTargetedNode.toShortString()}]
+                `))
+            }
+
+            this._nodesLinkableFromOutside.set(idAttr, node)
+        }
     }
 
     // ------------------------------------------------------------------------
-    // MARK: Sections
+    // MARK: Node: Sections
     // ------------------------------------------------------------------------
 
-    private registerSections() {
+    private processSections() {
         const sections = this._root.findAllChildren(RstNodeType.Section)
 
-        const registerSectionSimpleNames = () => {
-            const uniqueSimpleNames = new Set<SimpleName>()
-
-            for (const section of sections) {
-                const simpleNameFromText = normalizeSimpleName(section.textContent)
-                const simpleNameFromNode = normalizeSimpleName(`${section.nodeType}-${section.nthOfType}`)
-
-                if (uniqueSimpleNames.has(simpleNameFromText)) {
-                    this._sectionSimpleNames.set(section, simpleNameFromNode)
-                } else {
-                    uniqueSimpleNames.add(simpleNameFromText)
-                    this._sectionSimpleNames.set(section, simpleNameFromText)
-                }
-            }
+        for (const section of sections) {
+            const simpleName = this.getSimpleNameCandidate(section, true)
+            this.registerImplicitNode(section, simpleName)
+            this.registerNodeAsLinkable(section, simpleName)
         }
-
-        const registerSections = () => {
-            for (const section of sections) {
-                this.registerNodeAsTargetable(section)
-            }
-        }
-
-        registerSectionSimpleNames()
-        registerSections()
     }
 
     // ------------------------------------------------------------------------
-    // MARK: Footnote
+    // MARK: Node: Footnote
     // ------------------------------------------------------------------------
 
-    private registerFootnotes() {
+    private processFootnotes() {
         const footnoteDefs = this._root.findAllChildren(RstNodeType.FootnoteDef)
         const footnoteRefs = this._root.findAllChildren(RstNodeType.FootnoteRef)
 
@@ -314,9 +302,11 @@ export class SimpleNameResolver {
         }
 
         const registerFootnotes = () => {
-            // Must be done last because this rely on SimpleNames that are dependant on resolved AutoLabelNums and AutoSymbols
+            // Must be done last because this rely on getCandidateSimpleName that is dependant on resolved AutoLabelNums and AutoSymbols
             for (const node of [...footnoteDefs, ...footnoteRefs]) {
-                this.registerNodeAsTargetable(node)
+                const simpleName = this.getSimpleNameCandidate(node, true)
+                this.registerImplicitNode(node, simpleName)
+                this.registerNodeAsLinkable(node, simpleName, false)
             }
         }
 
@@ -327,10 +317,10 @@ export class SimpleNameResolver {
     }
 
     // ------------------------------------------------------------------------
-    // MARK: Citation
+    // MARK: Node: Citation
     // ------------------------------------------------------------------------
 
-    private registerCitations() {
+    private processCitations() {
         const citationDefs = this._root.findAllChildren(RstNodeType.CitationDef)
         const citationRefs = this._root.findAllChildren(RstNodeType.CitationRef)
 
@@ -355,7 +345,9 @@ export class SimpleNameResolver {
 
         const registerCitations = () => {
             for (const node of [...citationDefs, ...citationRefs]) {
-                this.registerNodeAsTargetable(node)
+                const simpleName = this.getSimpleNameCandidate(node, true)
+                this.registerImplicitNode(node, simpleName)
+                this.registerNodeAsLinkable(node, simpleName, false)
             }
         }
 
@@ -364,113 +356,72 @@ export class SimpleNameResolver {
     }
 
     // ------------------------------------------------------------------------
-    // MARK: Hyperlink
+    // MARK: Node: Hyperlink
     // ------------------------------------------------------------------------
 
-    private registerHyperlinks() {
+    resolveSimpleName(simpleName: SimpleName): RstNode | null {
+        return this._explicitSimpleNames.get(simpleName) ?? this._implicitSimpleNames.get(simpleName) ?? null
+    }
+
+    resolveIndirectHyperlinkTarget(hyperlinkTarget: RstHyperlinkTarget): RstNode | null {
+        if (!hyperlinkTarget.isTargetingNextNode) {
+            return null
+        }
+
+        let currNode: RstNode | null = hyperlinkTarget
+
+        // Follow the chain to find an visible node
+        while (true) {
+            currNode = currNode?.getNextNodeInTree() ?? null
+
+            if (!currNode) {
+                return null
+            }
+
+            if (currNode instanceof RstHyperlinkTarget && !currNode.isTargetingNextNode) {
+                return currNode
+            }
+
+            if (!(currNode instanceof RstHyperlinkTarget) && currNode.willRenderVisibleContent) {
+                return currNode
+            }
+        }
+    }
+
+    private processHyperlinks() {
         const hyperlinkTargets = this._root.findAllChildren(RstNodeType.HyperlinkTarget)
         const inlineInternalTargets = this._root.findAllChildren(RstNodeType.InlineInternalTarget)
         const hyperlinkRefs = this._root.findAllChildren(RstNodeType.HyperlinkRef)
 
-        const resolveHyperlinkTarget = (hyperlinkTarget: RstHyperlinkTarget): DocumentTarget & { targetNode?: RstNode } | null => {
-            if (hyperlinkTarget.isTargetingNextNode) {
-                // Follow the chain to find an explicit name
-                let currNode: RstNode | null = hyperlinkTarget
-
-                while (true) {
-                    currNode = currNode?.getNextNodeInTree() ?? null
-                    if (!currNode) {
-                        return null
-                    }
-
-                    if (currNode instanceof RstHyperlinkTarget) {
-                        return resolveHyperlinkTarget(currNode)
-                    }
-
-                    if (currNode.willRenderVisibleContent) {
-                        return {
-                            target: `#${this.getSimpleName(currNode)}`,
-                            isAlias: false,
-                            targetNode: currNode,
-                        }
-                    }
-                }
-            }
-
-            return {
-                target: hyperlinkTarget.target,
-                isAlias: hyperlinkTarget.isAlias,
-            }
-        }
-
         const registerHyperlinkTargets = () => {
             for (const hyperlinkTarget of hyperlinkTargets) {
-                const target = resolveHyperlinkTarget(hyperlinkTarget)
-                if (!target) {
-                    this._compiler.notifyWarning(`Failed to resolve [${hyperlinkTarget.toShortString()}]`)
-                    continue
-                }
+                const simpleName = this.getSimpleNameCandidate(hyperlinkTarget)
+                this.registerExplicitNode(hyperlinkTarget, simpleName)
 
-                const simpleName = this.getSimpleName(hyperlinkTarget)
-                this.registerNodeForwardTarget(simpleName, target)
-
-                if (target.targetNode) {
-                    this.registerExternalTargetableNode(simpleName, target.targetNode)
+                const indirectTarget = this.resolveIndirectHyperlinkTarget(hyperlinkTarget)
+                if (indirectTarget) {
+                    // Register the indirect target with the HyperlinkTarget's SimpleName so that it gets HyperlinkTarget's text for its id
+                    //
+                    // e.g.
+                    //      .. _Documentation:
+                    //      This paragraph will be generated with <p id="documentation">
+                    //
+                    this.registerNodeAsLinkable(indirectTarget, simpleName)
                 }
             }
         }
 
         const registerInlineInternalTargets = () => {
             for (const inlineTarget of inlineInternalTargets) {
-                const target: DocumentTarget = {
-                    target: `#${this.getSimpleName(inlineTarget)}`,
-                    isAlias: false,
-                }
-
-                const simpleName = this.getSimpleName(inlineTarget)
-                this.registerNodeForwardTarget(simpleName, target)
-                this.registerExternalTargetableNode(simpleName, inlineTarget)
+                const simpleName = this.getSimpleNameCandidate(inlineTarget)
+                this.registerExplicitNode(inlineTarget, simpleName)
+                this.registerNodeAsLinkable(inlineTarget, simpleName)
             }
         }
 
-        const registerHyperlinkRefs = () => {
-            let anonymousRefIdx = 0
-            const anonymousTargets = hyperlinkTargets.filter((target) => target.isAnonymous)
-            const resolveHyperlinkRef = (hyperlinkRef: RstHyperlinkRef): DocumentTarget | null => {
-                // Anonymous HyperlinkRefs without embeded url e.g. `example`__ can only reference anonymous HyperlinkTargets
-                // Anonymous HyperlinkRefs with embeded e.g. `example <url>`__ directly reference its target and we don't need any special treatment
-                if (!hyperlinkRef.isAnonymous || hyperlinkRef.isEmbeded) {
-                    return {
-                        target: hyperlinkRef.target,
-                        isAlias: hyperlinkRef.isAlias,
-                    }
-                }
-
-                const currRefIdx = anonymousRefIdx
-                const hyperlinkTarget = anonymousTargets.at(currRefIdx)
-                if (!hyperlinkTarget) {
-                    return null
-                }
-
-                anonymousRefIdx += 1
-                return resolveHyperlinkTarget(hyperlinkTarget)
-            }
-
+        const registerLinkableHyperlinkRefs = () => {
             for (const hyperlinkRef of hyperlinkRefs) {
-                const target = resolveHyperlinkRef(hyperlinkRef)
-                if (!target) {
-                    this._compiler.notifyWarning(`Failed to resolve [${hyperlinkRef.toShortString()}]`)
-                    continue
-                }
-
-                const simpleName = this.getSimpleName(hyperlinkRef)
-                this.registerNodeForwardTarget(simpleName, target)
-            }
-        }
-
-        const registerTargetableHyperlinkRefs = () => {
-            for (const hyperlinkRef of hyperlinkRefs) {
-                // Explicitly named HyperlinkRef that links elsewhere can be referenced by their label
+                // Explicitly-named embeded HyperlinkRef that links elsewhere can be referenced by their label
                 // e.g. `somelabel <url not same as label>`_ can be referenced by somelabel_
                 if (!hyperlinkRef.isEmbeded) {
                     continue
@@ -482,21 +433,30 @@ export class SimpleNameResolver {
                     continue
                 }
 
-                const candidateTargetName = normalizeSimpleName(hyperlinkRef.label)
-                if (this._simpleNameToTarget.has(candidateTargetName)) {
+                // If SimpleName already exists (e.g. another HyperlinkTarget) then this HyperlinkRef cannot be targeted
+                const candidateSimpleName = normalizeSimpleName(hyperlinkRef.label)
+                if (this._explicitSimpleNames.has(candidateSimpleName) || this._implicitSimpleNames.has(candidateSimpleName)) {
                     continue
                 }
 
-                this.registerNodeForwardTarget(candidateTargetName, {
-                    target: hyperlinkRef.target,
-                    isAlias: hyperlinkRef.isAlias,
-                })
+                this.registerImplicitNode(hyperlinkRef, candidateSimpleName)
+            }
+        }
+
+        const registerAnonymousHyperlinkRefs = () => {
+            const anonymousRefs = hyperlinkRefs.filter((ref) => ref.isAnonymous)
+            const anonymousTargets = hyperlinkTargets.filter((target) => target.isAnonymous)
+
+            for (let i = 0; i < anonymousRefs.length && i < anonymousTargets.length; i++) {
+                const ref = anonymousRefs[i]
+                const target = anonymousTargets[i]
+                this._anonymousHyperlinkRefToTarget.set(ref, target)
             }
         }
 
         registerHyperlinkTargets()
         registerInlineInternalTargets()
-        registerHyperlinkRefs()
-        registerTargetableHyperlinkRefs()
+        registerLinkableHyperlinkRefs()
+        registerAnonymousHyperlinkRefs()
     }
 }

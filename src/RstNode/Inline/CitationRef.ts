@@ -36,10 +36,10 @@ export const citationRefGenerators = createNodeGenerators(
     RstNodeType.CitationRef,
 
     (generatorState, node) => {
-        const simpleName = generatorState.simpleNameResolver.getSimpleName(node)
+        const refId = generatorState.htmlAttrResolver.getNodeHtmlId(node)
         const targetDef = generatorState.resolveCitationDef(node)
         const targetDefUrl = generatorState.resolveNodeToUrl(targetDef)
-        generatorState.writeTextWithLinePrefix(`<a href="${targetDefUrl}" id="${simpleName}" class="${generatorState.opts.htmlClass.citationRef}">${sanitizeHtml(node.textContent)}</a>`)
+        generatorState.writeTextWithLinePrefix(`<a href="${targetDefUrl}" id="${refId}" class="${generatorState.opts.htmlClass.citationRef}">${sanitizeHtml(node.textContent)}</a>`)
     },
 
     (generatorState, node) => {

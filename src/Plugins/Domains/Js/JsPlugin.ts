@@ -35,8 +35,8 @@ export const jsDomainPlugins = createRstCompilerPlugins({
                 continue
             }
 
-            parserOutput.simpleNameResolver.registerNodeAsTargetable(directiveNode)
-            parserOutput.simpleNameResolver.registerExternalTargetableNode(simpleName, directiveNode)
+            parserOutput.simpleNameResolver.registerExplicitNode(directiveNode, simpleName)
+            parserOutput.simpleNameResolver.registerNodeAsLinkable(directiveNode, simpleName, true)
         }
     },
 })

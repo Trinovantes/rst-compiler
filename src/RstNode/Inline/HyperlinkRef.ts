@@ -5,8 +5,6 @@ import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
 import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
 import { RstNodeType } from '../RstNodeType.js'
 import { parseEmbededRef } from '@/utils/parseEmbededRef.js'
-import { normalizeSimpleName } from '@/SimpleName.js'
-import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -138,30 +136,12 @@ export const hyperlinkRefGenerators = createNodeGenerators(
     RstNodeType.HyperlinkRef,
 
     (generatorState, node) => {
-        const url = getHyperlinkRefUrl(generatorState, node)
+        const url = generatorState.resolveHyperlinkRefToUrl(node)
         generatorState.writeTextWithLinePrefix(`<a href="${url}">${sanitizeHtml(node.label)}</a>`)
     },
 
     (generatorState, node) => {
-        const url = getHyperlinkRefUrl(generatorState, node)
+        const url = generatorState.resolveHyperlinkRefToUrl(node)
         generatorState.writeTextWithLinePrefix(`[${sanitizeHtml(node.label)}](${url})`)
     },
 )
-
-// ----------------------------------------------------------------------------
-// MARK: Helpers
-// ----------------------------------------------------------------------------
-
-function getHyperlinkRefUrl(generatorState: RstGeneratorState, node: RstHyperlinkRef): string {
-    // HyperlinkRefs can be written without space between label and angle brackets
-    // Some expect the angle brackets to contain the target url
-    // Others expect the whole string as label
-    // Thus we need to test both cases
-    if (node.isEmbeded) {
-        const simpleName = generatorState.simpleNameResolver.getSimpleName(node)
-        const altSimpleName = normalizeSimpleName(`${node.label}<${node.target}>`)
-        return generatorState.resolveNodeWithMultipleSimpleNamesToUrl(node, [altSimpleName, simpleName])
-    } else {
-        return generatorState.resolveNodeToUrl(node)
-    }
-}

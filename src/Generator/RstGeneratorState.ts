@@ -23,6 +23,8 @@ import { RstCitationRef } from '@/RstNode/Inline/CitationRef.js'
 import { RstCitationDef } from '@/RstNode/ExplicitMarkup/CitationDef.js'
 import { getAutoFootnoteSymbol } from '@/utils/getAutoFootnoteSymbol.js'
 import { getPathDirname, joinFilePath, normalizeFilePath, resolveFilePath } from '@/utils/path.js'
+import { RstHyperlinkTarget } from '@/RstNode/ExplicitMarkup/HyperlinkTarget.js'
+import { RstHyperlinkRef } from '@/RstNode/Inline/HyperlinkRef.js'
 
 export type RstGeneratorInput = {
     basePath: string // Base url all pages will be deployed to (default /)
@@ -98,7 +100,7 @@ export class RstGeneratorState {
             return [absPath, parserOutput]
         }))
         this._simpleNameCache = new Map(_generatorInput.docs.flatMap(({ docPath, parserOutput }) => {
-            const names = parserOutput.simpleNameResolver.simpleNamesTargetableFromOutside
+            const names = [...parserOutput.simpleNameResolver.nodesLinkableFromOutside.keys()]
             const absPath = getFilePathWithoutRst(joinFilePath(this._basePath, docPath))
             return names.map((name) => [name, absPath])
         }))
@@ -195,17 +197,19 @@ export class RstGeneratorState {
             throw new RstGeneratorError(this, srcNode, `Failed to resolveExternalRef "${targetRef}"`)
         }
 
-        const targetNode = parserOutput.simpleNameResolver.nodesTargetableFromOutside.get(targetRef)
+        const targetNode = parserOutput.simpleNameResolver.nodesLinkableFromOutside.get(targetRef)
         if (!targetNode) {
             throw new RstGeneratorError(this, srcNode, `Failed to resolveExternalRef "${targetRef}"`)
         }
 
-        // Usually targetSimpleName refers to the HyperlinkTarget
-        // and externalSimpleName refers to the Section that it is pointing at
-        const externalSimpleName = parserOutput.simpleNameResolver.getSimpleName(targetNode)
+        const nodeIdAttr = parserOutput.htmlAttrResolver.getNodeHtmlId(targetNode)
+        if (!nodeIdAttr) {
+            throw new RstGeneratorError(this, srcNode, `Failed to resolveExternalRef "${targetRef}"`)
+        }
+
         const externalUrl = docPath === this._currentDocPath
-            ? `#${externalSimpleName}`
-            : `${docPath}#${externalSimpleName}`
+            ? `#${nodeIdAttr}`
+            : `${docPath}#${nodeIdAttr}`
 
         const externalLabel = (targetNode instanceof RstSection)
             ? targetNode.textContent
@@ -215,6 +219,37 @@ export class RstGeneratorState {
             externalUrl,
             externalLabel,
         }
+    }
+
+    resolveHyperlinkRefToUrl(node: RstHyperlinkRef): string {
+        if (node.isAnonymous && !node.isEmbeded) {
+            const anonymousHyperlinkTarget = this.simpleNameResolver.anonymousHyperlinkRefToTarget.get(node)
+            if (!anonymousHyperlinkTarget) {
+                throw new RstGeneratorError(this, `Failed to resolve [${node.toShortString()}]`)
+            }
+
+            return this.resolveNodeToUrl(anonymousHyperlinkTarget)
+        }
+
+        // HyperlinkRef can be written without space between label and angle brackets
+        // - Some expect the angle brackets to contain the target url
+        // - Others expect the whole string as label
+        // Thus we need to test both cases
+        if (node.isEmbeded) {
+            const candidateSimpleName = normalizeSimpleName(`${node.label}<${node.target}>`)
+            const candidateUrl = this.resolveSimpleNameToUrl(candidateSimpleName)
+            if (candidateUrl) {
+                return candidateUrl
+            }
+        }
+
+        const targetSimpleName = normalizeSimpleName(node.target)
+        const targetUrl = this.resolveSimpleNameToUrl(targetSimpleName)
+        if (targetUrl) {
+            return targetUrl
+        }
+
+        return node.target
     }
 
     resolveNodeToUrl(node: RstNode): string {
@@ -227,39 +262,44 @@ export class RstGeneratorState {
         return url
     }
 
-    resolveNodeWithMultipleSimpleNamesToUrl(node: RstNode, simpleNames: Array<SimpleName>): string {
-        for (const simpleName of simpleNames) {
-            const url = this.resolveSimpleNameToUrl(simpleName)
-            if (url) {
-                return url
-            }
-        }
-
-        throw new RstGeneratorError(this, node, 'Failed to resolveNodeWithMultipleSimpleNamesToUrl')
-    }
-
     resolveSimpleNameToUrl(simpleName: SimpleName): string | null {
-        const seenSimpleNames = new Set<SimpleName>() // To avoid infinite loops
+        const seenNodes = new Set<RstNode>() // To avoid cyclic nodes causing infinite loops
+        let currNode: RstNode | null = this.simpleNameResolver.resolveSimpleName(simpleName)
 
-        while (true) {
-            if (seenSimpleNames.has(simpleName)) {
-                return null
+        while (currNode && !seenNodes.has(currNode)) {
+            seenNodes.add(currNode)
+
+            if (currNode instanceof RstHyperlinkTarget) {
+                if (currNode.isAlias) {
+                    currNode = this.simpleNameResolver.resolveSimpleName(normalizeSimpleName(currNode.target))
+                    continue
+                }
+                if (currNode.isTargetingNextNode) {
+                    currNode = this.simpleNameResolver.resolveIndirectHyperlinkTarget(currNode)
+                    continue
+                }
+
+                return currNode.target
             }
 
-            const docTarget = this.simpleNameResolver.simpleNameToTarget.get(simpleName)
-            if (!docTarget) {
-                return null
+            if (currNode instanceof RstHyperlinkRef) {
+                if (currNode.isAlias) {
+                    currNode = this.simpleNameResolver.resolveSimpleName(normalizeSimpleName(currNode.target))
+                    continue
+                }
+
+                return currNode.target
             }
 
-            const candidateTargetName = normalizeSimpleName(docTarget.target)
-            const isTargetTangible = (!docTarget.isAlias && docTarget.target.startsWith('#')) || (!docTarget.isAlias && !this.simpleNameResolver.simpleNameToTarget.has(candidateTargetName))
-            if (isTargetTangible) {
-                return docTarget.target
+            const idAttr = this.htmlAttrResolver.getNodeHtmlId(currNode)
+            if (!idAttr) {
+                throw new RstGeneratorError(this, currNode, `Resolved SimpleName:"${simpleName}" to [${currNode.toShortString()}] but it is not marked as linkable in HtmlAttrResolver`)
             }
 
-            seenSimpleNames.add(simpleName)
-            simpleName = candidateTargetName
+            return `#${idAttr}`
         }
+
+        return null
     }
 
     resolveCitationDef(citationRef: RstCitationRef): RstCitationDef {
@@ -271,9 +311,9 @@ export class RstGeneratorState {
         return citationDef
     }
 
-    resolveCitationDefBacklinks(citationDef: RstCitationDef): Array<SimpleName> {
+    resolveCitationDefBacklinks(citationDef: RstCitationDef): Array<string> {
         const refs = this.simpleNameResolver.citationDefBacklinks.get(citationDef) ?? []
-        return refs.map((citationRef) => this.simpleNameResolver.getSimpleName(citationRef))
+        return refs.map((citationRef) => this.resolveNodeToUrl(citationRef))
     }
 
     resolveFootnoteDef(footnoteRef: RstFootnoteRef): RstFootnoteDef {
@@ -285,9 +325,9 @@ export class RstGeneratorState {
         return footnoteDef
     }
 
-    resolveFootnoteDefBacklinks(footnoteDef: RstFootnoteDef): Array<SimpleName> {
+    resolveFootnoteDefBacklinks(footnoteDef: RstFootnoteDef): Array<string> {
         const footnoteRefs = this.simpleNameResolver.footnoteDefBacklinks.get(footnoteDef) ?? []
-        return footnoteRefs.map((footnoteRef) => this.simpleNameResolver.getSimpleName(footnoteRef))
+        return footnoteRefs.map((footnoteRef) => this.resolveNodeToUrl(footnoteRef))
     }
 
     resolveFootnoteDefLabel(footnoteDef: RstFootnoteDef): string {
@@ -702,9 +742,9 @@ export class RstGeneratorState {
         this.writeText(tag)
 
         if (node) {
-            if (this.htmlAttrResolver.hasForcedHtmlId(node)) {
-                const simpleName = this._currentParserOutput.simpleNameResolver.getSimpleName(node)
-                attrs.set('id', simpleName)
+            const htmlId = this.htmlAttrResolver.getNodeHtmlId(node)
+            if (htmlId) {
+                attrs.set('id', htmlId)
             }
 
             const htmlClassDirectives = this.htmlAttrResolver.getNodeHtmlClasses(node)

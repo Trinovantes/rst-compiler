@@ -83,6 +83,14 @@ export class RstHyperlinkTarget extends RstNode {
         return root
     }
 
+    override equals(other: RstNode): boolean {
+        if (!(other instanceof RstHyperlinkTarget)) {
+            return false
+        }
+
+        return this._rawLabel === other._rawLabel && this._rawTarget === other._rawTarget
+    }
+
     static reviveRstNodeFromJson(registrar: RstNodeRegistrar, json: RstNodeJson<RstHyperlinkTargetData>): RstHyperlinkTarget {
         return new RstHyperlinkTarget(registrar, structuredClone(json.source), json.data.rawLabel, json.data.rawTarget)
     }

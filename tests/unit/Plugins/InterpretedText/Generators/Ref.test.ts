@@ -93,7 +93,7 @@ describe.each([
 
             const doc1LocationFromBase = path.relative(basePath, doc1Location)
             const doc2LocationFromBase = path.relative(basePath, doc2Location)
-            const sectionUrl = `${doc2Location}#paragraph-1`
+            const sectionUrl = `${doc2Location}#paragraph-target`
 
             testGenerator({
                 basePath,

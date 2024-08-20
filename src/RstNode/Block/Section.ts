@@ -165,13 +165,13 @@ export const sectionGenerators = createNodeGenerators(
     },
 
     (generatorState, node) => {
-        const simpleName = generatorState.simpleNameResolver.getSimpleName(node)
+        const htmlId = generatorState.htmlAttrResolver.getNodeHtmlId(node)
 
         generatorState.writeLineVisitor(() => {
             generatorState.writeText('#'.repeat(node.level))
             generatorState.writeText(' ')
             generatorState.visitNodes(node.children)
-            generatorState.writeText(` {#${simpleName}}`)
+            generatorState.writeText(` {#${htmlId}}`)
         })
     },
 )

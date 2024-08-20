@@ -118,7 +118,7 @@ export const footnoteDefGenerators = createNodeGenerators(
                 if (backlinks.length > 0) {
                     generatorState.writeLineHtmlTagWithAttr('span', null, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.footnoteDefBacklinks }), () => {
                         for (const [idx, backlink] of backlinks.entries()) {
-                            generatorState.writeLine(`<a href="#${backlink}">[${idx + 1}]</a>`)
+                            generatorState.writeLine(`<a href="${backlink}">[${idx + 1}]</a>`)
                         }
                     })
                 }

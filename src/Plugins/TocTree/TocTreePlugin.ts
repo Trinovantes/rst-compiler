@@ -101,8 +101,8 @@ export const tocTreeDirectivePlugins = createRstCompilerPlugins({
                 continue
             }
 
-            parserOutput.simpleNameResolver.registerNodeAsTargetable(tocTreeNode)
-            parserOutput.simpleNameResolver.registerExternalTargetableNode(simpleName, tocTreeNode)
+            parserOutput.simpleNameResolver.registerExplicitNode(tocTreeNode, simpleName)
+            parserOutput.simpleNameResolver.registerNodeAsLinkable(tocTreeNode, simpleName, true)
         }
     },
 })

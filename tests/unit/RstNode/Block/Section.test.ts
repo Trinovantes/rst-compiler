@@ -128,13 +128,13 @@ describe('when there are multiple Sections with same normalized id, it generates
             introduction
         </h1>
 
-        <h1 id="section-2">
+        <h1 id="introduction-1">
             Introduction
         </h1>
     `, `
         # introduction {#introduction}
 
-        # Introduction {#section-2}
+        # Introduction {#introduction-1}
     `)
 })
 

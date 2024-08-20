@@ -182,22 +182,22 @@ describe('HyperlinkTarget', () => {
         ])
 
         testGenerator(input, `
-            <!-- HyperlinkTarget id:1 children:0 label:"_" target:"" isAnonymous:true isTargetingNextNode:true resolvedUrl:"#paragraph-1" -->
+            <!-- HyperlinkTarget id:1 children:0 label:"_" target:"" isAnonymous:true isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1" -->
 
-            <!-- HyperlinkTarget id:2 children:0 label:"target1" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-1" -->
+            <!-- HyperlinkTarget id:2 children:0 label:"target1" target:"" isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1" -->
 
-            <!-- HyperlinkTarget id:3 children:0 label:"target2" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-1" -->
+            <!-- HyperlinkTarget id:3 children:0 label:"target2" target:"" isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1" -->
 
-            <p id="paragraph-1">
+            <p id="anonymous-hyperlinktarget-1">
                 The targets &quot;target1&quot; and &quot;target2&quot; are synonyms; they both
                 point to this paragraph.
             </p>
         `, `
-            [HyperlinkTarget id:1 children:0 label:"_" target:"" isAnonymous:true isTargetingNextNode:true resolvedUrl:"#paragraph-1"]: #
+            [HyperlinkTarget id:1 children:0 label:"_" target:"" isAnonymous:true isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1"]: #
 
-            [HyperlinkTarget id:2 children:0 label:"target1" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-1"]: #
+            [HyperlinkTarget id:2 children:0 label:"target1" target:"" isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1"]: #
 
-            [HyperlinkTarget id:3 children:0 label:"target2" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-1"]: #
+            [HyperlinkTarget id:3 children:0 label:"target2" target:"" isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1"]: #
 
             The targets &quot;target1&quot; and &quot;target2&quot; are synonyms; they both
             point to this paragraph.
@@ -254,13 +254,13 @@ describe('HyperlinkTarget', () => {
         ])
 
         testGenerator(input, `
-            <!-- HyperlinkTarget id:1 children:0 label:"_" target:"" isAnonymous:true isTargetingNextNode:true resolvedUrl:"#citationdefgroup-1" -->
+            <!-- HyperlinkTarget id:1 children:0 label:"_" target:"" isAnonymous:true isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1" -->
 
-            <!-- HyperlinkTarget id:2 children:0 label:"target1" target:"" isTargetingNextNode:true resolvedUrl:"#citationdefgroup-1" -->
+            <!-- HyperlinkTarget id:2 children:0 label:"target1" target:"" isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1" -->
 
-            <!-- HyperlinkTarget id:3 children:0 label:"target2" target:"" isTargetingNextNode:true resolvedUrl:"#citationdefgroup-1" -->
+            <!-- HyperlinkTarget id:3 children:0 label:"target2" target:"" isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1" -->
 
-            <dl id="citationdefgroup-1" class="citations">
+            <dl id="anonymous-hyperlinktarget-1" class="citations">
                 <dt id="cite">
                     <span class="citation-definition">
                         cite
@@ -273,11 +273,11 @@ describe('HyperlinkTarget', () => {
                 </dd>
             </dl>
         `, `
-            [HyperlinkTarget id:1 children:0 label:"_" target:"" isAnonymous:true isTargetingNextNode:true resolvedUrl:"#citationdefgroup-1"]: #
+            [HyperlinkTarget id:1 children:0 label:"_" target:"" isAnonymous:true isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1"]: #
 
-            [HyperlinkTarget id:2 children:0 label:"target1" target:"" isTargetingNextNode:true resolvedUrl:"#citationdefgroup-1"]: #
+            [HyperlinkTarget id:2 children:0 label:"target1" target:"" isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1"]: #
 
-            [HyperlinkTarget id:3 children:0 label:"target2" target:"" isTargetingNextNode:true resolvedUrl:"#citationdefgroup-1"]: #
+            [HyperlinkTarget id:3 children:0 label:"target2" target:"" isTargetingNextNode:true resolvedUrl:"#anonymous-hyperlinktarget-1"]: #
 
             [^1]:
                 citation
@@ -420,13 +420,13 @@ describe('HyperlinkTarget', () => {
         ])
 
         testGenerator(input, `
-            <!-- HyperlinkTarget id:1 children:0 label:"Chapter One: "Tadpole Days"" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-1" -->
+            <!-- HyperlinkTarget id:1 children:0 label:"Chapter One: "Tadpole Days"" target:"" isTargetingNextNode:true resolvedUrl:"#chapter-one-tadpole-days" -->
 
-            <p id="paragraph-1">
+            <p id="chapter-one-tadpole-days">
                 Hello World
             </p>
         `, `
-            [HyperlinkTarget id:1 children:0 label:"Chapter One: "Tadpole Days"" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-1"]: #
+            [HyperlinkTarget id:1 children:0 label:"Chapter One: "Tadpole Days"" target:"" isTargetingNextNode:true resolvedUrl:"#chapter-one-tadpole-days"]: #
 
             Hello World
         `)
@@ -807,12 +807,8 @@ describe('HyperlinkRef', () => {
         `
 
         const generatorState = parseTestInputForGeneratorState(input)
-        const refs = generatorState.root.findAllChildren(RstNodeType.HyperlinkRef)
-        const ref1SimpleName = generatorState.simpleNameResolver.getSimpleName(refs[0])
-        const ref2SimpleName = generatorState.simpleNameResolver.getSimpleName(refs[1])
-
-        expect(generatorState.resolveSimpleNameToUrl(ref1SimpleName)).toBe(url)
-        expect(generatorState.resolveSimpleNameToUrl(ref2SimpleName)).toBe(url)
+        expect(generatorState.resolveSimpleNameToUrl(normalizeSimpleName('Python home page'))).toBe(url)
+        expect(generatorState.resolveSimpleNameToUrl(normalizeSimpleName('link'))).toBe(url)
     })
 
     test('when anonymous HyperlinkRef without embeded target does not have matching anonymous HyperlinkTarget, it throws error', () => {
@@ -827,7 +823,7 @@ describe('HyperlinkRef', () => {
             return new RstToHtmlCompiler().compile(input, opts, opts)
         }
 
-        expect(() => generate()).toThrow(/Failed to resolveNodeToUrl/)
+        expect(() => generate()).toThrow(/Failed to resolve/)
     })
 
     describe('when HyperlinkRef has angled brackets as part of its label, it prioritizes HyperlinkTarget with angle brackets', () => {

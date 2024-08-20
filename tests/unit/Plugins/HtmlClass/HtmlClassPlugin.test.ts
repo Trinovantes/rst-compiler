@@ -513,19 +513,19 @@ describe('when a node needs to target next node but is class Directive, it targe
     ])
 
     testGenerator(input, `
-        <!-- HyperlinkTarget id:1 children:0 label:"mytarget" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-2" -->
+        <!-- HyperlinkTarget id:1 children:0 label:"mytarget" target:"" isTargetingNextNode:true resolvedUrl:"#mytarget" -->
 
         <!-- Directive id:4 children:0 directive:"class" initContentText:"special" isInvisibleContent:true -->
 
-        <p id="paragraph-2" class="special">
+        <p id="mytarget" class="special">
             Hello World
         </p>
     `, `
-        [HyperlinkTarget id:1 children:0 label:"mytarget" target:"" isTargetingNextNode:true resolvedUrl:"#paragraph-2"]: #
+        [HyperlinkTarget id:1 children:0 label:"mytarget" target:"" isTargetingNextNode:true resolvedUrl:"#mytarget"]: #
 
         [Directive id:4 children:0 directive:"class" initContentText:"special" isInvisibleContent:true]: #
 
-        <p id="paragraph-2" class="special">
+        <p id="mytarget" class="special">
             Hello World
         </p>
     `)

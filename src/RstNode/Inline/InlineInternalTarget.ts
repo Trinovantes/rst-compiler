@@ -31,9 +31,8 @@ export const inlineInternalTargetGenerators = createNodeGenerators(
     RstNodeType.InlineInternalTarget,
 
     (generatorState, node) => {
-        const resolver = generatorState.simpleNameResolver
-        const simpleName = resolver.getSimpleName(node)
-        generatorState.writeTextWithLinePrefix(`<span class="${generatorState.opts.htmlClass.inlineInternalTarget}" id="${simpleName}">${sanitizeHtml(node.textContent)}</span>`)
+        const htmlId = generatorState.htmlAttrResolver.getNodeHtmlId(node)
+        generatorState.writeTextWithLinePrefix(`<span class="${generatorState.opts.htmlClass.inlineInternalTarget}" id="${htmlId}">${sanitizeHtml(node.textContent)}</span>`)
     },
 
     (generatorState, node) => {
