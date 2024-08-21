@@ -219,13 +219,11 @@ export class SimpleNameResolver {
         const registerAutoLabelNums = () => {
             const usedLabelNums = new Set<number>()
             let autoLabelNumCounter = 1
-
             const getNextLabelNum = (): number => {
-                let labelNum = autoLabelNumCounter++
-                while (usedLabelNums.has(labelNum)) {
-                    labelNum++
+                while (usedLabelNums.has(autoLabelNumCounter)) {
+                    autoLabelNumCounter++
                 }
-                return labelNum
+                return autoLabelNumCounter
             }
 
             // 1. Register all manual footnotes
