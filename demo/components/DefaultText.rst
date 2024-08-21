@@ -34,7 +34,7 @@ However, this demo is configured to use :code:`shiki` for syntax highlighting:
 
 .. code:: js
 
-    import { getHighlighter } from 'shiki'
+    import { createHighlighter } from 'shiki'
     import { RstToHtmlCompiler, RstGeneratorOptions } from 'rst-compiler'
 
     const generatorOptions: Partial<RstGeneratorOptions> = {
