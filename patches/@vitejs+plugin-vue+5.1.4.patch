@@ -1,11 +1,11 @@
 diff --git a/node_modules/@vitejs/plugin-vue/package.json b/node_modules/@vitejs/plugin-vue/package.json
-index 9b4c38d..5352c61 100644
+index 89755a4..ee7bde9 100644
 --- a/node_modules/@vitejs/plugin-vue/package.json
 +++ b/node_modules/@vitejs/plugin-vue/package.json
 @@ -1,7 +1,7 @@
  {
    "name": "@vitejs/plugin-vue",
-   "version": "5.1.2",
+   "version": "5.1.4",
 -  "type": "commonjs",
 +  "type": "module",
    "license": "MIT",
