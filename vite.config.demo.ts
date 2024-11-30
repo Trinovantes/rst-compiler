@@ -3,7 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import path from 'node:path'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import { commonConfig } from './vite.config.js'
-import packageJson from './package.json'
+import packageJson from './package.json' with { type: 'json' }
+import { fileURLToPath } from 'node:url'
 
 export default mergeConfig(commonConfig, defineConfig({
     root: path.resolve(__dirname, './demo'),
@@ -22,14 +23,24 @@ export default mergeConfig(commonConfig, defineConfig({
         'import.meta.env.PROJECT_DESC': JSON.stringify(packageJson.description),
     },
 
+    css: {
+        preprocessorOptions: {
+            scss: {
+                additionalData(source: string, filename: string) {
+                    return filename.endsWith('sass')
+                        ? `@use "sass:color"\n@use "sass:math"\n@use "${fileURLToPath(new URL('./demo/css/variables.scss', import.meta.url))}" as *\n` + source
+                        : `@use "sass:color"; @use "sass:math"; @use "${fileURLToPath(new URL('./demo/css/variables.scss', import.meta.url))}" as *;` + source
+                },
+            },
+        },
+    },
+
     plugins: [
         vue({
             template: {
                 transformAssetUrls,
             },
         }),
-        quasar({
-            sassVariables: './demo/css/variables.scss',
-        }),
+        quasar(),
     ],
 }))

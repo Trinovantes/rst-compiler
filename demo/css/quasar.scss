@@ -1,8 +1,10 @@
-@use "sass:math";
+@use 'sass:color';
+@use 'sass:math';
+@use './variables.scss' as *;
 
-@import '@quasar/extras/roboto-font/roboto-font.css';
-@import '@quasar/extras/material-icons/material-icons.css';
-@import 'quasar/src/css/index.sass';
+@use '@quasar/extras/roboto-font/roboto-font.css';
+@use '@quasar/extras/material-icons/material-icons.css';
+@use 'quasar/src/css/index.sass';
 
 body.mobile{
     .q-focus-helper{
