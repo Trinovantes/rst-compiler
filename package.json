@@ -79,7 +79,7 @@
         "typescript-eslint": "^8.0.0-alpha.24",
         "vite": "^6.0.1",
         "vite-plugin-dts": "^4.0.2",
-        "vitest": "^2.0.5",
+        "vitest": "^3.0.2",
         "vue": "^3.4.30",
         "vue-tsc": "^2.0.29"
     }
