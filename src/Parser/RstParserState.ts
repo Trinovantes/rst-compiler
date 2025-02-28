@@ -551,13 +551,8 @@ export class RstParserState {
         const escapedText = (plaintext) // Need to first escape text before parsing for standalone urls
 
         let consumedIdx = 0
-        const hyperlinkRe = new RegExp(
-            this._inlineMarkupStartLookbehindReStr +
-            `(?:${standaloneHyperlinkRefReStr})` +
-            this._inlineMarkupEndLookaheadReStr
-            ,
-            'g', // Global flag so we can iterate over all matches
-        )
+        const hyperlinkReStr = `${this._inlineMarkupStartLookbehindReStr}(?:${standaloneHyperlinkRefReStr})${this._inlineMarkupEndLookaheadReStr}`
+        const hyperlinkRe = new RegExp(hyperlinkReStr, 'g') // Global flag so we can iterate over all matches
 
         while (consumedIdx < escapedText.length) {
             const urlMatch = hyperlinkRe.exec(escapedText)

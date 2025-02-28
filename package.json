@@ -47,16 +47,15 @@
     },
     "dependencies": {
         "katex": "^0.16.10",
-        "shiki": "^1.5.2"
+        "shiki": "^3.1.0"
     },
     "devDependencies": {
         "@eslint/compat": "^1.1.0",
         "@eslint/js": "^9.4.0",
         "@quasar/extras": "^1.16.11",
         "@quasar/vite-plugin": "^1.7.0",
-        "@stylistic/eslint-plugin": "^2.1.0",
+        "@stylistic/eslint-plugin": "^4.1.0",
         "@types/bun": "^1.1.2",
-        "@types/eslint__js": "^8.42.3",
         "@types/katex": "^0.16.7",
         "@types/lodash.debounce": "^4.0.9",
         "@types/lodash.merge": "^4.6.9",
@@ -66,20 +65,20 @@
         "eslint": "^9.4.0",
         "eslint-plugin-n": "^17.7.0",
         "eslint-plugin-vue": "^9.9.0",
-        "globals": "^15.3.0",
+        "globals": "^16.0.0",
         "lodash.debounce": "^4.0.8",
         "lodash.merge": "^4.6.2",
         "lz-string": "^1.5.0",
         "mitt": "^3.0.1",
         "monaco-editor": "^0.52.0",
         "patch-package": "^8.0.0",
-        "quasar": "^2.16.4",
+        "quasar": "^2.17.7",
         "sass": "^1.77.6",
-        "typescript": "^5.4.5",
+        "typescript": "^5.8.1-rc",
         "typescript-eslint": "^8.0.0-alpha.24",
         "vite": "^6.0.1",
         "vite-plugin-dts": "^4.0.2",
-        "vitest": "^3.0.2",
+        "vitest": "^3.0.7",
         "vue": "^3.4.30",
         "vue-tsc": "^2.0.29"
     }
