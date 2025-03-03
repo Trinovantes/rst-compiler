@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe.each([
@@ -17,13 +16,13 @@ describe.each([
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive,
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'Godot\'s documentation is available in various languages and versions.\nExpand the "Read the Docs" panel at the bottom of the sidebar to see\nthe list.',
                 },
             ],
@@ -62,33 +61,33 @@ describe('nested admonitions', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'info',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'Outer 1',
                 },
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'warning',
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'Inner 1',
                         },
                         {
-                            type: RstNodeType.Directive,
+                            type: 'Directive',
                             data: {
                                 directive: 'error',
                             },
                             children: [
                                 {
-                                    type: RstNodeType.Paragraph,
+                                    type: 'Paragraph',
                                     text: 'Hello World',
                                 },
                             ],
@@ -96,13 +95,13 @@ describe('nested admonitions', () => {
                     ],
                 },
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'warning',
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'Inner 2',
                         },
                     ],
@@ -110,13 +109,13 @@ describe('nested admonitions', () => {
             ],
         },
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'info',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'Outer 2',
                 },
             ],

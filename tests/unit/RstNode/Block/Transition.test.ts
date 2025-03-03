@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('when there are less than 4 chars, it parses as Paragraph', () => {
@@ -10,7 +9,7 @@ describe('when there are less than 4 chars, it parses as Paragraph', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: '---',
         },
     ])
@@ -31,7 +30,7 @@ describe('when there are 4 characters, it parses as Transition', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Transition,
+            type: 'Transition',
         },
     ])
 
@@ -53,10 +52,10 @@ describe('when there are multiple linebreaks between Transitions, it parses as m
 
     testParser(input, [
         {
-            type: RstNodeType.Transition,
+            type: 'Transition',
         },
         {
-            type: RstNodeType.Transition,
+            type: 'Transition',
         },
     ])
 

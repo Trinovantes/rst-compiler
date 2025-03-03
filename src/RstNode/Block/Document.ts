@@ -10,17 +10,20 @@ import { RstNodeType } from '../RstNodeType.js'
 // ----------------------------------------------------------------------------
 
 export type RstDocumentData = {
-    docMeta: RstNodeJson | null
+    readonly docMeta: RstNodeJson | null
 }
 
 export class RstDocument extends RstNode {
+    readonly docMeta: RstFieldList | null
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        readonly docMeta: RstFieldList | null,
+        docMeta: RstFieldList | null,
     ) {
         super(registrar, source, children)
+        this.docMeta = docMeta
     }
 
     override toJSON(): RstNodeJson {
@@ -46,7 +49,7 @@ export class RstDocument extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Document
+        return 'Document'
     }
 
     override get isTextContentBasic(): boolean {
@@ -80,7 +83,7 @@ export class RstDocument extends RstNode {
 // ----------------------------------------------------------------------------
 
 export const documentGenerators = createNodeGenerators(
-    RstNodeType.Document,
+    'Document',
 
     (generatorState, node) => {
         if (node.docMeta) {

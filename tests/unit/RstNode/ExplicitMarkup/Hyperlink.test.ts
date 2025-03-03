@@ -4,7 +4,6 @@ import { testParser } from 'tests/fixtures/testParser.js'
 import { describe, expect, test } from 'vitest'
 import { parseTestInputForGeneratorState } from 'tests/fixtures/parseTestInput.js'
 import { RstToHtmlCompiler } from '@/RstCompiler.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: InlineInternalTarget
@@ -17,18 +16,18 @@ describe('InlineInternalTarget', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'Oh yes, the ',
                 },
                 {
-                    type: RstNodeType.InlineInternalTarget,
+                    type: 'InlineInternalTarget',
                     text: 'Norwegian Blue',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ".  What's, um, what's wrong with it?",
                 },
             ],
@@ -45,7 +44,7 @@ describe('InlineInternalTarget', () => {
 
     test('resolves SimpleName to normalized form of own text', () => {
         const generatorState = parseTestInputForGeneratorState(input)
-        const internalTarget = generatorState.root.findAllChildren(RstNodeType.InlineInternalTarget)[0]
+        const internalTarget = generatorState.root.findAllChildren('InlineInternalTarget')[0]
 
         expect(generatorState.simpleNameResolver.getSimpleName(internalTarget)).toBe('norwegian-blue')
         expect(generatorState.resolveNodeToUrl(internalTarget)).toBe('#norwegian-blue')
@@ -59,7 +58,7 @@ describe('InlineInternalTarget', () => {
         `
 
         const generatorState = parseTestInputForGeneratorState(input)
-        const hyperlinkTarget = generatorState.root.findAllChildren(RstNodeType.HyperlinkTarget)[0]
+        const hyperlinkTarget = generatorState.root.findAllChildren('HyperlinkTarget')[0]
 
         expect(generatorState.simpleNameResolver.getSimpleName(hyperlinkTarget)).toBe('alias')
         expect(generatorState.resolveNodeToUrl(hyperlinkTarget)).toBe('#norwegian-blue')
@@ -78,7 +77,7 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'label',
                     target: 'https://www.python.org/',
@@ -100,7 +99,7 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: '_',
                     target: 'https://www.python.org/',
@@ -123,7 +122,7 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: '_',
                     target: 'https://www.python.org/',
@@ -151,7 +150,7 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: '_',
                     target: '',
@@ -160,7 +159,7 @@ describe('HyperlinkTarget', () => {
                 },
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'target1',
                     target: '',
@@ -168,7 +167,7 @@ describe('HyperlinkTarget', () => {
                 },
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'target2',
                     target: '',
@@ -176,7 +175,7 @@ describe('HyperlinkTarget', () => {
                 },
             },
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: 'The targets "target1" and "target2" are synonyms; they both\npoint to this paragraph.',
             },
         ])
@@ -215,7 +214,7 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: '_',
                     target: '',
@@ -224,7 +223,7 @@ describe('HyperlinkTarget', () => {
                 },
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'target1',
                     target: '',
@@ -232,7 +231,7 @@ describe('HyperlinkTarget', () => {
                 },
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'target2',
                     target: '',
@@ -240,10 +239,10 @@ describe('HyperlinkTarget', () => {
                 },
             },
             {
-                type: RstNodeType.CitationDefGroup,
+                type: 'CitationDefGroup',
                 children: [
                     {
-                        type: RstNodeType.CitationDef,
+                        type: 'CitationDef',
                         text: 'citation',
                         data: {
                             label: 'cite',
@@ -309,27 +308,27 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'Hello ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'one',
                         data: {
                             isAlias: true,
                         },
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: ' World',
                     },
                 ],
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'one',
                     target: 'two_',
@@ -337,7 +336,7 @@ describe('HyperlinkTarget', () => {
                 },
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'two',
                     target: 'three_',
@@ -345,7 +344,7 @@ describe('HyperlinkTarget', () => {
                 },
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'three',
                     target: 'hello-world',
@@ -382,7 +381,7 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'FAQTS: Computers: Programming: Languages: Python',
                     target: 'http://python.faqts.com/',
@@ -406,7 +405,7 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'Chapter One: "Tadpole Days"',
                     target: '',
@@ -414,7 +413,7 @@ describe('HyperlinkTarget', () => {
                 },
             },
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: 'Hello World',
             },
         ])
@@ -442,7 +441,7 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'label',
                     target: 'https://google.ca/really/long/link',
@@ -464,7 +463,7 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'reference',
                     target: '../local path with spaces.html',
@@ -488,28 +487,28 @@ describe('HyperlinkTarget', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'label',
                     target: 'link_',
                 },
             },
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'Hello ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'label',
                         data: {
                             isAlias: true,
                         },
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: ' World',
                     },
                 ],
@@ -542,14 +541,14 @@ describe('HyperlinkRef', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'Use the ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'source',
                         data: {
                             label: 'source',
@@ -559,7 +558,7 @@ describe('HyperlinkRef', () => {
                         },
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: '.',
                     },
                 ],
@@ -585,25 +584,25 @@ describe('HyperlinkRef', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'See ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'HTML Element: <a>',
                         data: {
                             isAlias: true,
                         },
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: ' and ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'HTML Element: <b>',
                         data: {
                             isAlias: true,
@@ -612,7 +611,7 @@ describe('HyperlinkRef', () => {
                 ],
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'HTML Element: <a>',
                     target: '',
@@ -620,7 +619,7 @@ describe('HyperlinkRef', () => {
                 },
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'HTML Element: <b>',
                     target: 'https://google.ca',
@@ -654,14 +653,14 @@ describe('HyperlinkRef', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'See ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'HTML Element: <c>',
                         data: {
                             isAlias: true,
@@ -670,7 +669,7 @@ describe('HyperlinkRef', () => {
                 ],
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'HTML Element: <c>',
                     target: 'https://google.ca',
@@ -698,25 +697,25 @@ describe('HyperlinkRef', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'See ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'a_named_relative_link',
                         data: {
                             isEmbeded: true,
                         },
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: ' or ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'an_anonymous_relative_link',
                         data: {
                             isEmbeded: true,
@@ -724,7 +723,7 @@ describe('HyperlinkRef', () => {
                         },
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: ' for details.',
                     },
                 ],
@@ -743,23 +742,23 @@ describe('HyperlinkRef', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'https://google.ca',
                     },
                 ],
             },
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'See more on ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'GitHub',
                         data: {
                             isAnonymous: true,
@@ -769,7 +768,7 @@ describe('HyperlinkRef', () => {
                 ],
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     isAnonymous: true,
                     label: '_',
@@ -838,10 +837,10 @@ describe('HyperlinkRef', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'Foo',
                         data: {
                             label: 'Foo',
@@ -852,14 +851,14 @@ describe('HyperlinkRef', () => {
                 ],
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'Foo',
                     target: badUrl,
                 },
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'Foo<Bar>',
                     target: goodUrl,
@@ -894,20 +893,20 @@ describe('HyperlinkRef', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'See ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'if/else/elif',
                     },
                 ],
             },
             {
-                type: RstNodeType.Section,
+                type: 'Section',
                 text: 'if/else/elif',
                 data: {
                     level: 1,

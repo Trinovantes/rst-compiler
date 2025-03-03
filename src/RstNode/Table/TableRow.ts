@@ -13,13 +13,16 @@ export type RstTableRowData = {
 }
 
 export class RstTableRow extends RstNode {
+    readonly isHeadRow: boolean
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        readonly isHeadRow: boolean,
+        isHeadRow: boolean,
     ) {
         super(registrar, source, children)
+        this.isHeadRow = isHeadRow
     }
 
     override toObject(): RstNodeObject {
@@ -55,7 +58,7 @@ export class RstTableRow extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.TableRow
+        return 'TableRow'
     }
 
     override toShortString(): string {
@@ -68,7 +71,7 @@ export class RstTableRow extends RstNode {
 // ----------------------------------------------------------------------------
 
 export const tableRowGenerators = createNodeGenerators(
-    RstNodeType.TableRow,
+    'TableRow',
 
     (generatorState, node) => {
         throw new RstGeneratorError(generatorState, node, 'This should not be called directly')

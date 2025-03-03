@@ -16,13 +16,16 @@ export type RstFootnoteDefData = {
 }
 
 export class RstFootnoteDef extends RstNode {
+    private readonly _rawLabel: string
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        private readonly _rawLabel: string,
+        rawLabel: string,
     ) {
         super(registrar, source, children)
+        this._rawLabel = rawLabel
     }
 
     override toObject(): RstNodeObject {
@@ -64,7 +67,7 @@ export class RstFootnoteDef extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.FootnoteDef
+        return 'FootnoteDef'
     }
 
     get label(): string {
@@ -105,7 +108,7 @@ export class RstFootnoteDef extends RstNode {
 // ----------------------------------------------------------------------------
 
 export const footnoteDefGenerators = createNodeGenerators(
-    RstNodeType.FootnoteDef,
+    'FootnoteDef',
 
     (generatorState, node) => {
         const label = generatorState.resolveFootnoteDefLabel(node)

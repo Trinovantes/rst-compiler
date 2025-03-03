@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { RstEnumeratedListType } from '@/RstNode/List/EnumeratedListType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
@@ -14,40 +13,40 @@ describe('EnumeratedList', () => {
     }>([
         {
             label: 'arabic numerals',
-            listType: RstEnumeratedListType.Arabic,
+            listType: 'Arabic',
             bullets: ['1', '2', '3'],
         },
         {
             label: 'lowercase alphabet characters',
-            listType: RstEnumeratedListType.AlphabetLower,
+            listType: 'AlphabetLower',
             bullets: ['a', 'b', 'c'],
             mdBullets: ['1', '2', '3'],
             htmlListAttr: ' type="a"',
         },
         {
             label: 'uppercase alphabet characters',
-            listType: RstEnumeratedListType.AlphabetUpper,
+            listType: 'AlphabetUpper',
             bullets: ['A', 'B', 'C'],
             mdBullets: ['1', '2', '3'],
             htmlListAttr: ' type="A"',
         },
         {
             label: 'lowercase roman numerals',
-            listType: RstEnumeratedListType.RomanLower,
+            listType: 'RomanLower',
             bullets: ['i', 'ii', 'iii'],
             mdBullets: ['1', '2', '3'],
             htmlListAttr: ' type="i"',
         },
         {
             label: 'uppercase roman numerals',
-            listType: RstEnumeratedListType.RomanUpper,
+            listType: 'RomanUpper',
             bullets: ['I', 'II', 'III'],
             mdBullets: ['1', '2', '3'],
             htmlListAttr: ' type="I"',
         },
         {
             label: 'auto enumerator',
-            listType: RstEnumeratedListType.Arabic,
+            listType: 'Arabic',
             bullets: ['#', '#', '#'],
             mdBullets: ['1', '2', '3'],
         },
@@ -63,27 +62,27 @@ describe('EnumeratedList', () => {
 
             testParser(input, [
                 {
-                    type: RstNodeType.EnumeratedList,
+                    type: 'EnumeratedList',
                     data: {
                         listType,
                     },
                     children: [
                         {
-                            type: RstNodeType.BulletListItem,
+                            type: 'BulletListItem',
                             text: 'item 1',
                             data: {
                                 bullet: bullets[0],
                             },
                         },
                         {
-                            type: RstNodeType.BulletListItem,
+                            type: 'BulletListItem',
                             text: 'item 2',
                             data: {
                                 bullet: bullets[1],
                             },
                         },
                         {
-                            type: RstNodeType.BulletListItem,
+                            type: 'BulletListItem',
                             text: 'item 3',
                             data: {
                                 bullet: bullets[2],
@@ -131,27 +130,27 @@ describe('EnumeratedList', () => {
 
             testParser(input, [
                 {
-                    type: RstNodeType.EnumeratedList,
+                    type: 'EnumeratedList',
                     data: {
                         listType,
                     },
                     children: [
                         {
-                            type: RstNodeType.BulletListItem,
+                            type: 'BulletListItem',
                             text: 'item 1',
                             data: {
                                 bullet: bullets[0],
                             },
                         },
                         {
-                            type: RstNodeType.BulletListItem,
+                            type: 'BulletListItem',
                             text: 'item 2',
                             data: {
                                 bullet: bullets[1],
                             },
                         },
                         {
-                            type: RstNodeType.BulletListItem,
+                            type: 'BulletListItem',
                             text: 'item 3',
                             data: {
                                 bullet: bullets[2],
@@ -199,13 +198,13 @@ describe('EnumeratedList', () => {
 
                     testParser(input, [
                         {
-                            type: RstNodeType.EnumeratedList,
+                            type: 'EnumeratedList',
                             data: {
                                 listType,
                             },
                             children: [
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     text: 'item 1',
                                     data: {
                                         bullet: bullets[0],
@@ -223,13 +222,13 @@ describe('EnumeratedList', () => {
 
                     testParser(input, [
                         {
-                            type: RstNodeType.EnumeratedList,
+                            type: 'EnumeratedList',
                             data: {
                                 listType,
                             },
                             children: [
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     text: 'item 1',
                                     data: {
                                         bullet: bullets[0],
@@ -247,13 +246,13 @@ describe('EnumeratedList', () => {
 
                     testParser(input, [
                         {
-                            type: RstNodeType.EnumeratedList,
+                            type: 'EnumeratedList',
                             data: {
                                 listType,
                             },
                             children: [
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     text: 'item 1',
                                     data: {
                                         bullet: bullets[0],
@@ -271,7 +270,7 @@ describe('EnumeratedList', () => {
 
                     testParser(input, [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: `(${bullets[0]} item 1`,
                         },
                     ])
@@ -315,13 +314,13 @@ describe('EnumeratedList', () => {
 
                 testParser(input, [
                     {
-                        type: RstNodeType.EnumeratedList,
+                        type: 'EnumeratedList',
                         data: {
                             listType,
                         },
                         children: [
                             {
-                                type: RstNodeType.BulletListItem,
+                                type: 'BulletListItem',
                                 text: 'item 1',
                                 data: {
                                     bullet: bullets[0],
@@ -330,13 +329,13 @@ describe('EnumeratedList', () => {
                         ],
                     },
                     {
-                        type: RstNodeType.EnumeratedList,
+                        type: 'EnumeratedList',
                         data: {
                             listType,
                         },
                         children: [
                             {
-                                type: RstNodeType.BulletListItem,
+                                type: 'BulletListItem',
                                 text: 'item 3',
                                 data: {
                                     bullet: bullets[2],
@@ -380,7 +379,7 @@ describe('when second line is not indented, it parses as Paragraph instead', () 
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'A. Einstein was a really\nsmart dude.',
         },
     ])
@@ -395,13 +394,13 @@ describe('when enumerators do not have the same sequence, it parses as multiple 
 
     testParser(input, [
         {
-            type: RstNodeType.EnumeratedList,
+            type: 'EnumeratedList',
             data: {
-                listType: RstEnumeratedListType.Arabic,
+                listType: 'Arabic',
             },
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     text: 'list 1',
                     data: {
                         bullet: '1',
@@ -410,13 +409,13 @@ describe('when enumerators do not have the same sequence, it parses as multiple 
             ],
         },
         {
-            type: RstNodeType.EnumeratedList,
+            type: 'EnumeratedList',
             data: {
-                listType: RstEnumeratedListType.AlphabetLower,
+                listType: 'AlphabetLower',
             },
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     text: 'list 2',
                     data: {
                         bullet: 'a',

@@ -15,16 +15,18 @@ export type RstHyperlinkRefData = RstTextData & {
 }
 
 export class RstHyperlinkRef extends RstText {
-    private readonly _embededInfo: ReturnType<typeof parseEmbededRef>
+    readonly isAnonymous: boolean
+    readonly embededInfo: Readonly<ReturnType<typeof parseEmbededRef>>
 
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         rawText: string,
-        readonly isAnonymous: boolean,
+        isAnonymous: boolean,
     ) {
         super(registrar, source, rawText)
-        this._embededInfo = parseEmbededRef(rawText, true)
+        this.isAnonymous = isAnonymous
+        this.embededInfo = parseEmbededRef(rawText, true)
     }
 
     override toObject(): RstNodeObject {
@@ -84,7 +86,7 @@ export class RstHyperlinkRef extends RstText {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.HyperlinkRef
+        return 'HyperlinkRef'
     }
 
     override get textContent(): string {
@@ -96,19 +98,19 @@ export class RstHyperlinkRef extends RstText {
     }
 
     get label(): string {
-        return this._embededInfo.label
+        return this.embededInfo.label
     }
 
     get target(): string {
-        return this._embededInfo.target
+        return this.embededInfo.target
     }
 
     get isAlias(): boolean {
-        return this._embededInfo.isAlias
+        return this.embededInfo.isAlias
     }
 
     get isEmbeded(): boolean {
-        return this._embededInfo.isEmbeded
+        return this.embededInfo.isEmbeded
     }
 
     override toShortString(): string {
@@ -133,7 +135,7 @@ export class RstHyperlinkRef extends RstText {
 // ----------------------------------------------------------------------------
 
 export const hyperlinkRefGenerators = createNodeGenerators(
-    RstNodeType.HyperlinkRef,
+    'HyperlinkRef',
 
     (generatorState, node) => {
         const url = generatorState.resolveHyperlinkRefToUrl(node)

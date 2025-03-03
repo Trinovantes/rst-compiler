@@ -25,17 +25,20 @@ export class RstLineBlock extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.LineBlock
+        return 'LineBlock'
     }
 }
 
 export class RstLineBlockLine extends RstNode {
+    protected readonly textNodes: ContinuousText
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        protected readonly textNodes: ContinuousText = [],
+        textNodes: ContinuousText = [],
     ) {
         super(registrar, source, textNodes)
+        this.textNodes = textNodes
     }
 
     static reviveRstNodeFromJson(registrar: RstNodeRegistrar, json: RstNodeJson): RstLineBlockLine {
@@ -49,7 +52,7 @@ export class RstLineBlockLine extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.LineBlockLine
+        return 'LineBlockLine'
     }
 }
 
@@ -59,7 +62,7 @@ export class RstLineBlockLine extends RstNode {
 
 const lineBlockRe = /^([ ]*)\|(?: (?<lineBlockIndent> *)(?<lineBlockText>.+))?$/
 
-export const lineBlockParser: RstNodeParser<RstNodeType.LineBlock> = {
+export const lineBlockParser: RstNodeParser<'LineBlock'> = {
     parse: (parserState, indentSize) => {
         return parseLineBlock(parserState, indentSize, 0)
     },
@@ -142,7 +145,7 @@ function parseLineBlock(parserState: RstParserState, indentSize: number, lineBlo
 // ----------------------------------------------------------------------------
 
 export const lineBlockGenerators = createNodeGenerators(
-    RstNodeType.LineBlock,
+    'LineBlock',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTagWithAttr('div', node, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.lineBlock }), () => {
@@ -160,7 +163,7 @@ export const lineBlockGenerators = createNodeGenerators(
 )
 
 export const lineBlockLineGenerators = createNodeGenerators(
-    RstNodeType.LineBlockLine,
+    'LineBlockLine',
 
     (generatorState, node) => {
         const attrs = new HtmlAttributeStore({ class: generatorState.opts.htmlClass.lineBlockLine })

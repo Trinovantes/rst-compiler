@@ -33,6 +33,9 @@ export type RstNodeJson<RstNodeData = unknown> = {
 }
 
 export abstract class RstNode {
+    readonly source: Readonly<RstNodeSource>
+    readonly children: ReadonlyArray<RstNode>
+
     private _registration: RstNodeRegistration
     private _parent: RstNode | null = null// Private so nobody else can edit this value but our constructor
 
@@ -42,9 +45,12 @@ export abstract class RstNode {
 
     constructor(
         registrar: RstNodeRegistrar,
-        public source: RstNodeSource,
-        public children: ReadonlyArray<RstNode> = [],
+        source: RstNodeSource,
+        children: ReadonlyArray<RstNode> = [],
     ) {
+        this.source = source
+        this.children = children
+
         for (const child of this.children) {
             child._parent = this
         }
@@ -116,8 +122,8 @@ export abstract class RstNode {
      */
     get isTextContentBasic(): boolean {
         return this.children.length === 1 && (
-            (this.children[0].nodeType === RstNodeType.Text) ||
-            (this.children[0].nodeType === RstNodeType.Paragraph && this.children[0].isTextContentBasic)
+            (this.children[0].nodeType === 'Text') ||
+            (this.children[0].nodeType === 'Paragraph' && this.children[0].isTextContentBasic)
         )
     }
 

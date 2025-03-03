@@ -18,16 +18,25 @@ export type RstSubstitutionDefData = {
 }
 
 export class RstSubstitutionDef extends RstNode {
+    private readonly _rawNeedle: string
+    private readonly _rawDirective: string
+    private readonly _initContent: ReadonlyArray<RstNode> // Content on first line of directive
+    private readonly _config: RstFieldList | null // FieldList that specifies the Directive's settings
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        private readonly _rawNeedle: string,
-        private readonly _rawDirective: string,
-        private readonly _initContent: ReadonlyArray<RstNode>, // Content on first line of directive
-        private readonly _config: RstFieldList | null, // FieldList that specifies the Directive's settings
+        rawNeedle: string,
+        rawDirective: string,
+        initContent: ReadonlyArray<RstNode>, // Content on first line of directive
+        config: RstFieldList | null, // FieldList that specifies the Directive's settings
     ) {
         super(registrar, source, children)
+        this._rawNeedle = rawNeedle
+        this._rawDirective = rawDirective
+        this._initContent = initContent
+        this._config = config
     }
 
     override toObject(): RstNodeObject {
@@ -76,7 +85,7 @@ export class RstSubstitutionDef extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.SubstitutionDef
+        return 'SubstitutionDef'
     }
 
     override get willRenderVisibleContent(): boolean {
@@ -127,7 +136,7 @@ const substitutionDefRe = new RegExp(
     '$',
 )
 
-export const substitutionDefParser: RstNodeParser<RstNodeType.SubstitutionDef> = {
+export const substitutionDefParser: RstNodeParser<'SubstitutionDef'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -148,7 +157,7 @@ export const substitutionDefParser: RstNodeParser<RstNodeType.SubstitutionDef> =
         const firstLineText = firstLineMatches.groups?.firstLineText ?? ''
         const bodyIndentSize = parserState.peekNestedIndentSize(indentSize)
         const initContent = parserState.parseInitContent(bodyIndentSize, firstLineText, startLineIdx)
-        const directiveConfig = fieldListParser.parse(parserState, bodyIndentSize, RstNodeType.SubstitutionDef)
+        const directiveConfig = fieldListParser.parse(parserState, bodyIndentSize, 'SubstitutionDef')
 
         const directiveInitContent = directive === 'image'
             ? initContent
@@ -156,7 +165,7 @@ export const substitutionDefParser: RstNodeParser<RstNodeType.SubstitutionDef> =
         const directiveChildren = directive === 'image'
             ? []
             : initContent
-        const children = parserState.parseBodyNodes(bodyIndentSize, RstNodeType.SubstitutionDef, directiveChildren)
+        const children = parserState.parseBodyNodes(bodyIndentSize, 'SubstitutionDef', directiveChildren)
 
         const endLineIdx = parserState.lineIdx
         return new RstSubstitutionDef(
@@ -179,7 +188,7 @@ export const substitutionDefParser: RstNodeParser<RstNodeType.SubstitutionDef> =
 // ----------------------------------------------------------------------------
 
 export const substitutionDefGenerators = createNodeGenerators(
-    RstNodeType.SubstitutionDef,
+    'SubstitutionDef',
 
     (generatorState, node) => {
         const replacementText = generatorState.getChildrenText(() => {

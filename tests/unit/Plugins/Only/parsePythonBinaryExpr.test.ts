@@ -1,4 +1,4 @@
-import { PyToken, PyTokenType, evaluatePythonExpr, parsePythonBinaryExpr, tokenizePythonBinaryExpr } from '@/Plugins/Only/parsePythonBinaryExpr.js'
+import { PyToken, evaluatePythonExpr, parsePythonBinaryExpr, tokenizePythonBinaryExpr } from '@/Plugins/Only/parsePythonBinaryExpr.js'
 import { describe, expect, test } from 'vitest'
 
 describe('tokenizePythonBinaryExpr', () => {
@@ -9,37 +9,37 @@ describe('tokenizePythonBinaryExpr', () => {
         {
             testInput: 'not',
             expectedToken: {
-                type: PyTokenType.NOT,
+                type: 'NOT',
             },
         },
         {
             testInput: 'and',
             expectedToken: {
-                type: PyTokenType.AND,
+                type: 'AND',
             },
         },
         {
             testInput: 'or',
             expectedToken: {
-                type: PyTokenType.OR,
+                type: 'OR',
             },
         },
         {
             testInput: '(',
             expectedToken: {
-                type: PyTokenType.L_PAREN,
+                type: 'L_PAREN',
             },
         },
         {
             testInput: ')',
             expectedToken: {
-                type: PyTokenType.R_PAREN,
+                type: 'R_PAREN',
             },
         },
         {
             testInput: 'v',
             expectedToken: {
-                type: PyTokenType.TERMINAL,
+                type: 'TERMINAL',
                 value: 'v',
             },
         },
@@ -52,17 +52,17 @@ describe('tokenizePythonBinaryExpr', () => {
         const tokens = tokenizePythonBinaryExpr(input)
 
         expect(tokens).toStrictEqual([
-            { type: PyTokenType.NOT },
-            { type: PyTokenType.L_PAREN },
-            { type: PyTokenType.TERMINAL, value: 'v' },
-            { type: PyTokenType.AND },
-            { type: PyTokenType.L_PAREN },
-            { type: PyTokenType.TERMINAL, value: 'v' },
-            { type: PyTokenType.OR },
-            { type: PyTokenType.NOT },
-            { type: PyTokenType.TERMINAL, value: 'v' },
-            { type: PyTokenType.R_PAREN },
-            { type: PyTokenType.R_PAREN },
+            { type: 'NOT' },
+            { type: 'L_PAREN' },
+            { type: 'TERMINAL', value: 'v' },
+            { type: 'AND' },
+            { type: 'L_PAREN' },
+            { type: 'TERMINAL', value: 'v' },
+            { type: 'OR' },
+            { type: 'NOT' },
+            { type: 'TERMINAL', value: 'v' },
+            { type: 'R_PAREN' },
+            { type: 'R_PAREN' },
         ])
     })
 })
@@ -76,7 +76,7 @@ describe('parsePythonBinaryExpr', () => {
 
     test('NOT expr', () => {
         expect(parsePythonBinaryExpr('not a')).toStrictEqual({
-            operator: PyTokenType.NOT,
+            operator: 'NOT',
             left: {
                 terminal: 'a',
             },
@@ -85,7 +85,7 @@ describe('parsePythonBinaryExpr', () => {
 
     test('AND expr', () => {
         expect(parsePythonBinaryExpr('a and b')).toStrictEqual({
-            operator: PyTokenType.AND,
+            operator: 'AND',
             left: {
                 terminal: 'a',
             },
@@ -97,7 +97,7 @@ describe('parsePythonBinaryExpr', () => {
 
     test('OR expr', () => {
         expect(parsePythonBinaryExpr('a and b')).toStrictEqual({
-            operator: PyTokenType.AND,
+            operator: 'AND',
             left: {
                 terminal: 'a',
             },
@@ -118,19 +118,19 @@ describe('parsePythonBinaryExpr', () => {
         const expr = parsePythonBinaryExpr(input)
 
         expect(expr).toStrictEqual({
-            operator: PyTokenType.NOT,
+            operator: 'NOT',
             left: {
-                operator: PyTokenType.AND,
+                operator: 'AND',
                 left: {
                     terminal: 'v',
                 },
                 right: {
-                    operator: PyTokenType.OR,
+                    operator: 'OR',
                     left: {
                         terminal: 'v',
                     },
                     right: {
-                        operator: PyTokenType.NOT,
+                        operator: 'NOT',
                         left: {
                             terminal: 'v',
                         },

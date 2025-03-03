@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('when text is wrapped in colons, it parses as FieldListItem without any body', () => {
@@ -10,14 +9,14 @@ describe('when text is wrapped in colons, it parses as FieldListItem without any
 
     testParser(input, [
         {
-            type: RstNodeType.FieldList,
+            type: 'FieldList',
             children: [
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'key',
                             },
                         ],
@@ -50,20 +49,20 @@ describe('when text follows the second colon, it parses as FieldListItem with bo
 
     testParser(input, [
         {
-            type: RstNodeType.FieldList,
+            type: 'FieldList',
             children: [
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'key',
                             },
                         ],
                         body: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'value',
                             },
                         ],
@@ -100,31 +99,31 @@ describe('when multiple FieldListItems are in a row without linebreaks, they par
 
     testParser(input, [
         {
-            type: RstNodeType.FieldList,
+            type: 'FieldList',
             children: [
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'key1',
                             },
                         ],
                         body: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'value1',
                             },
                         ],
                     },
                 },
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'key2',
                             },
                         ],
@@ -133,17 +132,17 @@ describe('when multiple FieldListItems are in a row without linebreaks, they par
                     },
                 },
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'key3',
                             },
                         ],
                         body: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'value3',
                             },
                         ],
@@ -202,37 +201,37 @@ describe('when multiline body does align with colon, it parses as single FieldLi
 
     testParser(input, [
         {
-            type: RstNodeType.FieldList,
+            type: 'FieldList',
             children: [
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'Authors',
                             },
                         ],
                         body: [
                             {
-                                type: RstNodeType.BulletList,
+                                type: 'BulletList',
                                 children: [
                                     {
-                                        type: RstNodeType.BulletListItem,
+                                        type: 'BulletListItem',
                                         text: 'Me',
                                         data: {
                                             bullet: '-',
                                         },
                                     },
                                     {
-                                        type: RstNodeType.BulletListItem,
+                                        type: 'BulletListItem',
                                         text: 'Myself',
                                         data: {
                                             bullet: '-',
                                         },
                                     },
                                     {
-                                        type: RstNodeType.BulletListItem,
+                                        type: 'BulletListItem',
                                         text: 'I',
                                         data: {
                                             bullet: '-',
@@ -292,20 +291,20 @@ describe('when field name contains spaces, it is converted to slug form in html 
 
     testParser(input, [
         {
-            type: RstNodeType.FieldList,
+            type: 'FieldList',
             children: [
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'Parameter i',
                             },
                         ],
                         body: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'integer',
                             },
                         ],
@@ -340,14 +339,14 @@ describe('when FieldListItem name has InterpretedText with role suffix, it parse
 
     testParser(input, [
         {
-            type: RstNodeType.FieldList,
+            type: 'FieldList',
             children: [
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.InterpretedText,
+                                type: 'InterpretedText',
                                 text: 'field name',
                                 data: {
                                     role: 'code',
@@ -356,7 +355,7 @@ describe('when FieldListItem name has InterpretedText with role suffix, it parse
                         ],
                         body: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'interpreted text with explicit role as suffix',
                             },
                         ],
@@ -375,31 +374,31 @@ describe('when FieldListItem name has InterpretedText with role suffix followed 
 
     testParser(input, [
         {
-            type: RstNodeType.FieldList,
+            type: 'FieldList',
             children: [
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'a ',
                             },
                             {
-                                type: RstNodeType.InterpretedText,
+                                type: 'InterpretedText',
                                 text: 'complex',
                                 data: {
                                     role: 'code',
                                 },
                             },
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'field name',
                             },
                         ],
                         body: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'a backslash-escaped space\nis necessary',
                             },
                         ],
@@ -418,18 +417,18 @@ describe('when FieldListItem name has InterpretedText that is preceded by escape
 
     testParser(input, [
         {
-            type: RstNodeType.FieldList,
+            type: 'FieldList',
             children: [
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'field:',
                             },
                             {
-                                type: RstNodeType.InterpretedText,
+                                type: 'InterpretedText',
                                 text: 'name',
                                 data: {
                                     role: 'title-reference',
@@ -438,7 +437,7 @@ describe('when FieldListItem name has InterpretedText that is preceded by escape
                         ],
                         body: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'interpreted text (standard role) requires\nescaping the leading colon in a field name',
                             },
                         ],
@@ -456,17 +455,17 @@ describe('when InterpretedText with role prefix followed by colon, it should not
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.InterpretedText,
+                    type: 'InterpretedText',
                     text: 'not a field name',
                     data: {
                         role: 'code',
                     },
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ': paragraph with interpreted text',
                 },
             ],
@@ -481,21 +480,21 @@ describe('when InterpretedText with role prefix followed by colon and preceded b
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ':',
                 },
                 {
-                    type: RstNodeType.InterpretedText,
+                    type: 'InterpretedText',
                     text: 'not a field name',
                     data: {
                         role: 'code',
                     },
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ': paragraph with interpreted text',
                 },
             ],
@@ -510,21 +509,21 @@ describe('when InterpretedText with role prefix followed by colon and preceded b
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ':',
                 },
                 {
-                    type: RstNodeType.InterpretedText,
+                    type: 'InterpretedText',
                     text: 'not a field name',
                     data: {
                         role: 'code',
                     },
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ': paragraph with interpreted text',
                 },
             ],
@@ -539,20 +538,20 @@ describe('when InterpretedText with role has its starting backtick escaped, it s
 
     testParser(input, [
         {
-            type: RstNodeType.FieldList,
+            type: 'FieldList',
             children: [
                 {
-                    type: RstNodeType.FieldListItem,
+                    type: 'FieldListItem',
                     data: {
                         name: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'field:`name`',
                             },
                         ],
                         body: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'not interpreted text',
                             },
                         ],
@@ -581,7 +580,7 @@ describe('when InterpretedText with role has its ending backtick escaped, it sho
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: ':field:`name`: not interpreted text or field list item',
         },
     ])

@@ -3,7 +3,6 @@ import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { parseTestInput } from 'tests/fixtures/parseTestInput.js'
 import path from 'node:path'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 
 describe.each<{
     directive: string
@@ -45,28 +44,28 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Directive,
+                type: 'Directive',
                 data: {
                     directive,
                     initContent: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'MyModuleName',
                         },
                     ],
                 },
                 children: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'Hello World',
                     },
                 ],
             },
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.InterpretedText,
+                        type: 'InterpretedText',
                         text: 'MyModuleName',
                         data: {
                             role,
@@ -210,36 +209,36 @@ describe('js:function inside js:class inherits class name', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'js:class',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'Engine( initConfig )',
                     },
                 ],
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'Create a new Engine instance with the given configuration.',
                 },
                 {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'param EngineConfig initConfig',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'The initial config for this instance.',
                                     },
                                 ],
@@ -248,79 +247,79 @@ describe('js:function inside js:class inherits class name', () => {
                     ],
                 },
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.StrongEmphasis,
+                            type: 'StrongEmphasis',
                             text: 'Static Methods',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'js:function',
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'load( basePath )',
                             },
                         ],
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'Load the engine from the specified base path.',
                         },
                         {
-                            type: RstNodeType.FieldList,
+                            type: 'FieldList',
                             children: [
                                 {
-                                    type: RstNodeType.FieldListItem,
+                                    type: 'FieldListItem',
                                     data: {
                                         name: [
                                             {
-                                                type: RstNodeType.Text,
+                                                type: 'Text',
                                                 text: 'param string basePath',
                                             },
                                         ],
                                         body: [
                                             {
-                                                type: RstNodeType.Paragraph,
+                                                type: 'Paragraph',
                                                 text: 'Base path of the engine to load.',
                                             },
                                         ],
                                     },
                                 },
                                 {
-                                    type: RstNodeType.FieldListItem,
+                                    type: 'FieldListItem',
                                     data: {
                                         name: [
                                             {
-                                                type: RstNodeType.Text,
+                                                type: 'Text',
                                                 text: 'return',
                                             },
                                         ],
                                         body: [
                                             {
-                                                type: RstNodeType.Paragraph,
+                                                type: 'Paragraph',
                                                 text: 'A Promise that resolves once the engine is loaded.',
                                             },
                                         ],
                                     },
                                 },
                                 {
-                                    type: RstNodeType.FieldListItem,
+                                    type: 'FieldListItem',
                                     data: {
                                         name: [
                                             {
-                                                type: RstNodeType.Text,
+                                                type: 'Text',
                                                 text: 'rtype',
                                             },
                                         ],
                                         body: [
                                             {
-                                                type: RstNodeType.Paragraph,
+                                                type: 'Paragraph',
                                                 text: 'Promise',
                                             },
                                         ],
@@ -410,98 +409,98 @@ describe('multiple params in js:function are consoldated into single list', () =
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'js:function',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: '$.getJSON(href, callback[, errback])',
                     },
                 ],
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'param string href',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'An URI to the location of the resource.',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'param callback',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'Gets called with the object.',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'param errback',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'Gets called in case the request fails. And a lot of other\ntext so we need multiple lines.',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'throws SomeError',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'For whatever reason in that case.',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'returns',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'Something.',
                                     },
                                 ],

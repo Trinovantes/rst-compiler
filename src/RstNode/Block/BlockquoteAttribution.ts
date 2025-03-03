@@ -11,12 +11,15 @@ import { ContinuousText } from '../Inline/Text.js'
 // ----------------------------------------------------------------------------
 
 export class RstBlockquoteAttribution extends RstNode {
+    protected readonly textNodes: ContinuousText
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        protected readonly textNodes: ContinuousText = [],
+        textNodes: ContinuousText = [],
     ) {
         super(registrar, source, textNodes)
+        this.textNodes = textNodes
     }
 
     static reviveRstNodeFromJson(registrar: RstNodeRegistrar, json: RstNodeJson): RstBlockquoteAttribution {
@@ -30,7 +33,7 @@ export class RstBlockquoteAttribution extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.BlockquoteAttribution
+        return 'BlockquoteAttribution'
     }
 }
 
@@ -40,13 +43,13 @@ export class RstBlockquoteAttribution extends RstNode {
 
 const blockquoteAttributonRe = /^([ ]*)(?<bulletAndSpace>---?[ ]+)(?<firstLineText>.+)$/
 
-export const blockquoteAttributionParser: RstNodeParser<RstNodeType.BlockquoteAttribution> = {
+export const blockquoteAttributionParser: RstNodeParser<'BlockquoteAttribution'> = {
     onParseShouldExitBody: true,
 
     parse: (parserState, indentSize, parentType) => {
         const startLineIdx = parserState.lineIdx
 
-        if (parentType !== RstNodeType.Blockquote) {
+        if (parentType !== 'Blockquote') {
             return null
         }
         if (!parserState.peekIsIndented(indentSize)) {
@@ -78,7 +81,7 @@ export const blockquoteAttributionParser: RstNodeParser<RstNodeType.BlockquoteAt
 // ----------------------------------------------------------------------------
 
 export const blockquoteAttributonGenerators = createNodeGenerators(
-    RstNodeType.BlockquoteAttribution,
+    'BlockquoteAttribution',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTag('footer', node, () => {

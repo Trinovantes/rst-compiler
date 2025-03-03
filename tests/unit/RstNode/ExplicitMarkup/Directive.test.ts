@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { trimCommonIndent } from '@/utils/trimCommonIndent.js'
 
 describe('with no data', () => {
@@ -10,7 +9,7 @@ describe('with no data', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'directive',
             },
@@ -25,13 +24,13 @@ describe('with data on same line', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'directive',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'data',
                 },
             ],
@@ -47,13 +46,13 @@ describe('with data on next line (indented 2)', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'directive',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'data',
                 },
             ],
@@ -69,13 +68,13 @@ describe('with data on next line (indented 3)', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'directive',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'data',
                 },
             ],
@@ -91,13 +90,13 @@ describe('with data on next line (indented 4)', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'directive',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'data',
                 },
             ],
@@ -121,18 +120,18 @@ describe('with data on multiple lines (aligned to colons)', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'note',
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'hidden',
                                     },
                                 ],
@@ -141,17 +140,17 @@ describe('with data on multiple lines (aligned to colons)', () => {
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'maxdepth',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: '1',
                                     },
                                 ],
@@ -162,14 +161,14 @@ describe('with data on multiple lines (aligned to colons)', () => {
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: 'This documentation is translated from the ',
                         },
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: 'original English one',
                             data: {
                                 label: 'original English one',
@@ -178,11 +177,11 @@ describe('with data on multiple lines (aligned to colons)', () => {
                             },
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: ' by community members\non ',
                         },
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: 'Weblate',
                             data: {
                                 label: 'Weblate',
@@ -191,13 +190,13 @@ describe('with data on multiple lines (aligned to colons)', () => {
                             },
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: '.',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'about/introduction\nabout/faq\nabout/troubleshooting',
                 },
             ],
@@ -221,18 +220,18 @@ describe('with data on multiple lines (aligned to 2 spaces)', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'note',
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'hidden',
                                     },
                                 ],
@@ -241,17 +240,17 @@ describe('with data on multiple lines (aligned to 2 spaces)', () => {
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'maxdepth',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: '1',
                                     },
                                 ],
@@ -262,14 +261,14 @@ describe('with data on multiple lines (aligned to 2 spaces)', () => {
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: 'This documentation is translated from the ',
                         },
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: 'original English one',
                             data: {
                                 label: 'original English one',
@@ -278,11 +277,11 @@ describe('with data on multiple lines (aligned to 2 spaces)', () => {
                             },
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: ' by community members\non ',
                         },
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: 'Weblate',
                             data: {
                                 label: 'Weblate',
@@ -291,13 +290,13 @@ describe('with data on multiple lines (aligned to 2 spaces)', () => {
                             },
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: '.',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'about/introduction\nabout/faq\nabout/troubleshooting',
                 },
             ],
@@ -316,25 +315,25 @@ describe('nested Directives', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'only',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'not i18n',
                     },
                 ],
             },
             children: [
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'note',
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'Godot\'s documentation is available in various languages and versions.\nExpand the "Read the Docs" panel at the bottom of the sidebar to see\nthe list.',
                         },
                     ],
@@ -365,12 +364,12 @@ describe('with raw text whose lowest indentation is not first non-blank line', (
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'code',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'csharp',
                     },
                 ],

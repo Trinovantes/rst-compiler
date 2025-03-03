@@ -16,13 +16,18 @@ export type RstFieldListItemData = {
 }
 
 export class RstFieldListItem extends RstNode {
+    readonly name: ContinuousText
+    readonly body: ReadonlyArray<RstNode>
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        readonly name: ContinuousText,
-        readonly body: ReadonlyArray<RstNode>,
+        name: ContinuousText,
+        body: ReadonlyArray<RstNode>,
     ) {
         super(registrar, source)
+        this.name = name
+        this.body = body
     }
 
     override toObject(): RstNodeObject {
@@ -60,7 +65,7 @@ export class RstFieldListItem extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.FieldListItem
+        return 'FieldListItem'
     }
 
     get nameText(): string {
@@ -96,7 +101,7 @@ export class RstFieldListItem extends RstNode {
 // ----------------------------------------------------------------------------
 
 export const fieldListItemGenerators = createNodeGenerators(
-    RstNodeType.FieldListItem,
+    'FieldListItem',
 
     (generatorState, node) => {
         const className = normalizeSimpleName(node.name.map((nameNode) => nameNode.textContent).join(''))

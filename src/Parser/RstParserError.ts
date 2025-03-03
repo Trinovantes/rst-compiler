@@ -1,12 +1,17 @@
 import { RstParserState } from './RstParserState.js'
 
 export class RstParserError extends Error {
+    private _parserState: RstParserState
+    private _msg: string
+
     constructor(
-        private _parserState: RstParserState,
-        private _msg: string,
+        parserState: RstParserState,
+        msg: string,
     ) {
-        super(_msg)
+        super(msg)
         this.name = 'RstParserError'
+        this._parserState = parserState
+        this._msg = msg
 
         // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         if (Error.captureStackTrace) {

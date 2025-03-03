@@ -1,9 +1,8 @@
 import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { getJsPropGroups, getJsPropGroupLabel, renderPropGroupAsHtml } from './JsPropGroup.js'
 
 export const jsDirectiveOptionsGenerator = createNodeGenerators(
-    RstNodeType.FieldList,
+    'FieldList',
 
     (generatorState, node) => {
         const jsProps = getJsPropGroups(generatorState, node)

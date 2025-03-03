@@ -23,7 +23,7 @@ export class RstBulletList extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.BulletList
+        return 'BulletList'
     }
 }
 
@@ -33,7 +33,7 @@ export class RstBulletList extends RstNode {
 
 const bulletListItemRe = /^[ ]*(?<bulletAndSpace>(?<bullet>[*+-])[ ]+)(?<firstLineText>.+)$/
 
-export const bulletListParser: RstNodeParser<RstNodeType.BulletList> = {
+export const bulletListParser: RstNodeParser<'BulletList'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -85,7 +85,7 @@ function parseListItem(parserState: RstParserState, indentSize: number): RstBull
 
     const firstLineText = firstLineMatches.groups?.firstLineText ?? ''
     const initContent = parserState.parseInitContent(bulletIndentSize, firstLineText, startLineIdx)
-    const listItemChildren = parserState.parseBodyNodes(bulletIndentSize, RstNodeType.BulletListItem, initContent)
+    const listItemChildren = parserState.parseBodyNodes(bulletIndentSize, 'BulletListItem', initContent)
 
     const endLineIdx = parserState.lineIdx
     return new RstBulletListItem(parserState.registrar, { startLineIdx, endLineIdx }, listItemChildren, bulletValue)
@@ -96,7 +96,7 @@ function parseListItem(parserState: RstParserState, indentSize: number): RstBull
 // ----------------------------------------------------------------------------
 
 export const bulletListGenerators = createNodeGenerators(
-    RstNodeType.BulletList,
+    'BulletList',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTag('ul', node, () => {

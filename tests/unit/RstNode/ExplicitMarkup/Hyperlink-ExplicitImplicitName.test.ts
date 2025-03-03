@@ -1,4 +1,3 @@
-import { RstNodeType } from '@/index.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe } from 'vitest'
@@ -15,28 +14,28 @@ describe('when there is node with implicit name same as HyperlinkTarget, the Hyp
 
     testParser(input, [
         {
-            type: RstNodeType.HyperlinkTarget,
+            type: 'HyperlinkTarget',
             data: {
                 label: 'foo',
                 target: 'https://google.ca',
             },
         },
         {
-            type: RstNodeType.Section,
+            type: 'Section',
             text: 'Foo',
             data: {
                 level: 1,
             },
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'Go to ',
                 },
                 {
-                    type: RstNodeType.HyperlinkRef,
+                    type: 'HyperlinkRef',
                     text: 'foo',
                     data: {
                         isAlias: true,

@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('when text begins with "|", it parses as LineBlock', () => {
@@ -12,14 +11,14 @@ describe('when text begins with "|", it parses as LineBlock', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.LineBlock,
+            type: 'LineBlock',
             children: [
                 {
-                    type: RstNodeType.LineBlockLine,
+                    type: 'LineBlockLine',
                     text: 'test',
                 },
             ],
@@ -51,21 +50,21 @@ describe('when lines are indented, the indentation is preserved as a nested Line
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.LineBlock,
+            type: 'LineBlock',
             children: [
                 {
-                    type: RstNodeType.LineBlockLine,
+                    type: 'LineBlockLine',
                     text: '01234567',
                 },
                 {
-                    type: RstNodeType.LineBlock,
+                    type: 'LineBlock',
                     children: [
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                             text: '0123',
                         },
                     ],
@@ -104,23 +103,23 @@ describe('when lines are indented (in reverse), the indentation is preserved as 
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.LineBlock,
+            type: 'LineBlock',
             children: [
                 {
-                    type: RstNodeType.LineBlock,
+                    type: 'LineBlock',
                     children: [
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                             text: '0123',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.LineBlockLine,
+                    type: 'LineBlockLine',
                     text: '01234567',
                 },
             ],
@@ -158,24 +157,24 @@ describe('when lines are separated by linebreak, the linebreak parses as an empt
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.LineBlock,
+            type: 'LineBlock',
             children: [
                 {
-                    type: RstNodeType.LineBlockLine,
+                    type: 'LineBlockLine',
                     text: '0123',
                 },
                 {
-                    type: RstNodeType.LineBlockLine,
+                    type: 'LineBlockLine',
                 },
                 {
-                    type: RstNodeType.LineBlock,
+                    type: 'LineBlock',
                     children: [
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                             text: '0123',
                         },
                     ],
@@ -228,42 +227,42 @@ describe('when LineBlock is indented, it parses as LineBlock inside Blockquote',
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'Take it away, Eric the Orchestra Leader!',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.LineBlock,
+                    type: 'LineBlock',
                     children: [
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                             text: 'A one, two, a one two three four',
                         },
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                         },
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                             text: 'Half a bee, philosophically,',
                         },
                         {
-                            type: RstNodeType.LineBlock,
+                            type: 'LineBlock',
                             children: [
                                 {
-                                    type: RstNodeType.LineBlockLine,
+                                    type: 'LineBlockLine',
                                     children: [
                                         {
-                                            type: RstNodeType.Text,
+                                            type: 'Text',
                                             text: 'must, ',
                                         },
                                         {
-                                            type: RstNodeType.Emphasis,
+                                            type: 'Emphasis',
                                             text: 'ipso facto',
                                         },
                                         {
-                                            type: RstNodeType.Text,
+                                            type: 'Text',
                                             text: ', half not be.',
                                         },
                                     ],
@@ -271,21 +270,21 @@ describe('when LineBlock is indented, it parses as LineBlock inside Blockquote',
                             ],
                         },
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                             text: 'But half the bee has got to be,',
                         },
                         {
-                            type: RstNodeType.LineBlock,
+                            type: 'LineBlock',
                             children: [
                                 {
-                                    type: RstNodeType.LineBlockLine,
+                                    type: 'LineBlockLine',
                                     children: [
                                         {
-                                            type: RstNodeType.Emphasis,
+                                            type: 'Emphasis',
                                             text: 'vis a vis',
                                         },
                                         {
-                                            type: RstNodeType.Text,
+                                            type: 'Text',
                                             text: " its entity.  D'you see?",
                                         },
                                     ],
@@ -293,31 +292,31 @@ describe('when LineBlock is indented, it parses as LineBlock inside Blockquote',
                             ],
                         },
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                         },
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                             text: 'But can a bee be said to be',
                         },
                         {
-                            type: RstNodeType.LineBlock,
+                            type: 'LineBlock',
                             children: [
                                 {
-                                    type: RstNodeType.LineBlockLine,
+                                    type: 'LineBlockLine',
                                     text: 'or not to be an entire bee,',
                                 },
                                 {
-                                    type: RstNodeType.LineBlock,
+                                    type: 'LineBlock',
                                     children: [
                                         {
-                                            type: RstNodeType.LineBlockLine,
+                                            type: 'LineBlockLine',
                                             text: 'when half the bee is not a bee,',
                                         },
                                         {
-                                            type: RstNodeType.LineBlock,
+                                            type: 'LineBlock',
                                             children: [
                                                 {
-                                                    type: RstNodeType.LineBlockLine,
+                                                    type: 'LineBlockLine',
                                                     text: 'due to some ancient injury?',
                                                 },
                                             ],
@@ -327,10 +326,10 @@ describe('when LineBlock is indented, it parses as LineBlock inside Blockquote',
                             ],
                         },
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                         },
                         {
-                            type: RstNodeType.LineBlockLine,
+                            type: 'LineBlockLine',
                             text: 'Singing...',
                         },
                     ],

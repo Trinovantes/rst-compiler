@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('when there is standalone text, it parses as Paragraph', () => {
@@ -10,7 +9,7 @@ describe('when there is standalone text, it parses as Paragraph', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'Hello world',
         },
     ])
@@ -33,11 +32,11 @@ describe('when text is separated by multiple linebreaks, it parses as multiple P
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'test 1',
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'test 2',
         },
     ])
@@ -65,7 +64,7 @@ describe('when text is not separated by multiple linebreaks, it parses as single
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'test 1\ntest 2',
         },
     ])

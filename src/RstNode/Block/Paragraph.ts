@@ -24,7 +24,7 @@ export class RstParagraph extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Paragraph
+        return 'Paragraph'
     }
 
     override get willRenderVisibleContent(): boolean {
@@ -62,7 +62,7 @@ export class RstParagraph extends RstNode {
 // MARK: Parser
 // ----------------------------------------------------------------------------
 
-export const paragraphParser: RstNodeParser<RstNodeType.Paragraph> = {
+export const paragraphParser: RstNodeParser<'Paragraph'> = {
     parse: (parserState, indentSize, parentType) => {
         const startLineIdx = parserState.lineIdx
         const paragraphText = parserState.parseBodyText(indentSize, parentType, /^[^\n]+$/)
@@ -77,7 +77,7 @@ export const paragraphParser: RstNodeParser<RstNodeType.Paragraph> = {
 // ----------------------------------------------------------------------------
 
 export const paragraphGenerators = createNodeGenerators(
-    RstNodeType.Paragraph,
+    'Paragraph',
 
     (generatorState, node) => {
         const outputText = node.getOutputText(generatorState)

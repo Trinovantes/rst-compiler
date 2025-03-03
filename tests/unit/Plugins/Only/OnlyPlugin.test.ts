@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('when no env is set, it defaults to false and does not output anything', () => {
@@ -12,19 +11,19 @@ describe('when no env is set, it defaults to false and does not output anything'
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'only',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'show',
                     },
                 ],
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'Hello World',
                 },
             ],
@@ -45,19 +44,19 @@ describe('when env is set to true, it outputs the child', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'only',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'show',
                     },
                 ],
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'Hello World',
                 },
             ],

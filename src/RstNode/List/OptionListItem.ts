@@ -19,13 +19,16 @@ export type OptionListItemData = {
 }
 
 export class RstOptionListItem extends RstNode {
+    readonly options: ReadonlyArray<CommandOption>
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        readonly options: ReadonlyArray<CommandOption>,
+        options: ReadonlyArray<CommandOption>,
     ) {
         super(registrar, source, children)
+        this.options = options
     }
 
     override toObject(): RstNodeObject {
@@ -59,7 +62,7 @@ export class RstOptionListItem extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.OptionListItem
+        return 'OptionListItem'
     }
 
     override toString(depth = 0): string {
@@ -86,7 +89,7 @@ export class RstOptionListItem extends RstNode {
 // ----------------------------------------------------------------------------
 
 export const optionListItemGenerators = createNodeGenerators(
-    RstNodeType.OptionListItem,
+    'OptionListItem',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTag('dt', node, () => {

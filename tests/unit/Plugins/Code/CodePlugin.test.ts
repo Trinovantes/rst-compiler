@@ -1,4 +1,3 @@
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe } from 'vitest'
@@ -18,26 +17,26 @@ describe('highlight Directive changes default language of code Directive', () =>
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'code',
                 rawBodyText: 'text 1',
             },
         },
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'highlight',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'js',
                     },
                 ],
             },
         },
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'code',
                 rawBodyText: 'text 2',
@@ -79,31 +78,31 @@ describe('highlight Directive changes default language of LiteralBlock', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: '::',
         },
         {
-            type: RstNodeType.LiteralBlock,
+            type: 'LiteralBlock',
             text: 'text 1',
         },
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'highlight',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'js',
                     },
                 ],
             },
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: '::',
         },
         {
-            type: RstNodeType.LiteralBlock,
+            type: 'LiteralBlock',
             text: 'text 2',
         },
     ])

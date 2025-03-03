@@ -1,5 +1,4 @@
 import { RstNodeParser } from '@/Parser/RstParser.js'
-import { RstNodeType } from '../RstNodeType.js'
 import { RstTable } from './Table.js'
 import { RstTableCell } from './TableCell.js'
 import { RstTableRow } from './TableRow.js'
@@ -13,7 +12,7 @@ import { RstParserError } from '@/Parser/RstParserError.js'
 const simpleTableRe        = /^([ ]*)=+([ ]+[=]+)+$/
 const simpleTableColSpanRe = /^([ ]*)-[ -]*$/
 
-export const tableSimpleParser: RstNodeParser<RstNodeType.Table> = {
+export const tableSimpleParser: RstNodeParser<'Table'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 

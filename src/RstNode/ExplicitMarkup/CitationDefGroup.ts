@@ -24,7 +24,7 @@ export class RstCitationDefGroup extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.CitationDefGroup
+        return 'CitationDefGroup'
     }
 }
 
@@ -41,7 +41,7 @@ const citationDefRe = new RegExp(
     '(?<firstLineText>.+)$', // Any char to end of line
 )
 
-export const citationGroupParser: RstNodeParser<RstNodeType.CitationDefGroup> = {
+export const citationGroupParser: RstNodeParser<'CitationDefGroup'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -90,7 +90,7 @@ function parseCitationDef(parserState: RstParserState, indentSize: number): RstC
     const firstLineText = firstLineMatches.groups?.firstLineText ?? ''
     const bodyIndentSize = parserState.peekNestedIndentSize(indentSize)
     const initContent = parserState.parseInitContent(bodyIndentSize, firstLineText, startLineIdx)
-    const children = parserState.parseBodyNodes(bodyIndentSize, RstNodeType.CitationDef, initContent)
+    const children = parserState.parseBodyNodes(bodyIndentSize, 'CitationDef', initContent)
 
     const endLineIdx = parserState.lineIdx
     return new RstCitationDef(parserState.registrar, { startLineIdx, endLineIdx }, children, rawLabel)
@@ -101,7 +101,7 @@ function parseCitationDef(parserState: RstParserState, indentSize: number): RstC
 // ----------------------------------------------------------------------------
 
 export const citationDefGroupGenerators = createNodeGenerators(
-    RstNodeType.CitationDefGroup,
+    'CitationDefGroup',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTagWithAttr('dl', node, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.citationDefGroup }), () => {

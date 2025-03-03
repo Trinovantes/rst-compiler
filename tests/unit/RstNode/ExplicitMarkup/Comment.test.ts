@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('single line Comment', () => {
@@ -10,7 +9,7 @@ describe('single line Comment', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Comment,
+            type: 'Comment',
             text: 'This is a comment',
         },
     ])
@@ -31,7 +30,7 @@ describe('multiline Comment', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Comment,
+            type: 'Comment',
             text: 'line 1\nline 2',
         },
     ])
@@ -54,7 +53,7 @@ describe('when Comment is empty, it does not generate anything', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Comment,
+            type: 'Comment',
             text: '',
         },
     ])
@@ -70,7 +69,7 @@ describe('when text is immediately after single line Comment, it parses as multi
 
     testParser(input, [
         {
-            type: RstNodeType.Comment,
+            type: 'Comment',
             text: 'comment\nline 2',
         },
     ])
@@ -94,7 +93,7 @@ describe('when text with different indentation is immediately after single line 
 
     testParser(input, [
         {
-            type: RstNodeType.Comment,
+            type: 'Comment',
             text: '1234\n    line 2',
         },
     ])
@@ -120,7 +119,7 @@ describe('when multiline comment has varying indentation sizes, it should strip 
 
     testParser(input, [
         {
-            type: RstNodeType.Comment,
+            type: 'Comment',
             text: '  34\n 234\n1234',
         },
     ])

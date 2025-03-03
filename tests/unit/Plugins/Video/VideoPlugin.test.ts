@@ -1,4 +1,3 @@
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe } from 'vitest'
@@ -17,75 +16,75 @@ describe('video directive configs', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'video',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'video.webm',
                     },
                 ],
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'alt',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'Put a text description of the video here',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'class',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'hello-world',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'preload',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'auto',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'muted',
                                     },
                                 ],
@@ -93,11 +92,11 @@ describe('video directive configs', () => {
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'nocontrols',
                                     },
                                 ],
@@ -105,11 +104,11 @@ describe('video directive configs', () => {
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'autoplay',
                                     },
                                 ],
@@ -117,11 +116,11 @@ describe('video directive configs', () => {
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'loop',
                                     },
                                 ],

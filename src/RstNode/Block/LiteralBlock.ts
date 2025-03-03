@@ -18,12 +18,15 @@ export type RstLiteralBlockData = {
 }
 
 export class RstLiteralBlock extends RstNode {
+    private readonly _rawText: string
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        private readonly _rawText: string,
+        rawText: string,
     ) {
         super(registrar, source)
+        this._rawText = rawText
     }
 
     override toJSON(): RstNodeJson {
@@ -45,7 +48,7 @@ export class RstLiteralBlock extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.LiteralBlock
+        return 'LiteralBlock'
     }
 
     override get isTextContentBasic(): boolean {
@@ -68,7 +71,7 @@ export class RstLiteralBlock extends RstNode {
 
 const quotedLiteralBlockRe = /^([ ]*)>+(?: .+)?$/
 
-export const literalBlockParser: RstNodeParser<RstNodeType.LiteralBlock> = {
+export const literalBlockParser: RstNodeParser<'LiteralBlock'> = {
     parse: (parserState, indentSize, parentType, prevNode) => {
         const startLineIdx = parserState.lineIdx
 
@@ -77,7 +80,7 @@ export const literalBlockParser: RstNodeParser<RstNodeType.LiteralBlock> = {
         }
 
         const prevNodelastChild = prevNode.children.at(-1)
-        if (prevNodelastChild?.nodeType !== RstNodeType.Text) { // "::" must be in base Text node
+        if (prevNodelastChild?.nodeType !== 'Text') { // "::" must be in base Text node
             return null
         }
         if (!prevNodelastChild.textContent.endsWith('::')) {
@@ -89,10 +92,10 @@ export const literalBlockParser: RstNodeParser<RstNodeType.LiteralBlock> = {
 
         if (parserState.peekIsAtleastIndented(bodyIndentSize)) {
             // Indented literal block must be on next level of indentation
-            literalText = parserState.parseBodyText(bodyIndentSize, RstNodeType.LiteralBlock)
+            literalText = parserState.parseBodyText(bodyIndentSize, 'LiteralBlock')
         } else if (parserState.peekIsIndented(indentSize) && parserState.peekTest(quotedLiteralBlockRe)) {
             // Quoted literal block must be on same indentation as current body
-            literalText = parserState.parseBodyText(indentSize, RstNodeType.LiteralBlock, quotedLiteralBlockRe)
+            literalText = parserState.parseBodyText(indentSize, 'LiteralBlock', quotedLiteralBlockRe)
         } else {
             // Not a literal block despite prev paragraph indicating that it is
             return null
@@ -108,7 +111,7 @@ export const literalBlockParser: RstNodeParser<RstNodeType.LiteralBlock> = {
 // ----------------------------------------------------------------------------
 
 export const literalBlockGenerators = createNodeGenerators(
-    RstNodeType.LiteralBlock,
+    'LiteralBlock',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTagWithAttr('div', node, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.literalBlock }), () => {

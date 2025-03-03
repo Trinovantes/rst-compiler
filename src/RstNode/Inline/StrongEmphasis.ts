@@ -19,7 +19,7 @@ export class RstStrongEmphasis extends RstText {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.StrongEmphasis
+        return 'StrongEmphasis'
     }
 }
 
@@ -28,7 +28,7 @@ export class RstStrongEmphasis extends RstText {
 // ----------------------------------------------------------------------------
 
 export const strongEmphasisGenerators = createNodeGenerators(
-    RstNodeType.StrongEmphasis,
+    'StrongEmphasis',
 
     (generatorState, node) => {
         generatorState.writeTextWithLinePrefix(`<strong>${sanitizeHtml(node.textContent)}</strong>`)

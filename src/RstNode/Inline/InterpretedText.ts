@@ -14,13 +14,16 @@ export type RstInterpretedTextData = RstTextData & {
 }
 
 export class RstInterpretedText extends RstText {
+    readonly role: string
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         rawText: string,
-        readonly role: string,
+        role: string,
     ) {
         super(registrar, source, rawText)
+        this.role = role
     }
 
     override toObject(): RstNodeObject {
@@ -53,7 +56,7 @@ export class RstInterpretedText extends RstText {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.InterpretedText
+        return 'InterpretedText'
     }
 
     override toShortString(): string {

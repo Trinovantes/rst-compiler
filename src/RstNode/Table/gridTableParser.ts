@@ -4,7 +4,6 @@ import { RstTable } from './Table.js'
 import { RstTableCell } from './TableCell.js'
 import { RstTableRow } from './TableRow.js'
 import { createBooleanTable } from './createBooleanTable.js'
-import { RstNodeType } from '../RstNodeType.js'
 import { RstParserError } from '@/Parser/RstParserError.js'
 
 // ----------------------------------------------------------------------------
@@ -15,7 +14,7 @@ import { RstParserError } from '@/Parser/RstParserError.js'
 const gridTableRe        = /^([ ]*)(?:\+-*)+\+[ ]*$/
 const gridTableHeadSepRe = /^([ ]*)(?:\+=*)+\+[ ]*$/
 
-export const tableGridParser: RstNodeParser<RstNodeType.Table> = {
+export const tableGridParser: RstNodeParser<'Table'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 

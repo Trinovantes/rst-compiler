@@ -24,7 +24,7 @@ export class RstFootnoteDefGroup extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.FootnoteDefGroup
+        return 'FootnoteDefGroup'
     }
 }
 
@@ -47,7 +47,7 @@ const footnoteDefRe = new RegExp(
     '(?<firstLineText>.+)$', // Any char to end of line
 )
 
-export const footnoteDefGroupParser: RstNodeParser<RstNodeType.FootnoteDefGroup> = {
+export const footnoteDefGroupParser: RstNodeParser<'FootnoteDefGroup'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -96,7 +96,7 @@ function parseFootnoteDef(parserState: RstParserState, indentSize: number): RstF
     const firstLineText = firstLineMatches.groups?.firstLineText ?? ''
     const bodyIndentSize = parserState.peekNestedIndentSize(indentSize)
     const initContent = parserState.parseInitContent(bodyIndentSize, firstLineText, startLineIdx)
-    const children = parserState.parseBodyNodes(bodyIndentSize, RstNodeType.FootnoteDef, initContent)
+    const children = parserState.parseBodyNodes(bodyIndentSize, 'FootnoteDef', initContent)
 
     const endLineIdx = parserState.lineIdx
     return new RstFootnoteDef(parserState.registrar, { startLineIdx, endLineIdx }, children, rawLabel)
@@ -107,7 +107,7 @@ function parseFootnoteDef(parserState: RstParserState, indentSize: number): RstF
 // ----------------------------------------------------------------------------
 
 export const footnoteDefGroupGenerators = createNodeGenerators(
-    RstNodeType.FootnoteDefGroup,
+    'FootnoteDefGroup',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTagWithAttr('dl', node, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.footnoteDefGroup }), () => {

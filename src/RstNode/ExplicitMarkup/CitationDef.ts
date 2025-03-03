@@ -16,13 +16,16 @@ export type RstCitationDefData = {
 }
 
 export class RstCitationDef extends RstNode {
+    private readonly _rawLabel: string
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        private readonly _rawLabel: string,
+        rawLabel: string,
     ) {
         super(registrar, source, children)
+        this._rawLabel = rawLabel
     }
 
     override toObject(): RstNodeObject {
@@ -56,7 +59,7 @@ export class RstCitationDef extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.CitationDef
+        return 'CitationDef'
     }
 
     get label(): string {
@@ -77,7 +80,7 @@ export class RstCitationDef extends RstNode {
 // ----------------------------------------------------------------------------
 
 export const citationDefGenerators = createNodeGenerators(
-    RstNodeType.CitationDef,
+    'CitationDef',
 
     (generatorState, node) => {
         const backlinks = generatorState.resolveCitationDefBacklinks(node)

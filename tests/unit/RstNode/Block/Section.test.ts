@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('when text is has underline, it parses as Section', () => {
@@ -11,7 +10,7 @@ describe('when text is has underline, it parses as Section', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Section,
+            type: 'Section',
             text: 'test',
             data: {
                 level: 1,
@@ -37,7 +36,7 @@ describe('when text has overline and underline, it parses as Section', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Section,
+            type: 'Section',
             text: 'test',
             data: {
                 level: 1,
@@ -65,14 +64,14 @@ describe('when there are multiple Sections with different markers, the first Sec
 
     testParser(input, [
         {
-            type: RstNodeType.Section,
+            type: 'Section',
             text: 'test1',
             data: {
                 level: 1,
             },
         },
         {
-            type: RstNodeType.Section,
+            type: 'Section',
             text: 'test2',
             data: {
                 level: 2,
@@ -108,14 +107,14 @@ describe('when there are multiple Sections with same normalized id, it generates
 
     testParser(input, [
         {
-            type: RstNodeType.Section,
+            type: 'Section',
             text: 'introduction',
             data: {
                 level: 1,
             },
         },
         {
-            type: RstNodeType.Section,
+            type: 'Section',
             text: 'Introduction',
             data: {
                 level: 1,
@@ -147,7 +146,7 @@ describe('when overline and underline do not match, it parses as Paragraph', () 
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: '===\ntest\n---',
         },
     ])

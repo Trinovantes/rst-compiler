@@ -1,4 +1,3 @@
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe } from 'vitest'
@@ -18,43 +17,43 @@ describe('normal tabs', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'tabs',
             },
             children: [
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'tab',
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'Label A',
                             },
                         ],
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'Text A',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'tab',
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'Label B',
                             },
                         ],
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'Text B',
                         },
                     ],
@@ -108,43 +107,43 @@ describe('group tabs', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'tabs',
             },
             children: [
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'group-tab',
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'Label A',
                             },
                         ],
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'Text A',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'group-tab',
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'Label B',
                             },
                         ],
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'Text B',
                         },
                     ],
@@ -198,18 +197,18 @@ describe('group tabs (code)', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'tabs',
             },
             children: [
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'code-tab',
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'js',
                             },
                         ],
@@ -217,12 +216,12 @@ describe('group tabs (code)', () => {
                     },
                 },
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'code-tab',
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'py',
                             },
                         ],
@@ -278,18 +277,18 @@ describe('when code-group does not have a valid language label, it generates mar
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'tabs',
             },
             children: [
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'code-tab',
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'Label A',
                             },
                         ],
@@ -297,12 +296,12 @@ describe('when code-group does not have a valid language label, it generates mar
                     },
                 },
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'code-tab',
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'c# Label B',
                             },
                         ],

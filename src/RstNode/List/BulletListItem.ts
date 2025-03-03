@@ -7,7 +7,6 @@ import { RstNodeType } from '../RstNodeType.js'
 import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
 import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
 import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
-import { RstEnumeratedListType } from './EnumeratedListType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -18,13 +17,16 @@ export type RstBulletListItemData = {
 }
 
 export class RstBulletListItem extends RstNode {
+    readonly bullet: string
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        readonly bullet: string,
+        bullet: string,
     ) {
         super(registrar, source, children)
+        this.bullet = bullet
     }
 
     override toObject(): RstNodeObject {
@@ -58,7 +60,7 @@ export class RstBulletListItem extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.BulletListItem
+        return 'BulletListItem'
     }
 
     override toShortString(): string {
@@ -88,20 +90,20 @@ export class RstBulletListItem extends RstNode {
 
             return idx + 1
         } else {
-            const parent = this.getParent(RstNodeType.EnumeratedList)
+            const parent = this.getParent('EnumeratedList')
             if (!parent) {
                 throw new RstGeneratorError(generatorState, this, 'Failed to getEnumeratedListValue (failed to getParent)')
             }
 
             switch (parent.listType) {
-                case RstEnumeratedListType.AlphabetUpper:
-                case RstEnumeratedListType.AlphabetLower: {
+                case 'AlphabetUpper':
+                case 'AlphabetLower': {
                     const letter = this.bullet.toLowerCase()
                     return letter.charCodeAt(0) - 'a'.charCodeAt(0) + 1
                 }
 
-                case RstEnumeratedListType.RomanUpper:
-                case RstEnumeratedListType.RomanLower:
+                case 'RomanUpper':
+                case 'RomanLower':
                     return romanToInt(this.bullet)
 
                 default:
@@ -116,7 +118,7 @@ export class RstBulletListItem extends RstNode {
 // ----------------------------------------------------------------------------
 
 export const bulletListItemGenerators = createNodeGenerators(
-    RstNodeType.BulletListItem,
+    'BulletListItem',
 
     (generatorState, node) => {
         const attrs = new HtmlAttributeStore()

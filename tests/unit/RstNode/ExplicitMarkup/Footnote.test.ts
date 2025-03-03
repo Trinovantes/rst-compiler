@@ -7,7 +7,6 @@ import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { parseTestInput, parseTestInputForGeneratorState } from 'tests/fixtures/parseTestInput.js'
 import { RstToHtmlCompiler } from '@/RstCompiler.js'
 import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 
 describe('manual number', () => {
     const input = `
@@ -18,14 +17,14 @@ describe('manual number', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'Hello ',
                 },
                 {
-                    type: RstNodeType.FootnoteRef,
+                    type: 'FootnoteRef',
                     text: '1',
                     data: {
                         isManualLabelNum: true,
@@ -33,16 +32,16 @@ describe('manual number', () => {
                     },
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' World',
                 },
             ],
         },
         {
-            type: RstNodeType.FootnoteDefGroup,
+            type: 'FootnoteDefGroup',
             children: [
                 {
-                    type: RstNodeType.FootnoteDef,
+                    type: 'FootnoteDef',
                     text: 'footnote',
                     data: {
                         label: '1',
@@ -93,10 +92,10 @@ describe('auto number', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.FootnoteRef,
+                    type: 'FootnoteRef',
                     text: '#',
                     data: {
                         isManualLabelNum: false,
@@ -104,16 +103,16 @@ describe('auto number', () => {
                     },
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' auto number',
                 },
             ],
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.FootnoteRef,
+                    type: 'FootnoteRef',
                     text: '#note',
                     data: {
                         isManualLabelNum: false,
@@ -121,23 +120,23 @@ describe('auto number', () => {
                     },
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' auto number with label',
                 },
             ],
         },
         {
-            type: RstNodeType.FootnoteDefGroup,
+            type: 'FootnoteDefGroup',
             children: [
                 {
-                    type: RstNodeType.FootnoteDef,
+                    type: 'FootnoteDef',
                     text: 'footnote',
                     data: {
                         label: '#',
                     },
                 },
                 {
-                    type: RstNodeType.FootnoteDef,
+                    type: 'FootnoteDef',
                     text: 'this auto label can be reused',
                     data: {
                         label: '#note',
@@ -207,14 +206,14 @@ describe('auto symbol', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'Hello ',
                 },
                 {
-                    type: RstNodeType.FootnoteRef,
+                    type: 'FootnoteRef',
                     text: '*',
                     data: {
                         isManualLabelNum: false,
@@ -222,16 +221,16 @@ describe('auto symbol', () => {
                     },
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' World',
                 },
             ],
         },
         {
-            type: RstNodeType.FootnoteDefGroup,
+            type: 'FootnoteDefGroup',
             children: [
                 {
-                    type: RstNodeType.FootnoteDef,
+                    type: 'FootnoteDef',
                     text: 'footnote',
                     data: {
                         label: '*',
@@ -371,7 +370,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const { root, simpleNameResolver } = parseTestInput(input)
-            const footnoteDef = root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            const footnoteDef = root.findAllChildren('FootnoteDef')[0]
             const simpleName = simpleNameResolver.getSimpleName(footnoteDef)
             expect(simpleName).toBe('footnotedef-99')
         })
@@ -384,7 +383,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const { root, simpleNameResolver } = parseTestInput(input)
-            const footnoteDef = root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            const footnoteDef = root.findAllChildren('FootnoteDef')[0]
             const simpleName = simpleNameResolver.getSimpleName(footnoteDef)
             expect(simpleName).toBe('footnotedef-1')
         })
@@ -397,7 +396,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const { root, simpleNameResolver } = parseTestInput(input)
-            const footnoteDef = root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            const footnoteDef = root.findAllChildren('FootnoteDef')[0]
             const simpleName = simpleNameResolver.getSimpleName(footnoteDef)
             expect(simpleName).toBe('label')
         })
@@ -410,7 +409,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const { root, simpleNameResolver } = parseTestInput(input)
-            const footnoteDef = root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            const footnoteDef = root.findAllChildren('FootnoteDef')[0]
             const simpleName = simpleNameResolver.getSimpleName(footnoteDef)
             expect(simpleName).toBe('footnotedef-1')
         })
@@ -425,7 +424,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const generatorState = parseTestInputForGeneratorState(input)
-            const ref = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)[0]
+            const ref = generatorState.root.findAllChildren('FootnoteRef')[0]
             expect(generatorState.resolveFootnoteRefLabel(ref)).toBe('1')
         })
 
@@ -437,7 +436,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const generatorState = parseTestInputForGeneratorState(input)
-            const ref = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)[0]
+            const ref = generatorState.root.findAllChildren('FootnoteRef')[0]
             expect(generatorState.resolveFootnoteRefLabel(ref)).toBe('1')
         })
 
@@ -449,7 +448,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const generatorState = parseTestInputForGeneratorState(input)
-            const ref = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)[0]
+            const ref = generatorState.root.findAllChildren('FootnoteRef')[0]
             expect(generatorState.resolveFootnoteRefLabel(ref)).toBe('1')
         })
 
@@ -461,7 +460,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const generatorState = parseTestInputForGeneratorState(input)
-            const ref = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)[0]
+            const ref = generatorState.root.findAllChildren('FootnoteRef')[0]
             expect(generatorState.resolveFootnoteRefLabel(ref)).toBe('*')
         })
     })
@@ -473,7 +472,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const generatorState = parseTestInputForGeneratorState(input)
-            const def = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            const def = generatorState.root.findAllChildren('FootnoteDef')[0]
             expect(generatorState.resolveFootnoteDefLabel(def)).toBe('1')
         })
 
@@ -483,7 +482,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const generatorState = parseTestInputForGeneratorState(input)
-            const def = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            const def = generatorState.root.findAllChildren('FootnoteDef')[0]
             expect(generatorState.resolveFootnoteDefLabel(def)).toBe('1')
         })
 
@@ -493,7 +492,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const generatorState = parseTestInputForGeneratorState(input)
-            const def = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            const def = generatorState.root.findAllChildren('FootnoteDef')[0]
             expect(generatorState.resolveFootnoteDefLabel(def)).toBe('1')
         })
 
@@ -503,7 +502,7 @@ describe('RstResolverSimpleName', () => {
             `
 
             const generatorState = parseTestInputForGeneratorState(input)
-            const def = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)[0]
+            const def = generatorState.root.findAllChildren('FootnoteDef')[0]
             expect(generatorState.resolveFootnoteDefLabel(def)).toBe('*')
         })
     })
@@ -519,9 +518,9 @@ describe('RstResolverSimpleName', () => {
         `
 
         const generatorState = parseTestInputForGeneratorState(input)
-        const defs = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)
-        const refs = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)
-        const hyperlinkRefs = generatorState.root.findAllChildren(RstNodeType.HyperlinkRef)
+        const defs = generatorState.root.findAllChildren('FootnoteDef')
+        const refs = generatorState.root.findAllChildren('FootnoteRef')
+        const hyperlinkRefs = generatorState.root.findAllChildren('HyperlinkRef')
 
         test('Document has 1 FootnoteDef and 2 FootnoteRefs', () => {
             expect(defs.length).toBe(1)
@@ -596,8 +595,8 @@ describe('RstResolverSimpleName', () => {
 
         test('resolveFootnoteRefLabel(FootnoteRef) resolves correctly', () => {
             const generatorState = parseTestInputForGeneratorState(input)
-            const defs = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)
-            const refs = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)
+            const defs = generatorState.root.findAllChildren('FootnoteDef')
+            const refs = generatorState.root.findAllChildren('FootnoteRef')
 
             expect(defs.length).toBe(3)
             expect(refs.length).toBe(3)
@@ -700,8 +699,8 @@ describe('RstResolverSimpleName', () => {
 
         test('resolveFootnoteRefLabel(FootnoteRef) resolves correctly', () => {
             const generatorState = parseTestInputForGeneratorState(input)
-            const defs = generatorState.root.findAllChildren(RstNodeType.FootnoteDef)
-            const refs = generatorState.root.findAllChildren(RstNodeType.FootnoteRef)
+            const defs = generatorState.root.findAllChildren('FootnoteDef')
+            const refs = generatorState.root.findAllChildren('FootnoteRef')
 
             expect(defs.length).toBe(3)
             expect(refs.length).toBe(3)

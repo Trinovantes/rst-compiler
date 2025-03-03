@@ -24,7 +24,7 @@ export class RstFieldList extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.FieldList
+        return 'FieldList'
     }
 
     hasField(fieldName: string): boolean {
@@ -87,7 +87,7 @@ export const fieldListItemRe = new RegExp(
     '$',
 )
 
-export const fieldListParser: RstNodeParser<RstNodeType.FieldList> = {
+export const fieldListParser: RstNodeParser<'FieldList'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -136,7 +136,7 @@ function parseListItem(parserState: RstParserState, indentSize: number): RstFiel
     const firstLineText = firstLineMatches.groups?.firstLineText ?? ''
     const bodyIndentSize = parserState.peekNestedIndentSize(indentSize)
     const initContent = parserState.parseInitContent(bodyIndentSize, firstLineText, startLineIdx)
-    const listItemChildren = parserState.parseBodyNodes(bodyIndentSize, RstNodeType.OptionListItem, initContent)
+    const listItemChildren = parserState.parseBodyNodes(bodyIndentSize, 'OptionListItem', initContent)
 
     const endLineIdx = parserState.lineIdx
     return new RstFieldListItem(parserState.registrar, { startLineIdx, endLineIdx }, fieldNameNodes, listItemChildren)
@@ -147,7 +147,7 @@ function parseListItem(parserState: RstParserState, indentSize: number): RstFiel
 // ----------------------------------------------------------------------------
 
 export const fieldListGenerators = createNodeGenerators(
-    RstNodeType.FieldList,
+    'FieldList',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTagWithAttr('dl', node, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.fieldList }), () => {

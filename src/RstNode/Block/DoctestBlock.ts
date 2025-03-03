@@ -17,12 +17,15 @@ export type RstDoctestBlockData = {
 }
 
 export class RstDoctestBlock extends RstNode {
+    private readonly _rawText: string
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        private readonly _rawText: string,
+        rawText: string,
     ) {
         super(registrar, source)
+        this._rawText = rawText
     }
 
     override toJSON(): RstNodeJson {
@@ -44,7 +47,7 @@ export class RstDoctestBlock extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.DoctestBlock
+        return 'DoctestBlock'
     }
 
     override get isTextContentBasic(): boolean {
@@ -67,7 +70,7 @@ export class RstDoctestBlock extends RstNode {
 
 const doctestBlockRe = /^([ ]*)>>> (.+)$/
 
-export const doctestBlockParser: RstNodeParser<RstNodeType.DoctestBlock> = {
+export const doctestBlockParser: RstNodeParser<'DoctestBlock'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -75,7 +78,7 @@ export const doctestBlockParser: RstNodeParser<RstNodeType.DoctestBlock> = {
             return null
         }
 
-        const doctestBlockText = parserState.parseBodyText(indentSize, RstNodeType.DoctestBlock, /^[^\n]+$/)
+        const doctestBlockText = parserState.parseBodyText(indentSize, 'DoctestBlock', /^[^\n]+$/)
         const endLineIdx = parserState.lineIdx
         return new RstDoctestBlock(parserState.registrar, { startLineIdx, endLineIdx }, doctestBlockText)
     },
@@ -86,7 +89,7 @@ export const doctestBlockParser: RstNodeParser<RstNodeType.DoctestBlock> = {
 // ----------------------------------------------------------------------------
 
 export const docTestBlockGenerators = createNodeGenerators(
-    RstNodeType.DoctestBlock,
+    'DoctestBlock',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTagWithAttr('div', node, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.docTestBlock }), () => {

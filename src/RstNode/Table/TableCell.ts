@@ -16,19 +16,26 @@ export type RstTableCellData = {
 }
 
 export class RstTableCell extends RstNode {
+    readonly rowSpan: number
+    readonly colSpan: number
+    readonly characterWidth: number
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        readonly rowSpan: number,
-        readonly colSpan: number,
-        readonly characterWidth: number,
+        rowSpan: number,
+        colSpan: number,
+        characterWidth: number,
     ) {
         if (rowSpan < 1 || colSpan < 1) {
             throw new Error(`Invalid colspan:${colSpan} rowspan:${rowSpan}`)
         }
 
         super(registrar, source, children)
+        this.rowSpan = rowSpan
+        this.colSpan = colSpan
+        this.characterWidth = characterWidth
     }
 
     override toObject(): RstNodeObject {
@@ -67,7 +74,7 @@ export class RstTableCell extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.TableCell
+        return 'TableCell'
     }
 
     override toShortString(): string {
@@ -80,7 +87,7 @@ export class RstTableCell extends RstNode {
 // ----------------------------------------------------------------------------
 
 export const tableCellGenerators = createNodeGenerators(
-    RstNodeType.TableCell,
+    'TableCell',
 
     (generatorState, node) => {
         throw new RstGeneratorError(generatorState, node, 'This should not be called directly')

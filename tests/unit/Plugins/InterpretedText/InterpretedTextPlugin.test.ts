@@ -1,4 +1,3 @@
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe } from 'vitest'
@@ -67,10 +66,10 @@ describe.each<{
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.InterpretedText,
+                    type: 'InterpretedText',
                     text: 'test',
                     data: {
                         role,

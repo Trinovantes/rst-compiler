@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('next visible node gets html class', () => {
@@ -16,37 +15,37 @@ describe('next visible node gets html class', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'class',
                 isInvisibleContent: true,
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'special',
                     },
                 ],
             },
         },
         {
-            type: RstNodeType.Comment,
+            type: 'Comment',
             text: 'invisible',
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             data: {
                 directive: 'image',
                 needle: 'biohazard',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'biohazard.png',
                     },
                 ],
             },
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'Hello World',
         },
     ])
@@ -85,26 +84,26 @@ describe('when Directive is last child inside another block, next visible node o
 
     testParser(input, [
         {
-            type: RstNodeType.BulletList,
+            type: 'BulletList',
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     data: {
                         bullet: '*',
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'item 1',
                         },
                         {
-                            type: RstNodeType.Directive,
+                            type: 'Directive',
                             data: {
                                 directive: 'class',
                                 isInvisibleContent: true,
                                 initContent: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'special',
                                     },
                                 ],
@@ -113,7 +112,7 @@ describe('when Directive is last child inside another block, next visible node o
                     ],
                 },
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     text: 'item 2',
                     data: {
                         bullet: '*',
@@ -164,20 +163,20 @@ describe('when next node is Blockquote, the Directive must be followed by empty 
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'class',
                 isInvisibleContent: true,
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'special',
                     },
                 ],
             },
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             text: 'blockquote',
         },
     ])
@@ -214,37 +213,37 @@ describe('when Directive has nested blocks, all children get html class', () => 
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'class',
                 isInvisibleContent: true,
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'special',
                     },
                 ],
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'Hello',
                 },
                 {
-                    type: RstNodeType.Directive,
+                    type: 'Directive',
                     data: {
                         directive: 'class',
                         isInvisibleContent: true,
                         initContent: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'another-special',
                             },
                         ],
                     },
                 },
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'World',
                 },
             ],
@@ -285,24 +284,24 @@ describe('when next node is LiteralBlock with predefined class, it combines html
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'rst-class',
                 isInvisibleContent: true,
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'code-example-bad',
                     },
                 ],
             },
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: '::',
         },
         {
-            type: RstNodeType.LiteralBlock,
+            type: 'LiteralBlock',
             text: 'enum Tiles {TILE_BRICK, TILE_FLOOR, TILE_SPIKE, TILE_TELEPORT,}',
         },
     ])
@@ -335,23 +334,23 @@ describe('when next node is CitationDef with predefined class, it combines html 
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'rst-class',
                 isInvisibleContent: true,
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'special',
                     },
                 ],
             },
         },
         {
-            type: RstNodeType.CitationDefGroup,
+            type: 'CitationDefGroup',
             children: [
                 {
-                    type: RstNodeType.CitationDef,
+                    type: 'CitationDef',
                     text: 'citation',
                     data: {
                         label: 'label',
@@ -403,23 +402,23 @@ describe('when next node is FootnoteDef with predefined class, it combines html 
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'rst-class',
                 isInvisibleContent: true,
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'special',
                     },
                 ],
             },
         },
         {
-            type: RstNodeType.FootnoteDefGroup,
+            type: 'FootnoteDefGroup',
             children: [
                 {
-                    type: RstNodeType.FootnoteDef,
+                    type: 'FootnoteDef',
                     text: 'footnote',
                     data: {
                         label: '1',
@@ -486,7 +485,7 @@ describe('when a node needs to target next node but is class Directive, it targe
 
     testParser(input, [
         {
-            type: RstNodeType.HyperlinkTarget,
+            type: 'HyperlinkTarget',
             data: {
                 isTargetingNextNode: true,
                 label: 'mytarget',
@@ -494,20 +493,20 @@ describe('when a node needs to target next node but is class Directive, it targe
             },
         },
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'class',
                 isInvisibleContent: true,
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'special',
                     },
                 ],
             },
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'Hello World',
         },
     ])

@@ -160,7 +160,7 @@ export class RstCompiler {
         // because plugins' onParse hook need access to resolvers
 
         const htmlAttrResolver = new HtmlAttrResolver()
-        const substitutionResolver = new SubstitutionResolver(root.findAllChildren(RstNodeType.SubstitutionDef))
+        const substitutionResolver = new SubstitutionResolver(root.findAllChildren('SubstitutionDef'))
         const simpleNameResolver = new SimpleNameResolver(this, htmlAttrResolver, root)
 
         return {

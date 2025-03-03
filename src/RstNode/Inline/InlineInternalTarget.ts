@@ -19,7 +19,7 @@ export class RstInlineInternalTarget extends RstText {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.InlineInternalTarget
+        return 'InlineInternalTarget'
     }
 }
 
@@ -28,7 +28,7 @@ export class RstInlineInternalTarget extends RstText {
 // ----------------------------------------------------------------------------
 
 export const inlineInternalTargetGenerators = createNodeGenerators(
-    RstNodeType.InlineInternalTarget,
+    'InlineInternalTarget',
 
     (generatorState, node) => {
         const htmlId = generatorState.htmlAttrResolver.getNodeHtmlId(node)

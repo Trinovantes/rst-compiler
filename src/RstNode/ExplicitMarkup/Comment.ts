@@ -16,12 +16,15 @@ export type RstCommentData = {
 }
 
 export class RstComment extends RstNode {
+    private readonly _rawText: string
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        private readonly _rawText: string,
+        rawText: string,
     ) {
         super(registrar, source)
+        this._rawText = rawText
     }
 
     override toJSON(): RstNodeJson {
@@ -43,7 +46,7 @@ export class RstComment extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Comment
+        return 'Comment'
     }
 
     override get willRenderVisibleContent(): boolean {
@@ -69,7 +72,7 @@ export class RstComment extends RstNode {
 
 const commentRe = /^(?<indent>[ ]*\.\.)(?: (?<commentText>.*))?$/
 
-export const commentParser: RstNodeParser<RstNodeType.Comment> = {
+export const commentParser: RstNodeParser<'Comment'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -139,7 +142,7 @@ export const commentParser: RstNodeParser<RstNodeType.Comment> = {
 // ----------------------------------------------------------------------------
 
 export const commentGenerators = createNodeGenerators(
-    RstNodeType.Comment,
+    'Comment',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlComment(sanitizeHtml(node.textContent))

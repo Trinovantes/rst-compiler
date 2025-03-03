@@ -1,4 +1,3 @@
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe } from 'vitest'
@@ -10,10 +9,10 @@ describe('when InlineLiteral ends with escape slash, it parses as InlineLiteral'
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.InlineLiteral,
+                    type: 'InlineLiteral',
                     text: 'test\\',
                 },
             ],
@@ -36,10 +35,10 @@ describe('when InlineLiteral ends with multiple escape slashes, it parses as Inl
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.InlineLiteral,
+                    type: 'InlineLiteral',
                     text: 'test\\\\',
                 },
             ],
@@ -63,18 +62,18 @@ describe('when InlineLiteral contains special characters, the characters are pre
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'The regular expression ',
                 },
                 {
-                    type: RstNodeType.InlineLiteral,
+                    type: 'InlineLiteral',
                     text: '[+-]?(\\d+(\\.\\d*)?|\\.\\d+)',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' matches\nfloating-point numbers (without exponents).',
                 },
             ],

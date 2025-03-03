@@ -35,6 +35,8 @@ export type RstParserOutput = {
 }
 
 export class RstParserState {
+    readonly opts: Readonly<RstParserOptions>
+
     private _tokenIdx: number
     private readonly _tokens: ReadonlyArray<Token>
     private readonly _compiler: RstCompiler
@@ -46,12 +48,14 @@ export class RstParserState {
     readonly rootSource: RstNodeSource
 
     constructor(
-        readonly opts: Readonly<RstParserOptions>,
+        opts: Readonly<RstParserOptions>,
         tokens: ReadonlyArray<Token>,
         compiler: RstCompiler,
         registrar = new RstNodeRegistrar(),
         lineOffset = 0,
     ) {
+        this.opts = opts
+
         this._tokenIdx = 0
         this._tokens = tokens
         this._compiler = compiler
@@ -60,7 +64,7 @@ export class RstParserState {
         this._lineOffset = lineOffset
 
         const startLineIdx = this.lineIdx
-        this.rootBodyNodes = this.parseBodyNodes(0, RstNodeType.Document)
+        this.rootBodyNodes = this.parseBodyNodes(0, 'Document')
         const endLineIdx = this.lineIdx
         this.rootSource = { startLineIdx, endLineIdx }
     }
@@ -248,13 +252,13 @@ export class RstParserState {
             }
 
             // Exit if we are inside a node and encounted an empty comment
-            if (parentType !== RstNodeType.Document && this.peekTest(/^\.\.$/) && this.peekIsNewLine(1)) {
+            if (parentType !== 'Document' && this.peekTest(/^\.\.$/) && this.peekIsNewLine(1)) {
                 this.consume() // Consume the empty comment
                 break
             }
 
             // Exit if we are inside a node but encounter a new block without the same indentation
-            if (parentType !== RstNodeType.Document && this.peekIndentSize() < indentSize) {
+            if (parentType !== 'Document' && this.peekIndentSize() < indentSize) {
                 break
             }
 
@@ -305,13 +309,13 @@ export class RstParserState {
             }
 
             // Exit if we are inside a node and encounted an empty comment
-            if (parentType !== RstNodeType.Document && this.peekTest(/^\.\.$/) && this.peekIsNewLine(1)) {
+            if (parentType !== 'Document' && this.peekTest(/^\.\.$/) && this.peekIsNewLine(1)) {
                 this.consume() // Consume the empty comment
                 break
             }
 
             // Exit if we are inside a node but encounter a new block without the same indentation
-            if (parentType !== RstNodeType.Document && this.peekIndentSize() < indentSize) {
+            if (parentType !== 'Document' && this.peekIndentSize() < indentSize) {
                 break
             }
 

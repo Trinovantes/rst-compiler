@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGeneratorHeader } from 'tests/fixtures/testGenerator.js'
 
 describe('no config', () => {
@@ -10,7 +9,7 @@ describe('no config', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'meta',
             },
@@ -31,41 +30,41 @@ describe('config with no additional attributes', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'meta',
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'description',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'The reStructuredText plaintext markup language',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'keywords',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'plaintext, markup language',
                                     },
                                 ],
@@ -103,58 +102,58 @@ describe('config with extra attributes', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'meta',
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'description lang=en',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'An amusing story',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'description lang=fr',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'Une histoire amusante',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'hello world foo=bar bar=baz',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'content',
                                     },
                                 ],
@@ -199,24 +198,24 @@ describe('config without name attribute', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'meta',
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'http-equiv=Content-Type',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'text/html; charset=ISO-8859-1',
                                     },
                                 ],

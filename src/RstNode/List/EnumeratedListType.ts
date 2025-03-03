@@ -1,30 +1,29 @@
 import { romanUpperRe, romanLowerRe, romanToInt } from '@/utils/romanToInt.js'
 
-export const enum RstEnumeratedListType {
-    Arabic = 'Arabic',
-    AlphabetUpper = 'AlphabetUpper',
-    AlphabetLower = 'AlphabetLower',
-    RomanUpper = 'RomanUpper',
-    RomanLower = 'RomanLower',
-}
+export type RstEnumeratedListType =
+    'Arabic' |
+    'AlphabetUpper' |
+    'AlphabetLower' |
+    'RomanUpper' |
+    'RomanLower'
 
 export function getEnumeratedListType(bulletValue: string): RstEnumeratedListType | null {
     switch (true) {
         case romanUpperRe.test(bulletValue):
-            return RstEnumeratedListType.RomanUpper
+            return 'RomanUpper'
 
         case romanLowerRe.test(bulletValue):
-            return RstEnumeratedListType.RomanLower
+            return 'RomanLower'
 
         case bulletValue === '#':
         case /^[0-9]+$/.test(bulletValue):
-            return RstEnumeratedListType.Arabic
+            return 'Arabic'
 
         case /^[A-Z]$/.test(bulletValue):
-            return RstEnumeratedListType.AlphabetUpper
+            return 'AlphabetUpper'
 
         case /^[a-z]$/.test(bulletValue):
-            return RstEnumeratedListType.AlphabetLower
+            return 'AlphabetLower'
 
         default:
             return null
@@ -47,21 +46,21 @@ export function isSequentialBullet(currBulletValue: string, prevBulletValue?: st
     }
 
     switch (currType) {
-        case RstEnumeratedListType.Arabic: {
+        case 'Arabic': {
             const prev = parseInt(prevBulletValue)
             const curr = parseInt(currBulletValue)
             return prev + 1 === curr
         }
 
-        case RstEnumeratedListType.AlphabetUpper:
-        case RstEnumeratedListType.AlphabetLower: {
+        case 'AlphabetUpper':
+        case 'AlphabetLower': {
             const prev = prevBulletValue.toUpperCase().charCodeAt(0)
             const curr = currBulletValue.toUpperCase().charCodeAt(0)
             return prev + 1 === curr
         }
 
-        case RstEnumeratedListType.RomanUpper:
-        case RstEnumeratedListType.RomanLower: {
+        case 'RomanUpper':
+        case 'RomanLower': {
             const prev = romanToInt(prevBulletValue.toUpperCase())
             const curr = romanToInt(currBulletValue.toUpperCase())
             return prev + 1 === curr

@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('when there is no header separator, it only generates html', () => {
@@ -12,17 +11,17 @@ describe('when there is no header separator, it only generates html', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 2',
                         },
                     ],
@@ -62,33 +61,33 @@ describe('when there is header separator, it generates html and markdown', () =>
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     data: {
                         isHeadRow: true,
                     },
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 2',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test2',
                         },
                     ],
@@ -144,7 +143,7 @@ describe('when SimpleTable have less than 2 columns, it parses as Section instea
 
     testParser(input, [
         {
-            type: RstNodeType.Section,
+            type: 'Section',
             text: 'col 1',
             data: {
                 level: 1,
@@ -173,17 +172,17 @@ describe('when there is linebreak after header separator, it parses as Table wit
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 2',
                         },
                     ],
@@ -191,7 +190,7 @@ describe('when there is linebreak after header separator, it parses as Table wit
             ],
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'test1  test2\n=====  =====',
         },
     ])
@@ -253,33 +252,33 @@ describe('when there is empty cell in second row in first column, it parses as s
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     data: {
                         isHeadRow: true,
                     },
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 2\ntest',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test2',
                         },
                     ],
@@ -339,48 +338,48 @@ describe('when there is empty cell in second row not in first column, it parses 
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     data: {
                         isHeadRow: true,
                     },
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 2',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     data: {
                         isHeadRow: true,
                     },
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test2',
                         },
                     ],
@@ -444,45 +443,45 @@ describe('when there is empty cell in first column in first row after header sep
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     data: {
                         isHeadRow: true,
                     },
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 2',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test1',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test2',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'test3',
                         },
                     ],
@@ -557,72 +556,72 @@ describe('rightmost column has unbounded size', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     data: {
                         isHeadRow: true,
                     },
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'col 2',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: '1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'Second column of row 1.',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: '2',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'Second column of row 2.\nSecond line of paragraph.',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: '3',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             children: [
                                 {
-                                    type: RstNodeType.BulletList,
+                                    type: 'BulletList',
                                     children: [
                                         {
-                                            type: RstNodeType.BulletListItem,
+                                            type: 'BulletListItem',
                                             text: 'Second column of row 3.',
                                             data: {
                                                 bullet: '-',
                                             },
                                         },
                                         {
-                                            type: RstNodeType.BulletListItem,
+                                            type: 'BulletListItem',
                                             text: 'Second item in bullet\nlist (row 3, column 2).',
                                             data: {
                                                 bullet: '-',
@@ -635,14 +634,14 @@ describe('rightmost column has unbounded size', () => {
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: '\\',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'Row 4; column 1 will be empty.',
                         },
                     ],

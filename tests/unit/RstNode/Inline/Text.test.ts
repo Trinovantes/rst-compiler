@@ -6,11 +6,11 @@ import { RstNodeType } from '@/RstNode/RstNodeType.js'
 
 // To keep this test file simple, we do not have any other data in our Document
 // Thus, we need to skip these nodes' generated output tests because they reference other nodes in Document
-const nodesThatRefOtherNodes = new Set([
-    RstNodeType.SubstitutionRef,
-    RstNodeType.CitationRef,
-    RstNodeType.FootnoteRef,
-    RstNodeType.HyperlinkRef,
+const nodesThatRefOtherNodes = new Set<RstNodeType>([
+    'SubstitutionRef',
+    'CitationRef',
+    'FootnoteRef',
+    'HyperlinkRef',
 ])
 
 describe.each<{
@@ -26,7 +26,7 @@ describe.each<{
     data?: RstNodeObject['data']
 }>([
     {
-        nodeType: RstNodeType.Emphasis,
+        nodeType: 'Emphasis',
         startStr: '*',
         endStr: '*',
         htmlStartStr: '<em>',
@@ -35,7 +35,7 @@ describe.each<{
         mdEndStr: '*',
     },
     {
-        nodeType: RstNodeType.StrongEmphasis,
+        nodeType: 'StrongEmphasis',
         startStr: '**',
         endStr: '**',
         htmlStartStr: '<strong>',
@@ -44,7 +44,7 @@ describe.each<{
         mdEndStr: '**',
     },
     {
-        nodeType: RstNodeType.InterpretedText,
+        nodeType: 'InterpretedText',
         startStr: '`',
         endStr: '`',
         htmlStartStr: '<cite>',
@@ -56,12 +56,12 @@ describe.each<{
         },
     },
     {
-        nodeType: RstNodeType.SubstitutionRef,
+        nodeType: 'SubstitutionRef',
         startStr: '|',
         endStr: '|',
     },
     {
-        nodeType: RstNodeType.InlineInternalTarget,
+        nodeType: 'InlineInternalTarget',
         startStr: '_`',
         endStr: '`',
         bodyText: 'Hello World',
@@ -71,7 +71,7 @@ describe.each<{
         mdEndStr: '',
     },
     {
-        nodeType: RstNodeType.FootnoteRef,
+        nodeType: 'FootnoteRef',
         startStr: '[',
         endStr: ']_',
         bodyText: '1',
@@ -81,7 +81,7 @@ describe.each<{
         },
     },
     {
-        nodeType: RstNodeType.FootnoteRef,
+        nodeType: 'FootnoteRef',
         startStr: '[',
         endStr: ']_',
         bodyText: '#',
@@ -91,7 +91,7 @@ describe.each<{
         },
     },
     {
-        nodeType: RstNodeType.FootnoteRef,
+        nodeType: 'FootnoteRef',
         startStr: '[',
         endStr: ']_',
         bodyText: '*',
@@ -101,12 +101,12 @@ describe.each<{
         },
     },
     {
-        nodeType: RstNodeType.CitationRef,
+        nodeType: 'CitationRef',
         startStr: '[',
         endStr: ']_',
     },
     {
-        nodeType: RstNodeType.HyperlinkRef,
+        nodeType: 'HyperlinkRef',
         startStr: '`',
         endStr: '`_',
         bodyText: 'Hello World',
@@ -115,7 +115,7 @@ describe.each<{
         },
     },
     {
-        nodeType: RstNodeType.HyperlinkRef,
+        nodeType: 'HyperlinkRef',
         startStr: '`',
         endStr: '`__',
         bodyText: 'Hello World',
@@ -137,7 +137,7 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
                         type: nodeType,
@@ -164,10 +164,10 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'start ',
                     },
                     {
@@ -176,7 +176,7 @@ describe.each<{
                         ...extraFields,
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: ' end',
                     },
                 ],
@@ -199,10 +199,10 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'start :',
                     },
                     {
@@ -211,7 +211,7 @@ describe.each<{
                         ...extraFields,
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: ' end',
                     },
                 ],
@@ -234,10 +234,10 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'start ',
                     },
                     {
@@ -246,7 +246,7 @@ describe.each<{
                         ...extraFields,
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: ': end',
                     },
                 ],
@@ -269,7 +269,7 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: `thisis${startStr}${bodyText}${endStr}oneword`,
             },
         ])
@@ -290,10 +290,10 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'thisis',
                     },
                     {
@@ -302,7 +302,7 @@ describe.each<{
                         ...extraFields,
                     },
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'word',
                     },
                 ],
@@ -325,7 +325,7 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: `"${startStr}"test${endStr}`,
             },
         ])
@@ -346,7 +346,7 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: `${startStr}test${endStr}`,
             },
         ])
@@ -367,7 +367,7 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: `${startStr}test${endStr}`,
             },
         ])
@@ -388,10 +388,10 @@ describe.each<{
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: '\\ ',
                     },
                     {

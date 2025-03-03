@@ -1,5 +1,4 @@
 import { RstNodeObject } from '@/RstNode/RstNode.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
@@ -64,10 +63,10 @@ describe('Standalone HyperlinkRef', () => {
 
             testParser(input, [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: expectedLabel,
                             ...extraFields,
                         },
@@ -91,10 +90,10 @@ describe('Standalone HyperlinkRef', () => {
 
             testParser(input, [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: 'test label',
                             data: {
                                 label: 'test label',
@@ -123,19 +122,19 @@ describe('Standalone HyperlinkRef', () => {
 
             testParser(input, [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: 'start ',
                         },
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: expectedLabel,
                             ...extraFields,
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: ' end',
                         },
                     ],
@@ -158,10 +157,10 @@ describe('Standalone HyperlinkRef', () => {
 
             testParser(input, [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: expectedLabel,
                             ...extraFields,
                         },
@@ -185,28 +184,28 @@ describe('Standalone HyperlinkRef', () => {
 
             testParser(input, [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: expectedLabel,
                             ...extraFields,
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: ' ',
                         },
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: expectedLabel,
                             ...extraFields,
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: ' ',
                         },
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: expectedLabel,
                             ...extraFields,
                         },
@@ -239,14 +238,14 @@ describe('Simple HyperlinkRef', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'Hello ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'Google',
                         data: {
                             isAlias: true,
@@ -255,7 +254,7 @@ describe('Simple HyperlinkRef', () => {
                 ],
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: 'Google',
                     target: 'https://google.ca',
@@ -285,14 +284,14 @@ describe('Simple HyperlinkRef', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.Text,
+                        type: 'Text',
                         text: 'Hello ',
                     },
                     {
-                        type: RstNodeType.HyperlinkRef,
+                        type: 'HyperlinkRef',
                         text: 'Google',
                         data: {
                             isAlias: true,
@@ -302,7 +301,7 @@ describe('Simple HyperlinkRef', () => {
                 ],
             },
             {
-                type: RstNodeType.HyperlinkTarget,
+                type: 'HyperlinkTarget',
                 data: {
                     label: '_',
                     target: 'https://google.ca',

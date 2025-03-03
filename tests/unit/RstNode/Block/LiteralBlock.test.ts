@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('LiteralBlock', () => {
@@ -15,15 +14,15 @@ describe('LiteralBlock', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: 'paragraph:',
             },
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: '::',
             },
             {
-                type: RstNodeType.LiteralBlock,
+                type: 'LiteralBlock',
                 text: 'literal block',
             },
         ])
@@ -58,11 +57,11 @@ describe('LiteralBlock', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: 'paragraph: ::',
             },
             {
-                type: RstNodeType.LiteralBlock,
+                type: 'LiteralBlock',
                 text: 'literal block',
             },
         ])
@@ -77,11 +76,11 @@ describe('LiteralBlock', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: 'paragraph::',
             },
             {
-                type: RstNodeType.LiteralBlock,
+                type: 'LiteralBlock',
                 text: 'literal block',
             },
         ])
@@ -97,11 +96,11 @@ describe('LiteralBlock', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: 'paragraph::',
             },
             {
-                type: RstNodeType.LiteralBlock,
+                type: 'LiteralBlock',
                 text: '>> literal block 1\n> literal block 2',
             },
         ])
@@ -119,11 +118,11 @@ describe('when LiteralBlock has linebreaks, it preserves linebreaks', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph::',
         },
         {
-            type: RstNodeType.LiteralBlock,
+            type: 'LiteralBlock',
             text: 'line 1\n\nline 2',
         },
     ])
@@ -158,16 +157,16 @@ describe('when prev Paragraph ends with non-Text node, it parses as LiteralBlock
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Emphasis,
+                    type: 'Emphasis',
                     text: 'paragraph::',
                 },
             ],
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             text: 'not literal block',
         },
     ])
@@ -196,7 +195,7 @@ describe('when Paragraph with :: is last child, it parses as normal paragraph (o
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph::',
         },
     ])
@@ -219,11 +218,11 @@ describe('when Paragraph with :: is followed by non-indented text, it parses as 
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph::',
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'not literal block',
         },
     ])
@@ -257,15 +256,15 @@ describe('when LiteralBlock has multiline text, it preserves linebreaks', () => 
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: '::',
         },
         {
-            type: RstNodeType.LiteralBlock,
+            type: 'LiteralBlock',
             text: 'for a in [5,4,3,2,1]:   # this is program code, shown as-is\n    print a\nprint "it\'s..."\n# a literal block continues until the indentation ends',
         },
     ])

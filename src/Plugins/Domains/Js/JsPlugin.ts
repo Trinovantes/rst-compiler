@@ -6,7 +6,6 @@ import { jsDirectiveGenerators, jsDirectives } from './jsDirectiveGenerators.js'
 import { jsInterpretedTextGenerators } from './jsInterpretedTextGenerators.js'
 import { getJsLocalName } from './getJsLocalName.js'
 import { getParentModules } from './getParentModules.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 
 export const jsDomainPlugins = createRstCompilerPlugins({
     directiveGenerators: [
@@ -26,7 +25,7 @@ export const jsDomainPlugins = createRstCompilerPlugins({
     },
 
     onParse: (parserOutput) => {
-        const directives = parserOutput.root.findAllChildren(RstNodeType.Directive)
+        const directives = parserOutput.root.findAllChildren('Directive')
         const jsDomainDirectives = directives.filter((node) => jsDirectives.has(node.directive))
 
         for (const directiveNode of jsDomainDirectives) {

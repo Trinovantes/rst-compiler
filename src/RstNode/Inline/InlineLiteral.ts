@@ -19,7 +19,7 @@ export class RstInlineLiteral extends RstText {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.InlineLiteral
+        return 'InlineLiteral'
     }
 
     override get textContent(): string {
@@ -37,7 +37,7 @@ export class RstInlineLiteral extends RstText {
 // ----------------------------------------------------------------------------
 
 export const inlineLiteralGenerators = createNodeGenerators(
-    RstNodeType.InlineLiteral,
+    'InlineLiteral',
 
     (generatorState, node) => {
         generatorState.writeText(`<span class="${generatorState.opts.htmlClass.literalInline}">${sanitizeHtml(node.textContent)}</span>`)

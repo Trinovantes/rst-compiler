@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('OptionList', () => {
@@ -11,10 +10,10 @@ describe('OptionList', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.OptionList,
+                type: 'OptionList',
                 children: [
                     {
-                        type: RstNodeType.OptionListItem,
+                        type: 'OptionListItem',
                         text: 'Desc',
                         data: {
                             options: [
@@ -55,10 +54,10 @@ describe('OptionList', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.OptionList,
+                type: 'OptionList',
                 children: [
                     {
-                        type: RstNodeType.OptionListItem,
+                        type: 'OptionListItem',
                         text: 'Desc',
                         data: {
                             options: [
@@ -99,10 +98,10 @@ describe('OptionList', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.OptionList,
+                type: 'OptionList',
                 children: [
                     {
-                        type: RstNodeType.OptionListItem,
+                        type: 'OptionListItem',
                         text: 'Desc',
                         data: {
                             options: [
@@ -143,10 +142,10 @@ describe('OptionList', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.OptionList,
+                type: 'OptionList',
                 children: [
                     {
-                        type: RstNodeType.OptionListItem,
+                        type: 'OptionListItem',
                         text: 'Desc',
                         data: {
                             options: [
@@ -187,10 +186,10 @@ describe('OptionList', () => {
 
         testParser(input, [
             {
-                type: RstNodeType.OptionList,
+                type: 'OptionList',
                 children: [
                     {
-                        type: RstNodeType.OptionListItem,
+                        type: 'OptionListItem',
                         text: 'Desc',
                         data: {
                             options: [
@@ -234,10 +233,10 @@ describe('when following lines are on different indentation, it parses as same P
 
     testParser(input, [
         {
-            type: RstNodeType.OptionList,
+            type: 'OptionList',
             children: [
                 {
-                    type: RstNodeType.OptionListItem,
+                    type: 'OptionListItem',
                     text: 'Desc 1\nDesc 2\nDesc 3',
                     data: {
                         options: [
@@ -283,10 +282,10 @@ describe('when desc is blank on option line without arg, it parses Paragraph sta
 
     testParser(input, [
         {
-            type: RstNodeType.OptionList,
+            type: 'OptionList',
             children: [
                 {
-                    type: RstNodeType.OptionListItem,
+                    type: 'OptionListItem',
                     text: 'Desc',
                     data: {
                         options: [
@@ -328,10 +327,10 @@ describe('when desc is blank on option line with arg, it parses Paragraph starti
 
     testParser(input, [
         {
-            type: RstNodeType.OptionList,
+            type: 'OptionList',
             children: [
                 {
-                    type: RstNodeType.OptionListItem,
+                    type: 'OptionListItem',
                     text: 'Desc',
                     data: {
                         options: [
@@ -373,10 +372,10 @@ describe('when multiple options are delimited by commas, it parses as multiple o
 
     testParser(input, [
         {
-            type: RstNodeType.OptionList,
+            type: 'OptionList',
             children: [
                 {
-                    type: RstNodeType.OptionListItem,
+                    type: 'OptionListItem',
                     text: 'Desc',
                     data: {
                         options: [
@@ -428,21 +427,21 @@ describe('when option starts with escape character, it parses as DefinitionList 
 
     testParser(input, [
         {
-            type: RstNodeType.DefinitionList,
+            type: 'DefinitionList',
             children: [
                 {
-                    type: RstNodeType.DefinitionListItem,
+                    type: 'DefinitionListItem',
                     data: {
                         term: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: '-term 5',
                             },
                         ],
                         classifiers: [],
                         definition: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'Without escaping, this would be an option list item.',
                             },
                         ],
@@ -488,10 +487,10 @@ describe('multiple options parse as single list', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.OptionList,
+            type: 'OptionList',
             children: [
                 {
-                    type: RstNodeType.OptionListItem,
+                    type: 'OptionListItem',
                     text: 'Output all.',
                     data: {
                         options: [
@@ -504,7 +503,7 @@ describe('multiple options parse as single list', () => {
                     },
                 },
                 {
-                    type: RstNodeType.OptionListItem,
+                    type: 'OptionListItem',
                     text: 'Output just arg.',
                     data: {
                         options: [
@@ -517,7 +516,7 @@ describe('multiple options parse as single list', () => {
                     },
                 },
                 {
-                    type: RstNodeType.OptionListItem,
+                    type: 'OptionListItem',
                     text: 'Output all day long.',
                     data: {
                         options: [
@@ -530,7 +529,7 @@ describe('multiple options parse as single list', () => {
                     },
                 },
                 {
-                    type: RstNodeType.OptionListItem,
+                    type: 'OptionListItem',
                     text: 'A VMS/DOS-style option.',
                     data: {
                         options: [
@@ -543,7 +542,7 @@ describe('multiple options parse as single list', () => {
                     },
                 },
                 {
-                    type: RstNodeType.OptionListItem,
+                    type: 'OptionListItem',
                     data: {
                         options: [
                             {
@@ -555,11 +554,11 @@ describe('multiple options parse as single list', () => {
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'This option has two paragraphs in the description.\nThis is the first.',
                         },
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'This is the second.\nBlank lines may be omitted between options\n(as above) or left in (as here and below).',
                         },
                     ],

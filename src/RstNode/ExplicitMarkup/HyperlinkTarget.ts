@@ -26,13 +26,18 @@ export type RstHyperlinkTargetData = {
 }
 
 export class RstHyperlinkTarget extends RstNode {
+    private readonly _rawLabel: string
+    private readonly _rawTarget: string
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        private readonly _rawLabel: string,
-        private readonly _rawTarget: string,
+        rawLabel: string,
+        rawTarget: string,
     ) {
         super(registrar, source)
+        this._rawLabel = rawLabel
+        this._rawTarget = rawTarget
     }
 
     override toObject(): RstNodeObject {
@@ -100,7 +105,7 @@ export class RstHyperlinkTarget extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.HyperlinkTarget
+        return 'HyperlinkTarget'
     }
 
     override get willRenderVisibleContent(): boolean {
@@ -173,7 +178,7 @@ const explicitHyperlinkTargetRe = new RegExp(
 
 const anonymousHyperlinkTargetRe = /^__(?: (?<hyperlinkTarget>.+))?$/
 
-export const hyperlinkTargetParser: RstNodeParser<RstNodeType.HyperlinkTarget> = {
+export const hyperlinkTargetParser: RstNodeParser<'HyperlinkTarget'> = {
     parse: (parserState, indentSize) => {
         return parseExplicitTarget(parserState, indentSize) ?? parseAnonymousTarget(parserState, indentSize)
     },
@@ -249,7 +254,7 @@ function parseAnonymousTarget(parserState: RstParserState, indentSize: number): 
 // ----------------------------------------------------------------------------
 
 export const hyperlinkTargetGenerators = createNodeGenerators(
-    RstNodeType.HyperlinkTarget,
+    'HyperlinkTarget',
 
     (generatorState, node) => {
         const resolvedUrl = generatorState.resolveNodeToUrl(node)

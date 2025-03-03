@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe.each([
@@ -14,10 +13,10 @@ describe.each([
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 children: [
                     {
-                        type: RstNodeType.InterpretedText,
+                        type: 'InterpretedText',
                         text: '123',
                         data: {
                             role,
@@ -43,7 +42,7 @@ describe.each([
 
         testParser(input, [
             {
-                type: RstNodeType.Paragraph,
+                type: 'Paragraph',
                 text: `\`text\`:${role}:`,
             },
         ])

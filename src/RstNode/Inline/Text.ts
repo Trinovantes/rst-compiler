@@ -14,12 +14,15 @@ export type RstTextData = {
 }
 
 export class RstText extends RstNode {
+    protected readonly rawText: string
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        protected readonly rawText: string,
+        rawText: string,
     ) {
         super(registrar, source)
+        this.rawText = rawText
     }
 
     override toObject(): RstNodeObject {
@@ -47,7 +50,7 @@ export class RstText extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Text
+        return 'Text'
     }
 
     override get isInlineNode(): boolean {
@@ -56,7 +59,7 @@ export class RstText extends RstNode {
 
     override get isTextContentBasic(): boolean {
         // Only this parent class is plaintext (e.g. Text that subclasses this should not be considered plaintext)
-        return this.nodeType === RstNodeType.Text
+        return this.nodeType === 'Text'
     }
 
     override get textContent(): string {
@@ -91,7 +94,7 @@ export type ContinuousText = Array<RstText>
 // ----------------------------------------------------------------------------
 
 export const textGenerators = createNodeGenerators(
-    RstNodeType.Text,
+    'Text',
 
     (generatorState, node) => {
         generatorState.writeTextWithLinePrefix(sanitizeHtml(node.textContent))

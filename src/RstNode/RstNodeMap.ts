@@ -37,62 +37,61 @@ import type { RstOptionListItem } from './List/OptionListItem.js'
 import type { RstTable } from './Table/Table.js'
 import type { RstTableCell } from './Table/TableCell.js'
 import type { RstTableRow } from './Table/TableRow.js'
-import type { RstNodeType } from './RstNodeType.js'
 
 export type RstNodeMap = {
-    [RstNodeType.Document]: RstDocument
+    ['Document']: RstDocument
 
     // ------------------------------------------------------------------------
     // Block elements
     // ------------------------------------------------------------------------
 
-    [RstNodeType.Section]: RstSection
-    [RstNodeType.Transition]: RstTransition
-    [RstNodeType.Paragraph]: RstParagraph
+    ['Section']: RstSection
+    ['Transition']: RstTransition
+    ['Paragraph']: RstParagraph
 
-    [RstNodeType.BulletList]: RstBulletList
-    [RstNodeType.BulletListItem]: RstBulletListItem
-    [RstNodeType.EnumeratedList]: RstEnumeratedList
-    [RstNodeType.DefinitionList]: RstDefinitionList
-    [RstNodeType.DefinitionListItem]: RstDefinitionListItem
-    [RstNodeType.FieldList]: RstFieldList
-    [RstNodeType.FieldListItem]: RstFieldListItem
-    [RstNodeType.OptionList]: RstOptionList
-    [RstNodeType.OptionListItem]: RstOptionListItem
+    ['BulletList']: RstBulletList
+    ['BulletListItem']: RstBulletListItem
+    ['EnumeratedList']: RstEnumeratedList
+    ['DefinitionList']: RstDefinitionList
+    ['DefinitionListItem']: RstDefinitionListItem
+    ['FieldList']: RstFieldList
+    ['FieldListItem']: RstFieldListItem
+    ['OptionList']: RstOptionList
+    ['OptionListItem']: RstOptionListItem
 
-    [RstNodeType.LiteralBlock]: RstLiteralBlock
-    [RstNodeType.LineBlock]: RstLineBlock
-    [RstNodeType.LineBlockLine]: RstLineBlockLine
-    [RstNodeType.Blockquote]: RstBlockquote
-    [RstNodeType.BlockquoteAttribution]: RstBlockquoteAttribution
-    [RstNodeType.DoctestBlock]: RstDoctestBlock
+    ['LiteralBlock']: RstLiteralBlock
+    ['LineBlock']: RstLineBlock
+    ['LineBlockLine']: RstLineBlockLine
+    ['Blockquote']: RstBlockquote
+    ['BlockquoteAttribution']: RstBlockquoteAttribution
+    ['DoctestBlock']: RstDoctestBlock
 
-    [RstNodeType.Table]: RstTable
-    [RstNodeType.TableRow]: RstTableRow
-    [RstNodeType.TableCell]: RstTableCell
+    ['Table']: RstTable
+    ['TableRow']: RstTableRow
+    ['TableCell']: RstTableCell
 
-    [RstNodeType.FootnoteDefGroup]: RstFootnoteDefGroup
-    [RstNodeType.FootnoteDef]: RstFootnoteDef
-    [RstNodeType.CitationDefGroup]: RstCitationDefGroup
-    [RstNodeType.CitationDef]: RstCitationDef
-    [RstNodeType.HyperlinkTarget]: RstHyperlinkTarget
-    [RstNodeType.Directive]: RstDirective
-    [RstNodeType.SubstitutionDef]: RstSubstitutionDef
-    [RstNodeType.Comment]: RstComment
+    ['FootnoteDefGroup']: RstFootnoteDefGroup
+    ['FootnoteDef']: RstFootnoteDef
+    ['CitationDefGroup']: RstCitationDefGroup
+    ['CitationDef']: RstCitationDef
+    ['HyperlinkTarget']: RstHyperlinkTarget
+    ['Directive']: RstDirective
+    ['SubstitutionDef']: RstSubstitutionDef
+    ['Comment']: RstComment
 
     // ------------------------------------------------------------------------
     // Inline elements
     // ------------------------------------------------------------------------
 
-    [RstNodeType.Text]: RstText
+    ['Text']: RstText
 
-    [RstNodeType.StrongEmphasis]: RstStrongEmphasis
-    [RstNodeType.Emphasis]: RstEmphasis
-    [RstNodeType.InterpretedText]: RstInterpretedText
-    [RstNodeType.InlineLiteral]: RstInlineLiteral
-    [RstNodeType.SubstitutionRef]: RstSubstitutionRef
-    [RstNodeType.InlineInternalTarget]: RstInlineInternalTarget
-    [RstNodeType.FootnoteRef]: RstFootnoteRef
-    [RstNodeType.CitationRef]: RstCitationRef
-    [RstNodeType.HyperlinkRef]: RstHyperlinkRef
+    ['StrongEmphasis']: RstStrongEmphasis
+    ['Emphasis']: RstEmphasis
+    ['InterpretedText']: RstInterpretedText
+    ['InlineLiteral']: RstInlineLiteral
+    ['SubstitutionRef']: RstSubstitutionRef
+    ['InlineInternalTarget']: RstInlineInternalTarget
+    ['FootnoteRef']: RstFootnoteRef
+    ['CitationRef']: RstCitationRef
+    ['HyperlinkRef']: RstHyperlinkRef
 }

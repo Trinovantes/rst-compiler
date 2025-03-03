@@ -1,6 +1,5 @@
 import { describe, beforeEach, afterEach, vi } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 // ----------------------------------------------------------------------------
@@ -19,65 +18,65 @@ describe('image', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'The ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'biohazard',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' symbol must be used on containers used to\ndispose of medical waste.',
                 },
             ],
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             data: {
                 directive: 'image',
                 needle: 'biohazard',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'biohazard.png',
                     },
                 ],
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'height',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: '99',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'width',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: '99',
                                     },
                                 ],
@@ -117,42 +116,42 @@ describe('text', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'I recommend you try ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'Python',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: '.',
                 },
             ],
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             data: {
                 directive: 'replace',
                 needle: 'Python',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: 'Python, ',
                         },
                         {
-                            type: RstNodeType.Emphasis,
+                            type: 'Emphasis',
                             text: 'the',
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: ' best language around',
                         },
                     ],
@@ -191,41 +190,41 @@ describe('text with data starting on second line', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'I read ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'j2ee-cas',
                 },
             ],
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             data: {
                 directive: 'replace',
                 needle: 'j2ee-cas',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: 'the Java ',
                         },
                         {
-                            type: RstNodeType.InterpretedText,
+                            type: 'InterpretedText',
                             text: 'TM',
                             data: {
                                 role: 'sup',
                             },
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: ' 2 Platform, Enterprise Edition Client\nAccess Services',
                         },
                     ],
@@ -267,30 +266,30 @@ describe('text with multiline construct', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'label',
                 },
             ],
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             data: {
                 directive: 'replace',
                 needle: 'label',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     children: [
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: 'This documentation is translated from the ',
                         },
                         {
-                            type: RstNodeType.HyperlinkRef,
+                            type: 'HyperlinkRef',
                             text: 'original English one',
                             data: {
                                 label: 'original English one',
@@ -299,7 +298,7 @@ describe('text with multiline construct', () => {
                             },
                         },
                         {
-                            type: RstNodeType.Text,
+                            type: 'Text',
                             text: ' by community members',
                         },
                     ],
@@ -345,40 +344,40 @@ describe('unicode', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'Copyright ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'copy',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' 2003, ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'BogusMegaCorp (TM)',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: '---',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: '\nall rights reserved.',
                 },
             ],
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             text: '0xA9',
             data: {
                 directive: 'unicode',
@@ -386,37 +385,37 @@ describe('unicode', () => {
             },
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             data: {
                 directive: 'unicode',
                 needle: 'BogusMegaCorp (TM)',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'BogusMegaCorp U+2122',
                 },
                 {
-                    type: RstNodeType.Comment,
+                    type: 'Comment',
                     text: 'with trademark sign',
                 },
             ],
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             text: 'U+02014',
             data: {
                 directive: 'unicode',
                 needle: '---',
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'trim',
                                     },
                                 ],
@@ -508,14 +507,14 @@ describe('date', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             data: {
                 directive: 'date',
                 needle: 'date',
             },
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             text: 'hh:mm',
             data: {
                 directive: 'date',
@@ -523,43 +522,43 @@ describe('date', () => {
             },
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'Today\'s date is ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'date',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: '.',
                 },
             ],
         },
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'This document was generated on ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'date',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' at ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'time',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: '.',
                 },
             ],

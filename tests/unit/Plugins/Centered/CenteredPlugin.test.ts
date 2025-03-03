@@ -1,4 +1,3 @@
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe } from 'vitest'
@@ -14,17 +13,17 @@ describe('when Directive does not have initContent', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'centered',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'hello world',
                 },
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'another paragraph',
                 },
             ],
@@ -53,17 +52,17 @@ describe('when Directive has initContent, it generates initContent as new child 
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'centered',
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'hello world',
                 },
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'another paragraph',
                 },
             ],

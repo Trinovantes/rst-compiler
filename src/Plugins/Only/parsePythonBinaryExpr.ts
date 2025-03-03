@@ -8,14 +8,13 @@
 // MARK: Lexer
 // ----------------------------------------------------------------------------
 
-export const enum PyTokenType {
-    NOT = 'NOT',
-    AND = 'AND',
-    OR = 'OR',
-    L_PAREN = 'L_PAREN',
-    R_PAREN = 'R_PAREN',
-    TERMINAL = 'TERMINAL',
-}
+export type PyTokenType =
+    'NOT' |
+    'AND' |
+    'OR' |
+    'L_PAREN' |
+    'R_PAREN' |
+    'TERMINAL'
 
 export type PyToken = {
     type: PyTokenType
@@ -60,32 +59,32 @@ export function tokenizePythonBinaryExpr(input: string): Array<PyToken> {
 
         switch (true) {
             case c === '(': {
-                tokens.push({ type: PyTokenType.L_PAREN })
+                tokens.push({ type: 'L_PAREN' })
                 idx += 1
                 break
             }
             case c === ')': {
-                tokens.push({ type: PyTokenType.R_PAREN })
+                tokens.push({ type: 'R_PAREN' })
                 idx += 1
                 break
             }
             case currentWord === 'not': {
-                tokens.push({ type: PyTokenType.NOT })
+                tokens.push({ type: 'NOT' })
                 idx += currentWord.length
                 break
             }
             case currentWord === 'and': {
-                tokens.push({ type: PyTokenType.AND })
+                tokens.push({ type: 'AND' })
                 idx += currentWord.length
                 break
             }
             case currentWord === 'or': {
-                tokens.push({ type: PyTokenType.OR })
+                tokens.push({ type: 'OR' })
                 idx += currentWord.length
                 break
             }
             default: {
-                tokens.push({ type: PyTokenType.TERMINAL, value: currentWord })
+                tokens.push({ type: 'TERMINAL', value: currentWord })
                 idx += currentWord.length
             }
         }
@@ -99,7 +98,7 @@ export function tokenizePythonBinaryExpr(input: string): Array<PyToken> {
 // ----------------------------------------------------------------------------
 
 export type PyExpr = {
-    operator?: PyTokenType.AND | PyTokenType.OR | PyTokenType.NOT
+    operator?: 'AND' | 'OR' | 'NOT'
     terminal?: string
     left?: PyExpr
     right?: PyExpr
@@ -134,35 +133,35 @@ export function parsePythonBinaryExpr(input: string): PyExpr {
 
     const parseExpr = (): PyExpr => {
         switch (true) {
-            case peek()?.type === PyTokenType.L_PAREN: {
-                consume(PyTokenType.L_PAREN)
+            case peek()?.type === 'L_PAREN': {
+                consume('L_PAREN')
                 const expr = parseExpr()
-                consume(PyTokenType.R_PAREN)
+                consume('R_PAREN')
 
                 return expr
             }
 
-            case peek()?.type === PyTokenType.NOT: {
-                consume(PyTokenType.NOT)
+            case peek()?.type === 'NOT': {
+                consume('NOT')
                 const expr = parseExpr()
 
                 return {
-                    operator: PyTokenType.NOT,
+                    operator: 'NOT',
                     left: expr,
                 }
             }
 
-            case peek(1)?.type === PyTokenType.AND: {
-                const left = consume(PyTokenType.TERMINAL)
+            case peek(1)?.type === 'AND': {
+                const left = consume('TERMINAL')
                 if (!left.value) {
                     throw new Error('Missing terminal')
                 }
 
-                consume(PyTokenType.AND)
+                consume('AND')
                 const right = parseExpr()
 
                 return {
-                    operator: PyTokenType.AND,
+                    operator: 'AND',
                     left: {
                         terminal: left.value,
                     },
@@ -170,17 +169,17 @@ export function parsePythonBinaryExpr(input: string): PyExpr {
                 }
             }
 
-            case peek(1)?.type === PyTokenType.OR: {
-                const left = consume(PyTokenType.TERMINAL)
+            case peek(1)?.type === 'OR': {
+                const left = consume('TERMINAL')
                 if (!left.value) {
                     throw new Error('Missing terminal')
                 }
 
-                consume(PyTokenType.OR)
+                consume('OR')
                 const right = parseExpr()
 
                 return {
-                    operator: PyTokenType.OR,
+                    operator: 'OR',
                     left: {
                         terminal: left.value,
                     },
@@ -188,8 +187,8 @@ export function parsePythonBinaryExpr(input: string): PyExpr {
                 }
             }
 
-            case peek()?.type === PyTokenType.TERMINAL: {
-                const terminal = consume(PyTokenType.TERMINAL).value
+            case peek()?.type === 'TERMINAL': {
+                const terminal = consume('TERMINAL').value
                 if (!terminal) {
                     throw new Error('Missing terminal')
                 }
@@ -228,15 +227,15 @@ export function evaluatePythonExpr(input: string, env?: Record<string, boolean>)
                 return Boolean(env?.[expr.terminal])
             }
 
-            case expr.operator === PyTokenType.NOT: {
+            case expr.operator === 'NOT': {
                 return !evalExpr(expr.left)
             }
 
-            case expr.operator === PyTokenType.AND: {
+            case expr.operator === 'AND': {
                 return evalExpr(expr.left) && evalExpr(expr.right)
             }
 
-            case expr.operator === PyTokenType.OR: {
+            case expr.operator === 'OR': {
                 return evalExpr(expr.left) || evalExpr(expr.right)
             }
         }

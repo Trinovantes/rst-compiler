@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('single CitationRef and CitationDef', () => {
@@ -12,27 +11,27 @@ describe('single CitationRef and CitationDef', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'TEXT ',
                 },
                 {
-                    type: RstNodeType.CitationRef,
+                    type: 'CitationRef',
                     text: 'label',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' TEXT',
                 },
             ],
         },
         {
-            type: RstNodeType.CitationDefGroup,
+            type: 'CitationDefGroup',
             children: [
                 {
-                    type: RstNodeType.CitationDef,
+                    type: 'CitationDef',
                     text: 'citation',
                     data: {
                         label: 'label',
@@ -81,38 +80,38 @@ describe('multiple CitationRefs and CitationDefs', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'Hello ',
                 },
                 {
-                    type: RstNodeType.CitationRef,
+                    type: 'CitationRef',
                     text: 'label1',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' World ',
                 },
                 {
-                    type: RstNodeType.CitationRef,
+                    type: 'CitationRef',
                     text: 'label2',
                 },
             ],
         },
         {
-            type: RstNodeType.CitationDefGroup,
+            type: 'CitationDefGroup',
             children: [
                 {
-                    type: RstNodeType.CitationDef,
+                    type: 'CitationDef',
                     text: 'citation 1',
                     data: {
                         label: 'label1',
                     },
                 },
                 {
-                    type: RstNodeType.CitationDef,
+                    type: 'CitationDef',
                     text: 'citation 2',
                     data: {
                         label: 'label2',
@@ -179,24 +178,24 @@ describe('when there is a Blockquote in CitationDef, it parses as child of Citat
 
     testParser(input, [
         {
-            type: RstNodeType.CitationDefGroup,
+            type: 'CitationDefGroup',
             children: [
                 {
-                    type: RstNodeType.CitationDef,
+                    type: 'CitationDef',
                     data: {
                         label: 'label',
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'paragraph 1 line 1\nparagraph 1 line 2',
                         },
                         {
-                            type: RstNodeType.Blockquote,
+                            type: 'Blockquote',
                             text: 'blockquote',
                         },
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'paragraph 2',
                         },
                     ],
@@ -247,14 +246,14 @@ describe('when line has multiple square brackets, the text between first and las
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: '[1] this sentence is not inside citation ',
                 },
                 {
-                    type: RstNodeType.CitationRef,
+                    type: 'CitationRef',
                     text: 'note',
                 },
             ],

@@ -1,5 +1,4 @@
 import { RstToHtmlCompiler } from '@/RstCompiler.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { trimCommonIndent } from '@/utils/trimCommonIndent.js'
@@ -33,65 +32,65 @@ describe('when there is epilog, it appends to end of input', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: 'The ',
                 },
                 {
-                    type: RstNodeType.SubstitutionRef,
+                    type: 'SubstitutionRef',
                     text: 'biohazard',
                 },
                 {
-                    type: RstNodeType.Text,
+                    type: 'Text',
                     text: ' symbol must be used on containers used to\ndispose of medical waste.',
                 },
             ],
         },
         {
-            type: RstNodeType.SubstitutionDef,
+            type: 'SubstitutionDef',
             data: {
                 directive: 'image',
                 needle: 'biohazard',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'biohazard.png',
                     },
                 ],
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'height',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: '99',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'width',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: '99',
                                     },
                                 ],

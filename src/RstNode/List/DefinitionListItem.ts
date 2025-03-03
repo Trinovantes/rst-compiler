@@ -15,14 +15,21 @@ export type RstDefinitionListItemData = {
 }
 
 export class RstDefinitionListItem extends RstNode {
+    readonly term: ContinuousText
+    readonly classifiers: ReadonlyArray<ContinuousText>
+    readonly definition: ReadonlyArray<RstNode>
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        readonly term: ContinuousText,
-        readonly classifiers: ReadonlyArray<ContinuousText>,
-        readonly definition: ReadonlyArray<RstNode>,
+        term: ContinuousText,
+        classifiers: ReadonlyArray<ContinuousText>,
+        definition: ReadonlyArray<RstNode>,
     ) {
         super(registrar, source)
+        this.term = term
+        this.classifiers = classifiers
+        this.definition = definition
     }
 
     override toObject(): RstNodeObject {
@@ -64,7 +71,7 @@ export class RstDefinitionListItem extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.DefinitionListItem
+        return 'DefinitionListItem'
     }
 
     override toString(depth = 0): string {
@@ -101,7 +108,7 @@ export class RstDefinitionListItem extends RstNode {
 // ----------------------------------------------------------------------------
 
 export const definitionListItemGenerators = createNodeGenerators(
-    RstNodeType.DefinitionListItem,
+    'DefinitionListItem',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTag('dt', node, () => {

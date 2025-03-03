@@ -20,15 +20,19 @@ export type RstTableData = {
 }
 
 export class RstTable extends RstNode {
+    readonly headRows: ReadonlyArray<RstNode>
+    readonly bodyRows: ReadonlyArray<RstNode>
     readonly isComplexTable: boolean
 
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        readonly headRows: ReadonlyArray<RstNode>,
-        readonly bodyRows: ReadonlyArray<RstNode>,
+        headRows: ReadonlyArray<RstNode>,
+        bodyRows: ReadonlyArray<RstNode>,
     ) {
         super(registrar, source, [...headRows, ...bodyRows])
+        this.headRows = headRows
+        this.bodyRows = bodyRows
 
         const hasHeaderRow = headRows.length === 1
         const hasSpanningCells = this.hasChild((child) => child instanceof RstTableCell && (child.colSpan > 1 || child.rowSpan > 1))
@@ -61,7 +65,7 @@ export class RstTable extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Table
+        return 'Table'
     }
 }
 
@@ -69,8 +73,8 @@ export class RstTable extends RstNode {
 // MARK: Generator
 // ----------------------------------------------------------------------------
 
-export const tableGenerators = createNodeGenerators<RstNodeType.Table, [RstDirective?]>(
-    RstNodeType.Table,
+export const tableGenerators = createNodeGenerators<'Table', [RstDirective?]>(
+    'Table',
 
     (generatorState, node, directiveNode) => {
         const tableAlign = directiveNode?.config?.getField('align') ?? null
@@ -118,8 +122,8 @@ export const tableGenerators = createNodeGenerators<RstNodeType.Table, [RstDirec
     },
 )
 
-export const listTableGenerators = createNodeGenerators<RstNodeType.BulletList, [RstDirective]>(
-    RstNodeType.BulletList,
+export const listTableGenerators = createNodeGenerators<'BulletList', [RstDirective]>(
+    'BulletList',
 
     (generatorState, node, directiveNode) => {
         const numHeadRows = parseInt(directiveNode.config?.getField('header-rows') ?? '0')
@@ -180,13 +184,13 @@ function getColWidths(generatorState: RstGeneratorState, directiveNode: RstDirec
 
     if (allowGridValue && rawWidths === 'grid') {
         const table = directiveNode?.children.at(0)
-        assertNode(generatorState, table, RstNodeType.Table)
+        assertNode(generatorState, table, 'Table')
 
         let totalWidth = 0
         const cellWidths = new Array<number>()
 
         for (const cell of table.children[0].children) {
-            assertNode(generatorState, cell, RstNodeType.TableCell)
+            assertNode(generatorState, cell, 'TableCell')
 
             totalWidth += cell.characterWidth
             cellWidths.push(cell.characterWidth)
@@ -200,11 +204,11 @@ function getColWidths(generatorState: RstGeneratorState, directiveNode: RstDirec
 
 function generateTableRows(generatorState: RstGeneratorState, rowNodes: ReadonlyArray<RstNode>, cellTag: 'th' | 'td', colWidths: Array<string>, tableAlign: string | null): void {
     for (const rowNode of rowNodes) {
-        assertNode(generatorState, rowNode, RstNodeType.TableRow)
+        assertNode(generatorState, rowNode, 'TableRow')
 
         generatorState.writeLineHtmlTag('tr', rowNode, () => {
             for (const [idx, cellNode] of rowNode.children.entries()) {
-                assertNode(generatorState, cellNode, RstNodeType.TableCell)
+                assertNode(generatorState, cellNode, 'TableCell')
 
                 const attrs = new HtmlAttributeStore()
 
@@ -231,10 +235,10 @@ function generateTableRows(generatorState: RstGeneratorState, rowNodes: Readonly
 
 function generateListTableRows(generatorState: RstGeneratorState, rowNodes: ReadonlyArray<RstNode>, cellTag: 'th' | 'td', colWidths: Array<string>, tableAlign: string | null): void {
     for (const rowNode of rowNodes) {
-        assertNode(generatorState, rowNode, RstNodeType.BulletListItem, 1)
+        assertNode(generatorState, rowNode, 'BulletListItem', 1)
 
         const colList = rowNode.children[0]
-        assertNode(generatorState, colList, RstNodeType.BulletList)
+        assertNode(generatorState, colList, 'BulletList')
 
         if (colWidths.length > 0 && colList.children.length !== colWidths.length) {
             throw new RstGeneratorError(generatorState, `Expected ${colList.children.length} widths but only got ${colWidths.length}`)

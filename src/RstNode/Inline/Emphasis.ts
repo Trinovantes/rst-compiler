@@ -19,7 +19,7 @@ export class RstEmphasis extends RstText {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Emphasis
+        return 'Emphasis'
     }
 }
 
@@ -28,7 +28,7 @@ export class RstEmphasis extends RstText {
 // ----------------------------------------------------------------------------
 
 export const emphasisGenerators = createNodeGenerators(
-    RstNodeType.Emphasis,
+    'Emphasis',
 
     (generatorState, node) => {
         generatorState.writeTextWithLinePrefix(`<em>${sanitizeHtml(node.textContent)}</em>`)

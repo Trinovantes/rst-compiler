@@ -20,13 +20,16 @@ export type RstEnumeratedListData = {
 }
 
 export class RstEnumeratedList extends RstNode {
+    readonly listType: RstEnumeratedListType
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        readonly listType: RstEnumeratedListType,
+        listType: RstEnumeratedListType,
     ) {
         super(registrar, source, children)
+        this.listType = listType
     }
 
     override toObject(): RstNodeObject {
@@ -60,7 +63,7 @@ export class RstEnumeratedList extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.EnumeratedList
+        return 'EnumeratedList'
     }
 
     override toShortString(): string {
@@ -93,7 +96,7 @@ const enumeratedListItemRe = new RegExp(
     '(?<firstLineText>.+)$', // Any char to end of line
 )
 
-export const enumeratedListParser: RstNodeParser<RstNodeType.EnumeratedList> = {
+export const enumeratedListParser: RstNodeParser<'EnumeratedList'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -156,7 +159,7 @@ function parseListItem(parserState: RstParserState, indentSize: number, prevBull
 
     const firstLineText = firstLineMatches.groups?.firstLineText ?? ''
     const initContent = parserState.parseInitContent(bulletIndentSize, firstLineText, startLineIdx)
-    const listItemChildren = parserState.parseBodyNodes(bulletIndentSize, RstNodeType.BulletListItem, initContent)
+    const listItemChildren = parserState.parseBodyNodes(bulletIndentSize, 'BulletListItem', initContent)
 
     const endLineIdx = parserState.lineIdx
     return new RstBulletListItem(parserState.registrar, { startLineIdx, endLineIdx }, listItemChildren, bulletValue)
@@ -167,24 +170,24 @@ function parseListItem(parserState: RstParserState, indentSize: number, prevBull
 // ----------------------------------------------------------------------------
 
 export const enumeratedListGenerators = createNodeGenerators(
-    RstNodeType.EnumeratedList,
+    'EnumeratedList',
 
     (generatorState, node) => {
         const attrs = new HtmlAttributeStore()
         switch (node.listType) {
-            case RstEnumeratedListType.AlphabetUpper:
+            case 'AlphabetUpper':
                 attrs.set('type', 'A')
                 break
 
-            case RstEnumeratedListType.AlphabetLower:
+            case 'AlphabetLower':
                 attrs.set('type', 'a')
                 break
 
-            case RstEnumeratedListType.RomanUpper:
+            case 'RomanUpper':
                 attrs.set('type', 'I')
                 break
 
-            case RstEnumeratedListType.RomanLower:
+            case 'RomanLower':
                 attrs.set('type', 'i')
                 break
         }

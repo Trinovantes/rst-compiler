@@ -11,7 +11,6 @@ import { RstDocument } from '@/RstNode/Block/Document.js'
 import { RstNodeGenerator } from './RstGenerator.js'
 import { FilePathWithoutRst, getFilePathWithoutRst } from './FilePathWithoutRst.js'
 import { RstSection } from '@/RstNode/Block/Section.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { HtmlAttributeStore } from './HtmlAttributeStore.js'
 import { RstGeneratorError } from './RstGeneratorError.js'
 import { sha1 } from '@/utils/sha1.js'
@@ -57,6 +56,16 @@ type OutputBuffer = {
 type VisitChildren = () => void
 
 export class RstGeneratorState {
+    readonly opts: RstGeneratorOptions
+
+    private readonly _generatorInput: Readonly<RstGeneratorInput>
+    private readonly _compiler: RstCompiler
+    private readonly _basePath: FilePathWithoutRst
+    private readonly _currentDocPath: FilePathWithoutRst
+    private readonly _currentParserOutput: RstParserOutput
+    private readonly _docsCache: ReadonlyMap<FilePathWithoutRst, RstParserOutput>
+    private readonly _simpleNameCache: ReadonlyMap<SimpleName, FilePathWithoutRst>
+
     private _globalHeaderBuffer = new Map<string, string>() // Content to write to top of output e.g. <script> <link> (indexed by string key so multiple nodes don't output the same content)
     private _downloads = new Map<string, string>() // Maps source of download file (relative to basePath) to expected location to be served
     private _outputBuffers: Array<OutputBuffer> = [
@@ -66,40 +75,38 @@ export class RstGeneratorState {
         },
     ]
 
-    private readonly _basePath: FilePathWithoutRst
-    private readonly _currentDocPath: FilePathWithoutRst
-    private readonly _currentParserOutput: RstParserOutput
-    private readonly _docsCache: ReadonlyMap<FilePathWithoutRst, RstParserOutput>
-    private readonly _simpleNameCache: ReadonlyMap<SimpleName, FilePathWithoutRst>
-
     private _enableUnicodeConversion = false
     private _enableForcedHtmlMode = false // Some constructs cannot be represented in Markdown so we switch to outputting html recursively as fallback
     private _disableLineBreaksBetweenBlocks = false
     private _disableCommentMarkup = false // So we don't write comment markup inside a parent comment
 
     constructor(
-        readonly opts: RstGeneratorOptions,
-        private readonly _generatorInput: Readonly<RstGeneratorInput>,
-        private readonly _compiler: RstCompiler,
+        opts: RstGeneratorOptions,
+        generatorInput: RstGeneratorInput,
+        compiler: RstCompiler,
     ) {
-        if (!_generatorInput.basePath.startsWith('/') || !_generatorInput.basePath.endsWith('/')) {
-            throw new Error(`basePath:"${_generatorInput.basePath}" must start and end with "/"`)
+        this.opts = opts
+        this._generatorInput = generatorInput
+        this._compiler = compiler
+
+        if (!this._generatorInput.basePath.startsWith('/') || !this._generatorInput.basePath.endsWith('/')) {
+            throw new Error(`basePath:"${this._generatorInput.basePath}" must start and end with "/"`)
         }
 
-        const currentDoc = _generatorInput.docs.find(({ docPath }) => docPath === _generatorInput.currentDocPath)
+        const currentDoc = this._generatorInput.docs.find(({ docPath }) => docPath === this._generatorInput.currentDocPath)
         if (!currentDoc) {
-            throw new Error(`Failed to find "${_generatorInput.currentDocPath}" in generatorInput.docs`)
+            throw new Error(`Failed to find "${this._generatorInput.currentDocPath}" in generatorInput.docs`)
         }
 
-        this._basePath = getFilePathWithoutRst(normalizeFilePath(_generatorInput.basePath))
+        this._basePath = getFilePathWithoutRst(normalizeFilePath(this._generatorInput.basePath))
         this._currentDocPath = getFilePathWithoutRst(joinFilePath(this._basePath, currentDoc.docPath))
         this._currentParserOutput = currentDoc.parserOutput
 
-        this._docsCache = new Map(_generatorInput.docs.map(({ docPath, parserOutput }) => {
+        this._docsCache = new Map(this._generatorInput.docs.map(({ docPath, parserOutput }) => {
             const absPath = getFilePathWithoutRst(joinFilePath(this._basePath, docPath))
             return [absPath, parserOutput]
         }))
-        this._simpleNameCache = new Map(_generatorInput.docs.flatMap(({ docPath, parserOutput }) => {
+        this._simpleNameCache = new Map(this._generatorInput.docs.flatMap(({ docPath, parserOutput }) => {
             const names = [...parserOutput.simpleNameResolver.nodesLinkableFromOutside.keys()]
             const absPath = getFilePathWithoutRst(joinFilePath(this._basePath, docPath))
             return names.map((name) => [name, absPath])
@@ -173,7 +180,7 @@ export class RstGeneratorState {
             throw new RstGeneratorError(this, srcNode, `targetPath:"${docPath}" (resolved from "${targetPath}") not found`)
         }
 
-        const firstSection = parserOutput.root.findFirstChild(RstNodeType.Section)
+        const firstSection = parserOutput.root.findFirstChild('Section')
         const externalLabel = firstSection?.textContent
 
         return {
@@ -395,7 +402,7 @@ export class RstGeneratorState {
                     }
 
                     // Really ugly way to get types to work
-                    (generator as RstNodeGenerator<RstNodeType.Document>).generate(this, node as RstDocument)
+                    (generator as RstNodeGenerator<'Document'>).generate(this, node as RstDocument)
                 }
             }
         }

@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('no args', () => {
@@ -10,12 +9,12 @@ describe('no args', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'image',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'picture.jpg',
                     },
                 ],
@@ -38,30 +37,30 @@ describe('with alt', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'image',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'picture.jpg',
                     },
                 ],
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'alt',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'desc',
                                     },
                                 ],
@@ -88,30 +87,30 @@ describe('with size', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'image',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'picture.jpg',
                     },
                 ],
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'width',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: '100px',
                                     },
                                 ],
@@ -153,47 +152,47 @@ describe('with body content', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Directive,
+            type: 'Directive',
             data: {
                 directive: 'figure',
                 initContent: [
                     {
-                        type: RstNodeType.Paragraph,
+                        type: 'Paragraph',
                         text: 'picture.png',
                     },
                 ],
                 config: {
-                    type: RstNodeType.FieldList,
+                    type: 'FieldList',
                     children: [
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'scale',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: '50 %',
                                     },
                                 ],
                             },
                         },
                         {
-                            type: RstNodeType.FieldListItem,
+                            type: 'FieldListItem',
                             data: {
                                 name: [
                                     {
-                                        type: RstNodeType.Text,
+                                        type: 'Text',
                                         text: 'alt',
                                     },
                                 ],
                                 body: [
                                     {
-                                        type: RstNodeType.Paragraph,
+                                        type: 'Paragraph',
                                         text: 'map to buried treasure',
                                     },
                                 ],
@@ -204,45 +203,45 @@ describe('with body content', () => {
             },
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'This is the caption of the figure (a simple paragraph).',
                 },
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'The legend consists of all elements after the caption.  In this\ncase, the legend consists of this paragraph and the following\ntable:',
                 },
                 {
-                    type: RstNodeType.Table,
+                    type: 'Table',
                     children: [
                         {
-                            type: RstNodeType.TableRow,
+                            type: 'TableRow',
                             data: {
                                 isHeadRow: true,
                             },
                             children: [
                                 {
-                                    type: RstNodeType.TableCell,
+                                    type: 'TableCell',
                                     text: 'Symbol',
                                 },
                                 {
-                                    type: RstNodeType.TableCell,
+                                    type: 'TableCell',
                                     text: 'Meaning',
                                 },
                             ],
                         },
                         {
-                            type: RstNodeType.TableRow,
+                            type: 'TableRow',
                             children: [
                                 {
-                                    type: RstNodeType.TableCell,
+                                    type: 'TableCell',
                                     children: [
                                         {
-                                            type: RstNodeType.Directive,
+                                            type: 'Directive',
                                             data: {
                                                 directive: 'image',
                                                 initContent: [
                                                     {
-                                                        type: RstNodeType.Paragraph,
+                                                        type: 'Paragraph',
                                                         text: 'tent.png',
                                                     },
                                                 ],
@@ -251,24 +250,24 @@ describe('with body content', () => {
                                     ],
                                 },
                                 {
-                                    type: RstNodeType.TableCell,
+                                    type: 'TableCell',
                                     text: 'Campground',
                                 },
                             ],
                         },
                         {
-                            type: RstNodeType.TableRow,
+                            type: 'TableRow',
                             children: [
                                 {
-                                    type: RstNodeType.TableCell,
+                                    type: 'TableCell',
                                     children: [
                                         {
-                                            type: RstNodeType.Directive,
+                                            type: 'Directive',
                                             data: {
                                                 directive: 'image',
                                                 initContent: [
                                                     {
-                                                        type: RstNodeType.Paragraph,
+                                                        type: 'Paragraph',
                                                         text: 'waves.png',
                                                     },
                                                 ],
@@ -277,24 +276,24 @@ describe('with body content', () => {
                                     ],
                                 },
                                 {
-                                    type: RstNodeType.TableCell,
+                                    type: 'TableCell',
                                     text: 'Lake',
                                 },
                             ],
                         },
                         {
-                            type: RstNodeType.TableRow,
+                            type: 'TableRow',
                             children: [
                                 {
-                                    type: RstNodeType.TableCell,
+                                    type: 'TableCell',
                                     children: [
                                         {
-                                            type: RstNodeType.Directive,
+                                            type: 'Directive',
                                             data: {
                                                 directive: 'image',
                                                 initContent: [
                                                     {
-                                                        type: RstNodeType.Paragraph,
+                                                        type: 'Paragraph',
                                                         text: 'peak.png',
                                                     },
                                                 ],
@@ -303,7 +302,7 @@ describe('with body content', () => {
                                     ],
                                 },
                                 {
-                                    type: RstNodeType.TableCell,
+                                    type: 'TableCell',
                                     text: 'Mountain',
                                 },
                             ],

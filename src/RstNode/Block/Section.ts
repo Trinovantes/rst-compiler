@@ -17,13 +17,18 @@ export type RstSectionData = {
 }
 
 export class RstSection extends RstNode {
+    protected readonly textNodes: ContinuousText
+    readonly level: number
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
-        protected readonly textNodes: ContinuousText = [],
-        readonly level: number,
+        textNodes: ContinuousText = [],
+        level: number,
     ) {
         super(registrar, source, textNodes)
+        this.textNodes = textNodes
+        this.level = level
     }
 
     override toObject(): RstNodeObject {
@@ -57,7 +62,7 @@ export class RstSection extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Section
+        return 'Section'
     }
 
     override toShortString(): string {
@@ -72,7 +77,7 @@ export class RstSection extends RstNode {
 export const sectionChars  = ['=', '-', '`', ':', '.', "'", '"', '~', '^', '_', '*', '+', '#']
 export const sectionMarkRe = new RegExp(`^(${sectionChars.map(escapeForRegExp).map((c) => `${c}{2,}`).join('|')})[ ]*$`)
 
-export const sectionParser: RstNodeParser<RstNodeType.Section> = {
+export const sectionParser: RstNodeParser<'Section'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -154,7 +159,7 @@ function getSectionInfo(parserState: RstParserState): SectionInfo | null {
 // ----------------------------------------------------------------------------
 
 export const sectionGenerators = createNodeGenerators(
-    RstNodeType.Section,
+    'Section',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTag(`h${node.level}`, node, () => {

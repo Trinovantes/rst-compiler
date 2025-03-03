@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('when text begins with ">>>", it parses as DoctestBlock', () => {
@@ -10,7 +9,7 @@ describe('when text begins with ">>>", it parses as DoctestBlock', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.DoctestBlock,
+            type: 'DoctestBlock',
             text: '>>> test',
         },
     ])
@@ -35,11 +34,11 @@ describe('when indented DoctestBlock is preceded by LiteralBlock marker, it pars
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'The following is a literal block::',
         },
         {
-            type: RstNodeType.LiteralBlock,
+            type: 'LiteralBlock',
             text: '>>> This is not recognized as a doctest block by reStructuredText',
         },
     ])
@@ -70,14 +69,14 @@ describe('when indented DoctestBlock is not preceded by LiteralBlock marker, it 
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.DoctestBlock,
+                    type: 'DoctestBlock',
                     text: '>>> test',
                 },
             ],

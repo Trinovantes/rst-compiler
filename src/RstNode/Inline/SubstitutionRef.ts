@@ -23,7 +23,7 @@ export class RstSubstitutionRef extends RstText {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.SubstitutionRef
+        return 'SubstitutionRef'
     }
 }
 
@@ -32,7 +32,7 @@ export class RstSubstitutionRef extends RstText {
 // ----------------------------------------------------------------------------
 
 export const substitutionRefGenerators = createNodeGenerators(
-    RstNodeType.SubstitutionRef,
+    'SubstitutionRef',
 
     (generatorState, node) => {
         const substitutionDef = generatorState.substitutionResolver.resolveSubstitution(generatorState, node)

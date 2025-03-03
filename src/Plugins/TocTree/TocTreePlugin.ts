@@ -4,7 +4,6 @@ import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
 import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
 import { parseEmbededRef } from '@/utils/parseEmbededRef.js'
 import { RstNode } from '@/RstNode/RstNode.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { SimpleName, normalizeSimpleName } from '@/SimpleName.js'
 
 // ----------------------------------------------------------------------------
@@ -88,7 +87,7 @@ export const tocTreeDirectivePlugins = createRstCompilerPlugins({
     },
 
     onParse: (parserOutput) => {
-        const directives = parserOutput.root.findAllChildren(RstNodeType.Directive)
+        const directives = parserOutput.root.findAllChildren('Directive')
         const tocTreeDirectives = directives.filter((node) => node.directive === TOCTREE_DIRECTIVE)
 
         for (const tocTreeNode of tocTreeDirectives) {

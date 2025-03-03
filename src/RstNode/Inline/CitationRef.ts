@@ -20,7 +20,7 @@ export class RstCitationRef extends RstText {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.CitationRef
+        return 'CitationRef'
     }
 
     static isValidText(bodyText: string): boolean {
@@ -33,7 +33,7 @@ export class RstCitationRef extends RstText {
 // ----------------------------------------------------------------------------
 
 export const citationRefGenerators = createNodeGenerators(
-    RstNodeType.CitationRef,
+    'CitationRef',
 
     (generatorState, node) => {
         const refId = generatorState.htmlAttrResolver.getNodeHtmlId(node)

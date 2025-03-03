@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('when the second line after text is indented, it parses as DefinitionList', () => {
@@ -11,21 +10,21 @@ describe('when the second line after text is indented, it parses as DefinitionLi
 
     testParser(input, [
         {
-            type: RstNodeType.DefinitionList,
+            type: 'DefinitionList',
             children: [
                 {
-                    type: RstNodeType.DefinitionListItem,
+                    type: 'DefinitionListItem',
                     data: {
                         term: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'term',
                             },
                         ],
                         classifiers: [],
                         definition: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'definition',
                             },
                         ],
@@ -61,28 +60,28 @@ describe('when definition has text followed by colon, it parses as classifier fo
 
     testParser(input, [
         {
-            type: RstNodeType.DefinitionList,
+            type: 'DefinitionList',
             children: [
                 {
-                    type: RstNodeType.DefinitionListItem,
+                    type: 'DefinitionListItem',
                     data: {
                         term: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'term',
                             },
                         ],
                         classifiers: [
                             [
                                 {
-                                    type: RstNodeType.Text,
+                                    type: 'Text',
                                     text: 'classifier 1',
                                 },
                             ],
                         ],
                         definition: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'definition',
                             },
                         ],
@@ -118,34 +117,34 @@ describe('when there are multiple colons, it parses as multiple classifiers in s
 
     testParser(input, [
         {
-            type: RstNodeType.DefinitionList,
+            type: 'DefinitionList',
             children: [
                 {
-                    type: RstNodeType.DefinitionListItem,
+                    type: 'DefinitionListItem',
                     data: {
                         term: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'term',
                             },
                         ],
                         classifiers: [
                             [
                                 {
-                                    type: RstNodeType.Text,
+                                    type: 'Text',
                                     text: 'classifier 1',
                                 },
                             ],
                             [
                                 {
-                                    type: RstNodeType.Text,
+                                    type: 'Text',
                                     text: 'classifier two',
                                 },
                             ],
                         ],
                         definition: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'definition',
                             },
                         ],
@@ -181,21 +180,21 @@ describe('when classifier is not formated with space+colon+space, it parses as p
 
     testParser(input, [
         {
-            type: RstNodeType.DefinitionList,
+            type: 'DefinitionList',
             children: [
                 {
-                    type: RstNodeType.DefinitionListItem,
+                    type: 'DefinitionListItem',
                     data: {
                         term: [
                             {
-                                type: RstNodeType.Text,
+                                type: 'Text',
                                 text: 'term: not a classifier',
                             },
                         ],
                         classifiers: [],
                         definition: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'definition',
                             },
                         ],
@@ -231,45 +230,45 @@ describe('when term has inline markup with space+colon+space inside, it is prior
 
     testParser(input, [
         {
-            type: RstNodeType.DefinitionList,
+            type: 'DefinitionList',
             children: [
                 {
-                    type: RstNodeType.DefinitionListItem,
+                    type: 'DefinitionListItem',
                     data: {
                         term: [
                             {
-                                type: RstNodeType.StrongEmphasis,
+                                type: 'StrongEmphasis',
                                 text: 'term 4',
                             },
                         ],
                         classifiers: [
                             [
                                 {
-                                    type: RstNodeType.Emphasis,
+                                    type: 'Emphasis',
                                     text: 'classifier one',
                                 },
                             ],
                             [
                                 {
-                                    type: RstNodeType.InterpretedText,
+                                    type: 'InterpretedText',
                                     text: 'test',
                                     data: {
                                         role: 'sup',
                                     },
                                 },
                                 {
-                                    type: RstNodeType.Text,
+                                    type: 'Text',
                                     text: ' ',
                                 },
                                 {
-                                    type: RstNodeType.Emphasis,
+                                    type: 'Emphasis',
                                     text: 'start : end',
                                 },
                             ],
                         ],
                         definition: [
                             {
-                                type: RstNodeType.Paragraph,
+                                type: 'Paragraph',
                                 text: 'Definition 4',
                             },
                         ],

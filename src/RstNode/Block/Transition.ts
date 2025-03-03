@@ -28,7 +28,7 @@ export class RstTransition extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Transition
+        return 'Transition'
     }
 }
 
@@ -38,7 +38,7 @@ export class RstTransition extends RstNode {
 
 const transitionMarkRe = new RegExp(`^(${sectionChars.map(escapeForRegExp).map((c) => `${c}{4,}`).join('|')})[ ]*$`)
 
-export const transitionParser: RstNodeParser<RstNodeType.Transition> = {
+export const transitionParser: RstNodeParser<'Transition'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -62,7 +62,7 @@ export const transitionParser: RstNodeParser<RstNodeType.Transition> = {
 // ----------------------------------------------------------------------------
 
 export const transitionGenerators = createNodeGenerators(
-    RstNodeType.Transition,
+    'Transition',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTag('hr', node)

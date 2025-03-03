@@ -24,7 +24,7 @@ export class RstOptionList extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.OptionList
+        return 'OptionList'
     }
 }
 
@@ -51,7 +51,7 @@ const optionListItemRe = new RegExp(
     '.*$', // Any char to end of line
 )
 
-export const optionListParser: RstNodeParser<RstNodeType.OptionList> = {
+export const optionListParser: RstNodeParser<'OptionList'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -118,7 +118,7 @@ function parseListItem(parserState: RstParserState, indentSize: number): RstOpti
     const firstLineText = firstLineMatches[0].substring(descStartIdx)
     const bodyIndentSize = parserState.peekNestedIndentSize(indentSize)
     const initContent = parserState.parseInitContent(bodyIndentSize, firstLineText, startLineIdx)
-    const listItemChildren = parserState.parseBodyNodes(bodyIndentSize, RstNodeType.OptionListItem, initContent)
+    const listItemChildren = parserState.parseBodyNodes(bodyIndentSize, 'OptionListItem', initContent)
 
     const endLineIdx = parserState.lineIdx
     return new RstOptionListItem(parserState.registrar, { startLineIdx, endLineIdx }, listItemChildren, options)
@@ -129,7 +129,7 @@ function parseListItem(parserState: RstParserState, indentSize: number): RstOpti
 // ----------------------------------------------------------------------------
 
 export const optionListGenerators = createNodeGenerators(
-    RstNodeType.OptionList,
+    'OptionList',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTagWithAttr('dl', node, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.optionList }), () => {

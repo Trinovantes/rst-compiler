@@ -30,7 +30,7 @@ export class RstFootnoteRef extends RstText {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.FootnoteRef
+        return 'FootnoteRef'
     }
 
     get isManualLabelNum(): boolean {
@@ -67,7 +67,7 @@ export class RstFootnoteRef extends RstText {
 // ----------------------------------------------------------------------------
 
 export const footnoteRefGenerators = createNodeGenerators(
-    RstNodeType.FootnoteRef,
+    'FootnoteRef',
 
     (generatorState, node) => {
         const targetDef = generatorState.resolveFootnoteDef(node)

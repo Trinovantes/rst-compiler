@@ -2,7 +2,6 @@ import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
 import { RstStrongEmphasis } from '@/RstNode/Inline/StrongEmphasis.js'
 import { RstText } from '@/RstNode/Inline/Text.js'
 import { RstNodeSource } from '@/RstNode/RstNode.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { mergeSequentialTextNodes } from '@/utils/mergeSequentialTextNodes.js'
 import { expect, test } from 'vitest'
 
@@ -24,7 +23,7 @@ test('when there are sequential Text tokens, it should merge them all into a sin
 
     expect(mergedNodes).toHaveLength(1)
     expect(mergedNodes[0].textContent).toBe('Hello World!')
-    expect(mergedNodes[0].nodeType).toBe(RstNodeType.Text)
+    expect(mergedNodes[0].nodeType).toBe('Text')
 })
 
 test('when there are sequential Text tokens in-between non-Text tokens, it should merge the middle Text tokens', () => {
@@ -42,9 +41,9 @@ test('when there are sequential Text tokens in-between non-Text tokens, it shoul
     expect(mergedNodes[0].textContent).toBe('Hello')
     expect(mergedNodes[1].textContent).toBe('abc')
     expect(mergedNodes[2].textContent).toBe('World')
-    expect(mergedNodes[0].nodeType).toBe(RstNodeType.StrongEmphasis)
-    expect(mergedNodes[1].nodeType).toBe(RstNodeType.Text)
-    expect(mergedNodes[2].nodeType).toBe(RstNodeType.StrongEmphasis)
+    expect(mergedNodes[0].nodeType).toBe('StrongEmphasis')
+    expect(mergedNodes[1].nodeType).toBe('Text')
+    expect(mergedNodes[2].nodeType).toBe('StrongEmphasis')
 })
 
 test('when there are sequential non-Text tokens, it should not merge them', () => {
@@ -64,11 +63,11 @@ test('when there are sequential non-Text tokens, it should not merge them', () =
     expect(mergedNodes[2].textContent).toBe('b')
     expect(mergedNodes[3].textContent).toBe('c')
     expect(mergedNodes[4].textContent).toBe('World')
-    expect(mergedNodes[0].nodeType).toBe(RstNodeType.Text)
-    expect(mergedNodes[1].nodeType).toBe(RstNodeType.StrongEmphasis)
-    expect(mergedNodes[2].nodeType).toBe(RstNodeType.StrongEmphasis)
-    expect(mergedNodes[3].nodeType).toBe(RstNodeType.StrongEmphasis)
-    expect(mergedNodes[4].nodeType).toBe(RstNodeType.Text)
+    expect(mergedNodes[0].nodeType).toBe('Text')
+    expect(mergedNodes[1].nodeType).toBe('StrongEmphasis')
+    expect(mergedNodes[2].nodeType).toBe('StrongEmphasis')
+    expect(mergedNodes[3].nodeType).toBe('StrongEmphasis')
+    expect(mergedNodes[4].nodeType).toBe('Text')
 })
 
 test('when the input is an empty array, it should return an empty array', () => {
@@ -89,5 +88,5 @@ test('when the input contains characters that need to be sanitized, it should pr
 
     expect(mergedNodes).toHaveLength(1)
     expect(mergedNodes[0].textContent).toBe('&<>"\'')
-    expect(mergedNodes[0].nodeType).toBe(RstNodeType.Text)
+    expect(mergedNodes[0].nodeType).toBe('Text')
 })

@@ -10,7 +10,6 @@ import { SimpleName, normalizeSimpleName } from '@/SimpleName.js'
 import { RstCompiler } from '@/RstCompiler.js'
 import { HtmlAttrResolver } from './HtmlAttrResolver.js'
 import { RstDocument } from '@/RstNode/Block/Document.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { RstSection } from '@/RstNode/Block/Section.js'
 import { RstHyperlinkRef } from '@/RstNode/Inline/HyperlinkRef.js'
 import { trimCommonIndent } from '@/utils/trimCommonIndent.js'
@@ -28,6 +27,10 @@ type FootnoteSymNum = Brand<number, 'FootnoteSymNum'> // For determining which s
  * Data in this container class is consumed by RstGeneratorState
  */
 export class SimpleNameResolver {
+    private readonly _compiler: RstCompiler
+    private readonly _htmlAttrResolver: HtmlAttrResolver
+    private readonly _root: RstDocument
+
     private readonly _nodesLinkableFromOutside = new Map<SimpleName, RstNode>() // Other Documents can use these SimpleNames to reference a node inside this Document
     private readonly _explicitSimpleNames = new Map<SimpleName, RstNode>()
     private readonly _explicitNodes = new Map<RstNode, SimpleName>()
@@ -43,10 +46,14 @@ export class SimpleNameResolver {
     private readonly _anonymousHyperlinkRefToTarget = new Map<RstHyperlinkRef, RstHyperlinkTarget>()
 
     constructor(
-        private readonly _compiler: RstCompiler,
-        private readonly _htmlAttrResolver: HtmlAttrResolver,
-        private readonly _root: RstDocument,
+        compiler: RstCompiler,
+        htmlAttrResolver: HtmlAttrResolver,
+        root: RstDocument,
     ) {
+        this._compiler = compiler
+        this._htmlAttrResolver = htmlAttrResolver
+        this._root = root
+
         this.processSections()
         this.processFootnotes()
         this.processCitations()
@@ -199,7 +206,7 @@ export class SimpleNameResolver {
     // ------------------------------------------------------------------------
 
     private processSections() {
-        const sections = this._root.findAllChildren(RstNodeType.Section)
+        const sections = this._root.findAllChildren('Section')
 
         for (const section of sections) {
             const simpleName = this.getSimpleNameCandidate(section, true)
@@ -213,8 +220,8 @@ export class SimpleNameResolver {
     // ------------------------------------------------------------------------
 
     private processFootnotes() {
-        const footnoteDefs = this._root.findAllChildren(RstNodeType.FootnoteDef)
-        const footnoteRefs = this._root.findAllChildren(RstNodeType.FootnoteRef)
+        const footnoteDefs = this._root.findAllChildren('FootnoteDef')
+        const footnoteRefs = this._root.findAllChildren('FootnoteRef')
 
         const registerAutoLabelNums = () => {
             const usedLabelNums = new Set<number>()
@@ -319,8 +326,8 @@ export class SimpleNameResolver {
     // ------------------------------------------------------------------------
 
     private processCitations() {
-        const citationDefs = this._root.findAllChildren(RstNodeType.CitationDef)
-        const citationRefs = this._root.findAllChildren(RstNodeType.CitationRef)
+        const citationDefs = this._root.findAllChildren('CitationDef')
+        const citationRefs = this._root.findAllChildren('CitationRef')
 
         const registerCitationBacklinks = () => {
             // 1. Init backlinks array for each Def
@@ -387,9 +394,9 @@ export class SimpleNameResolver {
     }
 
     private processHyperlinks() {
-        const hyperlinkTargets = this._root.findAllChildren(RstNodeType.HyperlinkTarget)
-        const inlineInternalTargets = this._root.findAllChildren(RstNodeType.InlineInternalTarget)
-        const hyperlinkRefs = this._root.findAllChildren(RstNodeType.HyperlinkRef)
+        const hyperlinkTargets = this._root.findAllChildren('HyperlinkTarget')
+        const inlineInternalTargets = this._root.findAllChildren('InlineInternalTarget')
+        const hyperlinkRefs = this._root.findAllChildren('HyperlinkRef')
 
         const registerHyperlinkTargets = () => {
             for (const hyperlinkTarget of hyperlinkTargets) {

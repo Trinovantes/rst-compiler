@@ -1,5 +1,4 @@
 import { describe } from 'vitest'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
@@ -12,11 +11,11 @@ describe('when text is indented, it parses as Blockquote', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             text: 'blockquote',
         },
     ])
@@ -49,18 +48,18 @@ describe('when there are nested indentation, it parses as nested Blockquotes', (
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'blockquote 1',
                 },
                 {
-                    type: RstNodeType.Blockquote,
+                    type: 'Blockquote',
                     text: 'blockquote 2',
                 },
             ],
@@ -103,18 +102,18 @@ describe('when there are out-of-order indentation, it parses as nested Blockquot
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.Blockquote,
+                    type: 'Blockquote',
                     text: 'blockquote 2',
                 },
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'blockquote 1',
                 },
             ],
@@ -159,24 +158,24 @@ describe('when Blockquote text begins with "--", it parses as BlockquoteAttribut
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'blockquote 1',
                 },
                 {
-                    type: RstNodeType.BlockquoteAttribution,
+                    type: 'BlockquoteAttribution',
                     text: 'blockquote 1 attribution 1',
                 },
             ],
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             text: 'blockquote 2',
         },
     ])
@@ -228,24 +227,24 @@ describe('when there is multiline BlockquoteAttribution, it parses single Blockq
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'blockquote 1',
                 },
                 {
-                    type: RstNodeType.BlockquoteAttribution,
+                    type: 'BlockquoteAttribution',
                     text: 'blockquote 1 attribution line 1\nblockquote 1 attribution line 2',
                 },
             ],
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             text: 'blockquote 2',
         },
     ])
@@ -298,27 +297,27 @@ describe('when there are consecutive BlockquoteAttributions, it parses as 2 Bloc
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'blockquote 1',
                 },
                 {
-                    type: RstNodeType.BlockquoteAttribution,
+                    type: 'BlockquoteAttribution',
                     text: 'attribution 1',
                 },
             ],
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.BlockquoteAttribution,
+                    type: 'BlockquoteAttribution',
                     text: 'attribution 2',
                 },
             ],
@@ -373,15 +372,15 @@ describe('when there is an empty Comment, it parses as 2 Blockquotes', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             text: 'blockquote 1',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             text: 'blockquote 2',
         },
     ])
@@ -420,17 +419,17 @@ describe('when the first line of Blockquote starts a BulletList, it parses as a 
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.BulletList,
+                    type: 'BulletList',
                     children: [
                         {
-                            type: RstNodeType.BulletListItem,
+                            type: 'BulletListItem',
                             text: 'blockquote 1 list',
                             data: {
                                 bullet: '-',
@@ -474,18 +473,18 @@ describe('when the first line of Blockquote indicates a LiteralBlock, it parses 
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.Paragraph,
+                    type: 'Paragraph',
                     text: 'the following is a literal block::',
                 },
                 {
-                    type: RstNodeType.LiteralBlock,
+                    type: 'LiteralBlock',
                     text: 'literal\\',
                 },
             ],

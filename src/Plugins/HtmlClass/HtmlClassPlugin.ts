@@ -1,6 +1,5 @@
 import { createDirectiveGenerators } from '@/Generator/RstGenerator.js'
 import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive
@@ -46,7 +45,7 @@ export const htmlClassDirectivePlugins = createRstCompilerPlugins({
     },
 
     onParse: (parserOutput) => {
-        const directiveNodes = parserOutput.root.findAllChildren(RstNodeType.Directive)
+        const directiveNodes = parserOutput.root.findAllChildren('Directive')
 
         for (const directiveNode of directiveNodes) {
             if (!htmlClassDirectiveGenerators.directives.includes(directiveNode.directive)) {

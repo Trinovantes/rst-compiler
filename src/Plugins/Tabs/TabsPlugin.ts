@@ -4,7 +4,6 @@ import { normalizeSimpleName } from '@/SimpleName.js'
 import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
 import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
 import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import browserCode from './Tabs.browser.js?raw' with { type: 'text' }
 import { renderCodeBlockHtml } from '../Code/renderCodeBlockHtml.js'
 import { renderCodeBlockMd } from '../Code/renderCodeBlockMd.js'
@@ -23,19 +22,20 @@ export const TAB_PANEL_CODEGROUP_DIRECTIVE = 'code-tab'
 
 export const GENERATOR_GLOBAL_HEADER_KEY = 'tabs-plugin'
 
-export enum TabsClientConstant {
-    ELEMENT_CONTAINER = 'rst-tabs-container',
-    ELEMENT_HEADING = 'rst-tab-heading',
-    ELEMENT_PANEL = 'rst-tab-panel',
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const TabsClientConstant = Object.freeze({
+    ELEMENT_CONTAINER: 'rst-tabs-container',
+    ELEMENT_HEADING: 'rst-tab-heading',
+    ELEMENT_PANEL: 'rst-tab-panel',
 
-    TEMPLATE_SLOT_NAME_HEADING = 'heading',
-    TEMPLATE_SLOT_NAME_PANEL = 'panel',
+    TEMPLATE_SLOT_NAME_HEADING: 'heading',
+    TEMPLATE_SLOT_NAME_PANEL: 'panel',
 
-    ATTR_TAB_GROUP_NAME = 'data-group-name',
-    ATTR_HEADING_NAME = 'data-heading',
+    ATTR_TAB_GROUP_NAME: 'data-group-name',
+    ATTR_HEADING_NAME: 'data-heading',
 
-    LOCAL_STORAGE_KEY = 'rst-compiler:tabs-plugin',
-}
+    LOCAL_STORAGE_KEY: 'rst-compiler:tabs-plugin',
+})
 
 // ----------------------------------------------------------------------------
 // MARK: Container Directive
@@ -74,7 +74,7 @@ function getTabsGroupKey(generatorState: RstGeneratorState, node: RstDirective):
     let childrenDirective: string | null = null
 
     for (const child of node.children) {
-        assertNode(generatorState, child, RstNodeType.Directive)
+        assertNode(generatorState, child, 'Directive')
 
         if (childrenDirective !== null && childrenDirective !== child.directive) {
             throw new RstGeneratorError(generatorState, child, `Expected "${childrenDirective}" but got "${child.directive}"`)

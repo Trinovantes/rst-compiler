@@ -18,17 +18,28 @@ export type RstDirectiveData = {
 }
 
 export class RstDirective extends RstNode {
+    private readonly _rawDirective: string
+    private readonly _isInvisibleContent: boolean
+    private readonly _initContent: ReadonlyArray<RstNode> // Content on first line of directive
+    private readonly _config: RstFieldList | null // FieldList that specifies the Directive's settings
+    private readonly _rawBodyText?: string // Content after first linebreak
+
     constructor(
         registrar: RstNodeRegistrar,
         source: RstNodeSource,
         children: ReadonlyArray<RstNode> = [],
-        private readonly _rawDirective: string,
-        private readonly _isInvisibleContent: boolean,
-        private readonly _initContent: ReadonlyArray<RstNode>, // Content on first line of directive
-        private readonly _config: RstFieldList | null, // FieldList that specifies the Directive's settings
-        private readonly _rawBodyText?: string, // Content after first linebreak
+        rawDirective: string,
+        isInvisibleContent: boolean,
+        initContent: ReadonlyArray<RstNode>, // Content on first line of directive
+        config: RstFieldList | null, // FieldList that specifies the Directive's settings
+        rawBodyText?: string, // Content after first linebreak
     ) {
         super(registrar, source, children)
+        this._rawDirective = rawDirective
+        this._isInvisibleContent = isInvisibleContent
+        this._initContent = initContent
+        this._config = config
+        this._rawBodyText = rawBodyText
     }
 
     override toObject(): RstNodeObject {
@@ -83,7 +94,7 @@ export class RstDirective extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Directive
+        return 'Directive'
     }
 
     override get willRenderVisibleContent(): boolean {
@@ -164,7 +175,7 @@ const directiveRe = new RegExp(
     '$',
 )
 
-export const directiveParser: RstNodeParser<RstNodeType.Directive> = {
+export const directiveParser: RstNodeParser<'Directive'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -188,7 +199,7 @@ export const directiveParser: RstNodeParser<RstNodeType.Directive> = {
         const firstLineText = firstLineMatches.groups?.firstLineText ?? ''
         const bodyIndentSize = parserState.peekNestedIndentSize(indentSize)
         const initContent = parserState.parseInitContent(bodyIndentSize, firstLineText, startLineIdx)
-        const directiveConfig = fieldListParser.parse(parserState, bodyIndentSize, RstNodeType.Directive)
+        const directiveConfig = fieldListParser.parse(parserState, bodyIndentSize, 'Directive')
 
         const isInvisibleContent = parserState.opts.directivesWithInvisibleContent.includes(directive)
         const hasInitContent = parserState.opts.directivesWithInitContent.includes(directive)
@@ -197,7 +208,7 @@ export const directiveParser: RstNodeParser<RstNodeType.Directive> = {
         const directiveChildren = hasInitContent ? [] : initContent
 
         if (parserState.opts.directivesWithRawText.includes(directive)) {
-            const rawBodyText = parserState.parseBodyText(bodyIndentSize, RstNodeType.Directive)
+            const rawBodyText = parserState.parseBodyText(bodyIndentSize, 'Directive')
             const endLineIdx = parserState.lineIdx
             return new RstDirective(
                 parserState.registrar,
@@ -213,7 +224,7 @@ export const directiveParser: RstNodeParser<RstNodeType.Directive> = {
                 rawBodyText,
             )
         } else {
-            const children = parserState.parseBodyNodes(bodyIndentSize, RstNodeType.Directive, directiveChildren)
+            const children = parserState.parseBodyNodes(bodyIndentSize, 'Directive', directiveChildren)
             const endLineIdx = parserState.lineIdx
             return new RstDirective(
                 parserState.registrar,

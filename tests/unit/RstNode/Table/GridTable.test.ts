@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('single cell', () => {
@@ -12,13 +11,13 @@ describe('single cell', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'A',
                         },
                     ],
@@ -53,30 +52,30 @@ describe('multiple cells', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'A',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'B',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'C',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'D',
                         },
                     ],
@@ -128,33 +127,33 @@ describe('multiple cells with header separator', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     data: {
                         isHeadRow: true,
                     },
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'A',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'B',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'C',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'D',
                         },
                     ],
@@ -212,17 +211,17 @@ describe('row span', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'A',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'C',
                             data: {
                                 colSpan: 1,
@@ -232,10 +231,10 @@ describe('row span', () => {
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'B',
                         },
                     ],
@@ -282,13 +281,13 @@ describe('col span', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'A',
                             data: {
                                 colSpan: 2,
@@ -298,14 +297,14 @@ describe('col span', () => {
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'B',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'C',
                         },
                     ],
@@ -359,62 +358,62 @@ describe('complex grid table', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     data: {
                         isHeadRow: true,
                     },
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'Header row, column 1\n(header rows optional)',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'Header 2',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'Header 3',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'Header 4',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'body row 1, column 1',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'column 2',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'column 3',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'column 4',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'body row 2',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'Cells may span columns.',
                             data: {
                                 colSpan: 3,
@@ -424,14 +423,14 @@ describe('complex grid table', () => {
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'body row 3',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'Cells may\nspan rows.',
                             data: {
                                 colSpan: 1,
@@ -439,31 +438,31 @@ describe('complex grid table', () => {
                             },
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             data: {
                                 colSpan: 2,
                                 rowSpan: 2,
                             },
                             children: [
                                 {
-                                    type: RstNodeType.BulletList,
+                                    type: 'BulletList',
                                     children: [
                                         {
-                                            type: RstNodeType.BulletListItem,
+                                            type: 'BulletListItem',
                                             text: 'Table cells',
                                             data: {
                                                 bullet: '-',
                                             },
                                         },
                                         {
-                                            type: RstNodeType.BulletListItem,
+                                            type: 'BulletListItem',
                                             text: 'contain',
                                             data: {
                                                 bullet: '-',
                                             },
                                         },
                                         {
-                                            type: RstNodeType.BulletListItem,
+                                            type: 'BulletListItem',
                                             text: 'body elements.',
                                             data: {
                                                 bullet: '-',
@@ -476,10 +475,10 @@ describe('complex grid table', () => {
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'body row 4',
                         },
                     ],
@@ -607,42 +606,42 @@ describe('when cell has multiple paragraphs, it renders as line breaks in markdo
 
     testParser(input, [
         {
-            type: RstNodeType.Table,
+            type: 'Table',
             children: [
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     data: {
                         isHeadRow: true,
                     },
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'A',
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'B',
                         },
                     ],
                 },
                 {
-                    type: RstNodeType.TableRow,
+                    type: 'TableRow',
                     children: [
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             children: [
                                 {
-                                    type: RstNodeType.Paragraph,
+                                    type: 'Paragraph',
                                     text: 'C',
                                 },
                                 {
-                                    type: RstNodeType.Paragraph,
+                                    type: 'Paragraph',
                                     text: 'C',
                                 },
                             ],
                         },
                         {
-                            type: RstNodeType.TableCell,
+                            type: 'TableCell',
                             text: 'D\nD\nD',
                         },
                     ],

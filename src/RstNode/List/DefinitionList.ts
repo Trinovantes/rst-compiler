@@ -23,7 +23,7 @@ export class RstDefinitionList extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.DefinitionList
+        return 'DefinitionList'
     }
 }
 
@@ -33,7 +33,7 @@ export class RstDefinitionList extends RstNode {
 
 const definitionListItemRe = /^[ ]*(?!\.\.)(?<lineText>.+)$/
 
-export const definitionListParser: RstNodeParser<RstNodeType.DefinitionList> = {
+export const definitionListParser: RstNodeParser<'DefinitionList'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -84,7 +84,7 @@ function parseListItem(parserState: RstParserState, indentSize: number): RstDefi
     const term = termAndClassifiers[0]
     const classifiers = termAndClassifiers.slice(1)
 
-    const definitionBodyNodes = parserState.parseBodyNodes(indentSize + parserState.opts.inputIndentSize, RstNodeType.DefinitionListItem)
+    const definitionBodyNodes = parserState.parseBodyNodes(indentSize + parserState.opts.inputIndentSize, 'DefinitionListItem')
     const endLineIdx = parserState.lineIdx
     return new RstDefinitionListItem(parserState.registrar, { startLineIdx, endLineIdx }, term, classifiers, definitionBodyNodes)
 }
@@ -94,7 +94,7 @@ function parseListItem(parserState: RstParserState, indentSize: number): RstDefi
 // ----------------------------------------------------------------------------
 
 export const definitionListGenerators = createNodeGenerators(
-    RstNodeType.DefinitionList,
+    'DefinitionList',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTag('dl', node, () => {

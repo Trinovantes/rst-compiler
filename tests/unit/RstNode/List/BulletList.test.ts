@@ -1,5 +1,4 @@
 import { describe } from 'vitest'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
@@ -17,17 +16,17 @@ describe('when text begins with a bullet character and space, it parses as Bulle
 
         testParser(input, [
             {
-                type: RstNodeType.BulletList,
+                type: 'BulletList',
                 children: [
                     {
-                        type: RstNodeType.BulletListItem,
+                        type: 'BulletListItem',
                         text: 'bullet 1',
                         data: {
                             bullet,
                         },
                     },
                     {
-                        type: RstNodeType.BulletListItem,
+                        type: 'BulletListItem',
                         text: 'bullet 2',
                         data: {
                             bullet,
@@ -67,17 +66,17 @@ describe('when there are no linebreaks between bullets, it still parses as Bulle
 
     testParser(input, [
         {
-            type: RstNodeType.BulletList,
+            type: 'BulletList',
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     text: 'bullet 1',
                     data: {
                         bullet: '-',
                     },
                 },
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     text: 'bullet 2',
                     data: {
                         bullet: '-',
@@ -117,20 +116,20 @@ describe('when there are linebreaks in bullet, it parses as multiple Paragraphs 
 
     testParser(input, [
         {
-            type: RstNodeType.BulletList,
+            type: 'BulletList',
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     data: {
                         bullet: '-',
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'paragraph 1',
                         },
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'paragraph 2',
                         },
                     ],
@@ -166,10 +165,10 @@ describe('when next line aligns with initial bullet, it parses as single Paragra
 
     testParser(input, [
         {
-            type: RstNodeType.BulletList,
+            type: 'BulletList',
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     text: 'sentence 1\nsentence 2',
                     data: {
                         bullet: '-',
@@ -204,10 +203,10 @@ describe('when next line aligns with initial bullet and starts with bullet chara
 
     testParser(input, [
         {
-            type: RstNodeType.BulletList,
+            type: 'BulletList',
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     text: 'The following line appears to be a new sublist, but it is not:\n- This is a paragraph continuation, not a sublist (since there\'s\nno blank line).  This line is also incorrectly indented.\n- Warnings may be issued by the implementation.',
                     data: {
                         bullet: '-',
@@ -244,7 +243,7 @@ describe('when next line does not align with initial bullet, it parses as Paragr
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: '- sentence 1\nsentence 2',
         },
     ])
@@ -271,36 +270,36 @@ describe('when next sibling starts with bullet character, it parses as nested Bu
 
     testParser(input, [
         {
-            type: RstNodeType.BulletList,
+            type: 'BulletList',
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     data: {
                         bullet: '-',
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'parent list',
                         },
                         {
-                            type: RstNodeType.BulletList,
+                            type: 'BulletList',
                             children: [
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     data: {
                                         bullet: '-',
                                     },
                                     children: [
                                         {
-                                            type: RstNodeType.Paragraph,
+                                            type: 'Paragraph',
                                             text: 'child list',
                                         },
                                         {
-                                            type: RstNodeType.BulletList,
+                                            type: 'BulletList',
                                             children: [
                                                 {
-                                                    type: RstNodeType.BulletListItem,
+                                                    type: 'BulletListItem',
                                                     text: 'grandchild list',
                                                     data: {
                                                         bullet: '-',
@@ -366,36 +365,36 @@ describe('when multiple lines start with bullet characters with same indent, it 
 
     testParser(input, [
         {
-            type: RstNodeType.BulletList,
+            type: 'BulletList',
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     data: {
                         bullet: '-',
                     },
                     children: [
                         {
-                            type: RstNodeType.Paragraph,
+                            type: 'Paragraph',
                             text: 'parent list',
                         },
                         {
-                            type: RstNodeType.BulletList,
+                            type: 'BulletList',
                             children: [
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     data: {
                                         bullet: '-',
                                     },
                                     children: [
                                         {
-                                            type: RstNodeType.Paragraph,
+                                            type: 'Paragraph',
                                             text: 'child 1 list',
                                         },
                                         {
-                                            type: RstNodeType.BulletList,
+                                            type: 'BulletList',
                                             children: [
                                                 {
-                                                    type: RstNodeType.BulletListItem,
+                                                    type: 'BulletListItem',
                                                     text: 'child 1 grandchild list',
                                                     data: {
                                                         bullet: '-',
@@ -406,20 +405,20 @@ describe('when multiple lines start with bullet characters with same indent, it 
                                     ],
                                 },
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     data: {
                                         bullet: '-',
                                     },
                                     children: [
                                         {
-                                            type: RstNodeType.Paragraph,
+                                            type: 'Paragraph',
                                             text: 'child 2 list',
                                         },
                                         {
-                                            type: RstNodeType.BulletList,
+                                            type: 'BulletList',
                                             children: [
                                                 {
-                                                    type: RstNodeType.BulletListItem,
+                                                    type: 'BulletListItem',
                                                     text: 'child 2 grandchild list',
                                                     data: {
                                                         bullet: '-',
@@ -500,30 +499,30 @@ describe('when first line of list is indented, it parses as BulletList inside Bl
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             text: 'Paragraph',
         },
         {
-            type: RstNodeType.Blockquote,
+            type: 'Blockquote',
             children: [
                 {
-                    type: RstNodeType.BulletList,
+                    type: 'BulletList',
                     children: [
                         {
-                            type: RstNodeType.BulletListItem,
+                            type: 'BulletListItem',
                             data: {
                                 bullet: '-',
                             },
                             children: [
                                 {
-                                    type: RstNodeType.Paragraph,
+                                    type: 'Paragraph',
                                     text: 'List Line 1\nList Line 2',
                                 },
                                 {
-                                    type: RstNodeType.BulletList,
+                                    type: 'BulletList',
                                     children: [
                                         {
-                                            type: RstNodeType.BulletListItem,
+                                            type: 'BulletListItem',
                                             text: 'Sub-list',
                                             data: {
                                                 bullet: '-',
@@ -585,26 +584,26 @@ describe('when first child of list is another list, it parses as BulletList insi
 
     testParser(input, [
         {
-            type: RstNodeType.BulletList,
+            type: 'BulletList',
             children: [
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     data: {
                         bullet: '*',
                     },
                     children: [
                         {
-                            type: RstNodeType.BulletList,
+                            type: 'BulletList',
                             children: [
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     text: 'Tag',
                                     data: {
                                         bullet: '-',
                                     },
                                 },
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     text: 'Example',
                                     data: {
                                         bullet: '-',
@@ -615,53 +614,53 @@ describe('when first child of list is another list, it parses as BulletList insi
                     ],
                 },
                 {
-                    type: RstNodeType.BulletListItem,
+                    type: 'BulletListItem',
                     data: {
                         bullet: '*',
                     },
                     children: [
                         {
-                            type: RstNodeType.BulletList,
+                            type: 'BulletList',
                             children: [
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     data: {
                                         bullet: '-',
                                     },
                                     children: [
                                         {
-                                            type: RstNodeType.LineBlock,
+                                            type: 'LineBlock',
                                             children: [
                                                 {
-                                                    type: RstNodeType.LineBlockLine,
+                                                    type: 'LineBlockLine',
                                                     children: [
                                                         {
-                                                            type: RstNodeType.StrongEmphasis,
+                                                            type: 'StrongEmphasis',
                                                             text: 'b',
                                                         },
                                                     ],
                                                 },
                                                 {
-                                                    type: RstNodeType.LineBlockLine,
+                                                    type: 'LineBlockLine',
                                                     children: [
                                                         {
-                                                            type: RstNodeType.Text,
+                                                            type: 'Text',
                                                             text: 'Makes ',
                                                         },
                                                         {
-                                                            type: RstNodeType.InlineLiteral,
+                                                            type: 'InlineLiteral',
                                                             text: '{text}',
                                                         },
                                                         {
-                                                            type: RstNodeType.Text,
+                                                            type: 'Text',
                                                             text: ' use the bold (or bold italics) font of ',
                                                         },
                                                         {
-                                                            type: RstNodeType.InlineLiteral,
+                                                            type: 'InlineLiteral',
                                                             text: 'RichTextLabel',
                                                         },
                                                         {
-                                                            type: RstNodeType.Text,
+                                                            type: 'Text',
                                                             text: '.',
                                                         },
                                                     ],
@@ -671,16 +670,16 @@ describe('when first child of list is another list, it parses as BulletList insi
                                     ],
                                 },
                                 {
-                                    type: RstNodeType.BulletListItem,
+                                    type: 'BulletListItem',
                                     data: {
                                         bullet: '-',
                                     },
                                     children: [
                                         {
-                                            type: RstNodeType.Paragraph,
+                                            type: 'Paragraph',
                                             children: [
                                                 {
-                                                    type: RstNodeType.InlineLiteral,
+                                                    type: 'InlineLiteral',
                                                     text: '[b]{text}[/b]',
                                                 },
                                             ],

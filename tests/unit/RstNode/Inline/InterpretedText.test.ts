@@ -1,6 +1,5 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { RstNodeType } from '@/RstNode/RstNodeType.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('with prefix role', () => {
@@ -10,10 +9,10 @@ describe('with prefix role', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.InterpretedText,
+                    type: 'InterpretedText',
                     text: 'interpreted text',
                     data: {
                         role: 't',
@@ -39,10 +38,10 @@ describe('with suffix role', () => {
 
     testParser(input, [
         {
-            type: RstNodeType.Paragraph,
+            type: 'Paragraph',
             children: [
                 {
-                    type: RstNodeType.InterpretedText,
+                    type: 'InterpretedText',
                     text: 'interpreted text',
                     data: {
                         role: 't',

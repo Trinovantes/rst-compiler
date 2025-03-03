@@ -21,7 +21,7 @@ export class RstBlockquote extends RstNode {
     }
 
     override get nodeType(): RstNodeType {
-        return RstNodeType.Blockquote
+        return 'Blockquote'
     }
 }
 
@@ -29,7 +29,7 @@ export class RstBlockquote extends RstNode {
 // MARK: Parser
 // ----------------------------------------------------------------------------
 
-export const blockquoteParser: RstNodeParser<RstNodeType.Blockquote> = {
+export const blockquoteParser: RstNodeParser<'Blockquote'> = {
     parse: (parserState, indentSize) => {
         const startLineIdx = parserState.lineIdx
 
@@ -38,7 +38,7 @@ export const blockquoteParser: RstNodeParser<RstNodeType.Blockquote> = {
             return null
         }
 
-        const children = parserState.parseBodyNodes(nextIndentSize, RstNodeType.Blockquote)
+        const children = parserState.parseBodyNodes(nextIndentSize, 'Blockquote')
 
         const endLineIdx = parserState.lineIdx
         return new RstBlockquote(parserState.registrar, { startLineIdx, endLineIdx }, children)
@@ -50,7 +50,7 @@ export const blockquoteParser: RstNodeParser<RstNodeType.Blockquote> = {
 // ----------------------------------------------------------------------------
 
 export const blockquoteGenerators = createNodeGenerators(
-    RstNodeType.Blockquote,
+    'Blockquote',
 
     (generatorState, node) => {
         generatorState.writeLineHtmlTag('blockquote', node, () => {
