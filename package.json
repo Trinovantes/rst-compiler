@@ -38,7 +38,7 @@
         "prepublishOnly": "yarn build",
         "prepare": "patch-package",
         "lint": "vue-tsc --noemit && eslint",
-        "test": "vitest",
+        "test": "vitest --typecheck",
         "playPy": "python3 ./tests/playground/run.py",
         "playJs": "bun run ./tests/playground/run.ts",
         "server": "bun --watch run ./tests/playground/server.ts",
