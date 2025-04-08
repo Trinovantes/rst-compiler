@@ -1,10 +1,10 @@
 diff --git a/node_modules/quasar/package.json b/node_modules/quasar/package.json
-index 00fd32d..f170665 100644
+index 27afdd0..4dddb42 100644
 --- a/node_modules/quasar/package.json
 +++ b/node_modules/quasar/package.json
 @@ -2,11 +2,6 @@
    "name": "quasar",
-   "version": "2.18.0",
+   "version": "2.18.1",
    "description": "Build high-performance VueJS user interfaces (SPA, PWA, SSR, Mobile and Desktop) in record time",
 -  "type": "module",
 -  "module": "dist/quasar.client.js",
