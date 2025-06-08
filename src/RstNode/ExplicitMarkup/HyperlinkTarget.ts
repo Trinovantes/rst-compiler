@@ -162,7 +162,7 @@ export class RstHyperlinkTarget extends RstNode {
 // ----------------------------------------------------------------------------
 
 const explicitHyperlinkTargetRe = new RegExp(
-    '^ *.. +' +
+    '^ *\\.\\. +' +
     '_' +
         '(?:' +
             '(?<anonymousName>_)' +

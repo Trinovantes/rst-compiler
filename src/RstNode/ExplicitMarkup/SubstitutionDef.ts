@@ -128,7 +128,7 @@ export class RstSubstitutionDef extends RstNode {
 // ----------------------------------------------------------------------------
 
 const substitutionDefRe = new RegExp(
-    '^ *.. +' +
+    '^ *\\.\\. +' +
     '\\|(?<needle>.+)\\| ' +
     '(?<directive>\\S+)' +
     '(?<!\\\\)::' +

@@ -33,7 +33,7 @@ export class RstCitationDefGroup extends RstNode {
 // ----------------------------------------------------------------------------
 
 const citationDefRe = new RegExp(
-    '^ *.. +' +
+    '^ *\\.\\. +' +
     '\\[' +
         `(?<label>${simpleNameReStr})` +
     '\\]' +

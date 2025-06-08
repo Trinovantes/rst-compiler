@@ -168,7 +168,7 @@ export class RstDirective extends RstNode {
 // ----------------------------------------------------------------------------
 
 const directiveRe = new RegExp(
-    '^ *.. +' +
+    '^ *\\.\\. +' +
     '(?<directive>\\S+)' +
     ' ?(?<!\\\\)::' + // Technically we should not accept the optional space but in practice some docs use it and docutils allows it
     '(?: (?<firstLineText>.*))?' +

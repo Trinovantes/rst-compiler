@@ -33,7 +33,7 @@ export class RstFootnoteDefGroup extends RstNode {
 // ----------------------------------------------------------------------------
 
 const footnoteDefRe = new RegExp(
-    '^ *.. +' +
+    '^ *\\.\\. +' +
     '\\[' +
         '(?<label>' +
             '[0-9]+' + // Any number
