@@ -50,7 +50,7 @@ export class RstDoctestBlock extends RstNode {
         return 'DoctestBlock'
     }
 
-    override get isTextContentBasic(): boolean {
+    override get shouldTestTextContent(): boolean {
         return true
     }
 

@@ -74,7 +74,7 @@ export class RstDefinitionListItem extends RstNode {
         return 'DefinitionListItem'
     }
 
-    override get isTextContentBasic() {
+    override get shouldTestTextContent() {
         return false
     }
 

@@ -68,7 +68,7 @@ export class RstFieldListItem extends RstNode {
         return 'FieldListItem'
     }
 
-    override get isTextContentBasic() {
+    override get shouldTestTextContent() {
         return false
     }
 

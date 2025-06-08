@@ -52,7 +52,7 @@ export class RstDocument extends RstNode {
         return 'Document'
     }
 
-    override get isTextContentBasic(): boolean {
+    override get shouldTestTextContent(): boolean {
         return false
     }
 

@@ -57,7 +57,7 @@ export class RstText extends RstNode {
         return true
     }
 
-    override get isTextContentBasic(): boolean {
+    override get shouldTestTextContent(): boolean {
         // Only this parent class is plaintext (e.g. Text that subclasses this should not be considered plaintext)
         return this.nodeType === 'Text'
     }

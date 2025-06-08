@@ -63,7 +63,7 @@ export abstract class RstNode {
             type: this.nodeType,
         }
 
-        if (this.isTextContentBasic) {
+        if (this.shouldTestTextContent) {
             root.text = this.textContent
         } else if (this.shouldTestChildren) {
             root.children = this.children.map((child) => child.toObject())
@@ -120,10 +120,10 @@ export abstract class RstNode {
      *      text: 'textContent',
      *  }
      */
-    get isTextContentBasic(): boolean {
+    get shouldTestTextContent(): boolean {
         return this.children.length === 1 && (
             (this.children[0].nodeType === 'Text') ||
-            (this.children[0].nodeType === 'Paragraph' && this.children[0].isTextContentBasic)
+            (this.children[0].nodeType === 'Paragraph' && this.children[0].shouldTestTextContent)
         )
     }
 
@@ -171,7 +171,7 @@ export abstract class RstNode {
 
         let str = selfTab + `[${this.toShortString()}] (${this.lineNums})\n`
 
-        if (this.isTextContentBasic) {
+        if (this.shouldTestTextContent) {
             for (const line of this.textContent.split('\n')) {
                 str += childTab + `"${line}"\n`
             }

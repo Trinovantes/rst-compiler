@@ -121,7 +121,7 @@ export class RstDirective extends RstNode {
         return this._rawBodyText ?? ''
     }
 
-    override get isTextContentBasic(): boolean {
+    override get shouldTestTextContent(): boolean {
         return false
     }
 

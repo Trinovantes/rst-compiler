@@ -53,7 +53,7 @@ export class RstComment extends RstNode {
         return false
     }
 
-    override get isTextContentBasic(): boolean {
+    override get shouldTestTextContent(): boolean {
         return true
     }
 

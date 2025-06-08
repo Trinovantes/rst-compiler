@@ -51,7 +51,7 @@ export class RstLiteralBlock extends RstNode {
         return 'LiteralBlock'
     }
 
-    override get isTextContentBasic(): boolean {
+    override get shouldTestTextContent(): boolean {
         return true
     }
 
