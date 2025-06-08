@@ -1,7 +1,7 @@
 {
     "name": "rst-compiler",
     "type": "module",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "Parses reStructuredText and generates HTML or VitePress-compatible Markdown",
     "license": "MIT",
     "private": false,
