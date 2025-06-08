@@ -26,7 +26,7 @@ export class RstDefinitionListItem extends RstNode {
         classifiers: ReadonlyArray<ContinuousText>,
         definition: ReadonlyArray<RstNode>,
     ) {
-        super(registrar, source)
+        super(registrar, source, definition)
         this.term = term
         this.classifiers = classifiers
         this.definition = definition
@@ -72,6 +72,14 @@ export class RstDefinitionListItem extends RstNode {
 
     override get nodeType(): RstNodeType {
         return 'DefinitionListItem'
+    }
+
+    override get isTextContentBasic() {
+        return false
+    }
+
+    override get shouldTestChildren() {
+        return false
     }
 
     override toString(depth = 0): string {

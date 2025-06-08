@@ -65,7 +65,7 @@ export abstract class RstNode {
 
         if (this.isTextContentBasic) {
             root.text = this.textContent
-        } else if (this.children.length > 0) {
+        } else if (this.shouldTestChildren) {
             root.children = this.children.map((child) => child.toObject())
         }
 
@@ -125,6 +125,10 @@ export abstract class RstNode {
             (this.children[0].nodeType === 'Text') ||
             (this.children[0].nodeType === 'Paragraph' && this.children[0].isTextContentBasic)
         )
+    }
+
+    get shouldTestChildren(): boolean {
+        return this.children.length > 0
     }
 
     get textContent(): string {

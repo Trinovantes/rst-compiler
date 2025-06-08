@@ -25,7 +25,7 @@ export class RstFieldListItem extends RstNode {
         name: ContinuousText,
         body: ReadonlyArray<RstNode>,
     ) {
-        super(registrar, source)
+        super(registrar, source, body)
         this.name = name
         this.body = body
     }
@@ -66,6 +66,14 @@ export class RstFieldListItem extends RstNode {
 
     override get nodeType(): RstNodeType {
         return 'FieldListItem'
+    }
+
+    override get isTextContentBasic() {
+        return false
+    }
+
+    override get shouldTestChildren() {
+        return false
     }
 
     get nameText(): string {
