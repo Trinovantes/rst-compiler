@@ -278,7 +278,8 @@ export class RstGeneratorState {
 
             if (currNode instanceof RstHyperlinkTarget) {
                 if (currNode.isAlias) {
-                    currNode = this.simpleNameResolver.resolveSimpleName(normalizeSimpleName(currNode.target))
+                    // HyperlinkTarget aliasing another node is defined to have trailing underscore
+                    currNode = this.simpleNameResolver.resolveSimpleName(normalizeSimpleName(currNode.target.substring(0, currNode.target.length - 1)))
                     continue
                 }
                 if (currNode.isTargetingNextNode) {
@@ -291,7 +292,14 @@ export class RstGeneratorState {
 
             if (currNode instanceof RstHyperlinkRef) {
                 if (currNode.isAlias) {
-                    currNode = this.simpleNameResolver.resolveSimpleName(normalizeSimpleName(currNode.target))
+                    if (currNode.isEmbeded) {
+                        // HyperlinkRef aliasing another node inside an embeded is defined to have trailing underscore (e.g. `label <target_>`_)
+                        currNode = this.simpleNameResolver.resolveSimpleName(normalizeSimpleName(currNode.target.substring(0, currNode.target.length - 1)))
+                    } else {
+                        // Otherwise the target is treated as the entire alias name (e.g. `target`_)
+                        currNode = this.simpleNameResolver.resolveSimpleName(normalizeSimpleName(currNode.target))
+                    }
+
                     continue
                 }
 

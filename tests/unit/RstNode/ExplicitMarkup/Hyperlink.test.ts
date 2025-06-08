@@ -928,4 +928,39 @@ describe('HyperlinkRef', () => {
             # if/else/elif {#if-else-elif}
         `)
     })
+
+    describe('when HyperlinkTarget has labels with similar text but different allowed symbols, it parses them as separate SimpleNames', () => {
+        const input = `
+            .. _"code": directives.html#code
+
+            .. _\`:code:\`: roles.html#code
+        `
+
+        testParser(input, [
+            {
+                type: 'HyperlinkTarget',
+                data: {
+                    label: '"code"',
+                    target: 'directives.html#code',
+                },
+            },
+            {
+                type: 'HyperlinkTarget',
+                data: {
+                    label: ':code:',
+                    target: 'roles.html#code',
+                },
+            },
+        ])
+
+        testGenerator(input, `
+            <!-- HyperlinkTarget id:1 children:0 label:""code"" target:"directives.html#code" resolvedUrl:"directives.html#code" -->
+
+            <!-- HyperlinkTarget id:2 children:0 label:":code:" target:"roles.html#code" resolvedUrl:"roles.html#code" -->
+        `, `
+            [HyperlinkTarget id:1 children:0 label:""code"" target:"directives.html#code" resolvedUrl:"directives.html#code"]: #
+
+            [HyperlinkTarget id:2 children:0 label:":code:" target:"roles.html#code" resolvedUrl:"roles.html#code"]: #
+        `)
+    })
 })

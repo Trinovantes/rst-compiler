@@ -1,11 +1,11 @@
 import { Brand } from '@/@types/Brand.js'
 
-export const simpleNameReStr = '(?:[a-zA-Z](?:-?[a-zA-Z0-9]+)*)'
+export const simpleNameReStr = '(?:[a-zA-Z](?:-?[a-zA-Z0-9_.:+<>]+)*(?:-?[a-zA-Z0-9.:+<>]+))'
 
 /**
- * Reference Name (called SimpleName in this project to avoid confusion with *Ref RstNodes)
+ * Reference Name (called SimpleName in this project to avoid confusion with RstNodes that include "Ref" e.g. SubstitutionRef)
  *
- * For cross-referencing elements (usually set as "id" attr of html tags)
+ * For cross-referencing elements
  * https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#reference-names
  *
  *  For (case-insensitive):
@@ -18,6 +18,11 @@ export const simpleNameReStr = '(?:[a-zA-Z](?:-?[a-zA-Z0-9]+)*)'
  * - SubstitutionRef label
  */
 export type SimpleName = Brand<string, 'SimpleName'>
+
+/**
+ * SimpleName sanitized to be safe to use in html id attr
+ */
+export type SanitizedSimpleName = Brand<string, 'SanitizedSimpleName'>
 
 /**
  * This function converts origName to normalized form for cross-referencing between documents and for output
@@ -35,19 +40,41 @@ export function normalizeSimpleName(origName: string): SimpleName {
     // 2. Lowercase all letters
     origName = origName.toLowerCase()
 
-    // 3. Non-alphanumeric characters to hyphens
+    // 3. Invalid characters to hyphens
+    origName = origName.replaceAll(/[^a-zA-Z0-9\-_.:+<>]/g, '-')
+
+    // 4. Consecutive hyphens to one hyphen
+    origName = origName.replaceAll(/-{2,}/g, '-')
+
+    // 5. Strip leading hyphens
+    origName = origName.replace(/^[-]*/, '')
+
+    // 6. Strip trailing hyphens
+    origName = origName.replace(/[-]*$/, '')
+
+    return origName as SimpleName
+}
+
+export function sanitizeSimpleName(origName: string): SanitizedSimpleName {
+    // 1. Accented characters to base character
+    origName = origName.normalize('NFD').replaceAll(/[\u0300-\u036f]/g, '')
+
+    // 2. Lowercase all letters
+    origName = origName.toLowerCase()
+
+    // 3. Invalid characters to hyphens
     origName = origName.replaceAll(/[^a-zA-Z0-9]/g, '-')
 
-    // 4. Consequtive hyphens to one hyphen
+    // 4. Consecutive hyphens to one hyphen
     origName = origName.replaceAll(/-{2,}/g, '-')
 
     // 5. Strip leading hyphens/numbers
     origName = origName.replace(/^[-\d]*/, '')
 
     // 6. Strip trailing hyphens
-    origName = origName.replace(/-*$/, '')
+    origName = origName.replace(/[-]*$/, '')
 
-    return origName as SimpleName
+    return origName as SanitizedSimpleName
 }
 
 export function isSimpleName(text: string): text is SimpleName {

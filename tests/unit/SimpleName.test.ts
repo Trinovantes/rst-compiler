@@ -4,13 +4,13 @@ import { describe, expect, test } from 'vitest'
 describe('normalizeSimpleName', () => {
     test('it should convert accented characters to their base character', () => {
         const input = 'Thíś íś a stríñg with áccéntéd charácters.'
-        const expectedOutput = 'this-is-a-string-with-accented-characters'
+        const expectedOutput = 'this-is-a-string-with-accented-characters.'
         expect(normalizeSimpleName(input)).toBe(expectedOutput)
     })
 
     test('it should convert non-alphanumeric characters to hyphens', () => {
-        const input = '1000_Steps'
-        const expectedOutput = 'steps'
+        const input = '1000_!!!Steps'
+        const expectedOutput = '1000_-steps'
         expect(normalizeSimpleName(input)).toBe(expectedOutput)
     })
 
@@ -26,14 +26,8 @@ describe('normalizeSimpleName', () => {
         expect(normalizeSimpleName(input)).toBe(expectedOutput)
     })
 
-    test('it should strip leading number', () => {
-        const input = '0a'
-        const expectedOutput = 'a'
-        expect(normalizeSimpleName(input)).toBe(expectedOutput)
-    })
-
-    test('it should strip both leading hyphen and number', () => {
-        const input = '0-a'
+    test('it should strip both leading hyphen', () => {
+        const input = '--a'
         const expectedOutput = 'a'
         expect(normalizeSimpleName(input)).toBe(expectedOutput)
     })
@@ -45,8 +39,8 @@ describe('normalizeSimpleName', () => {
     })
 
     test.each([
-        ['Rot.Gelb&Grün:+2008', 'rot-gelb-grun-2008'],
-        ['1000_Steps!', 'steps'],
+        ['Rot.Gelb&Grün:+2008', 'rot.gelb-grun:+2008'],
+        ['1000_Steps!', '1000_steps'],
         ['A HYPERLINK', 'a-hyperlink'],
         ['a    hyperlink', 'a-hyperlink'],
         ['A HYPERLINK', 'a-hyperlink'],
