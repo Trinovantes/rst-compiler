@@ -176,7 +176,7 @@ const explicitHyperlinkTargetRe = new RegExp(
     '$',
 )
 
-const anonymousHyperlinkTargetRe = /^__(?: (?<hyperlinkTarget>.+))?$/
+const anonymousHyperlinkTargetRe = /^ *__(?: (?<hyperlinkTarget>.+))?$/
 
 export const hyperlinkTargetParser: RstNodeParser<'HyperlinkTarget'> = {
     parse: (parserState, indentSize) => {
