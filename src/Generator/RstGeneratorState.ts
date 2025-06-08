@@ -232,7 +232,7 @@ export class RstGeneratorState {
         if (node.isAnonymous && !node.isEmbeded) {
             const anonymousHyperlinkTarget = this.simpleNameResolver.anonymousHyperlinkRefToTarget.get(node)
             if (!anonymousHyperlinkTarget) {
-                throw new RstGeneratorError(this, `Failed to resolve [${node.toShortString()}]`)
+                throw new RstGeneratorError(this, `Failed to resolve [${node.toShortString()}] (${node.lineNums})`)
             }
 
             return this.resolveNodeToUrl(anonymousHyperlinkTarget)

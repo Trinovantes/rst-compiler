@@ -169,8 +169,8 @@ export class SimpleNameResolver {
         if (existingTargetedNode && !existingTargetedNode.equals(node)) {
             throw new Error(trimCommonIndent(`
                 SimpleName:"${simpleName}" already exists
-                    new: [${node.toShortString()}]
-                    old: [${existingTargetedNode.toShortString()}]
+                    new: [${node.toShortString()}] (${node.lineNums})
+                    old: [${existingTargetedNode.toShortString()}] (${existingTargetedNode.lineNums})
             `))
         }
 
@@ -192,8 +192,8 @@ export class SimpleNameResolver {
             if (existingTargetedNodeIsExplict) {
                 throw new Error(trimCommonIndent(`
                     id:"${idAttr}" already exists
-                        new: [${node.toShortString()}]
-                        old: [${existingTargetedNode.toShortString()}]
+                        new: [${node.toShortString()}] (${node.lineNums})
+                        old: [${existingTargetedNode.toShortString()}] (${existingTargetedNode.lineNums})
                 `))
             }
 

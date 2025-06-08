@@ -147,7 +147,7 @@ export abstract class RstNode {
         return str
     }
 
-    protected get lineNums(): string {
+    get lineNums(): string {
         const start = this.source.startLineIdx + 1 // Prints line numbers in 1-based counting for ease of reading
         const end = this.source.endLineIdx // Do not +1 so this is inclusive
         const lineNums = (start === end)
