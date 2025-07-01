@@ -9,12 +9,12 @@
 // ----------------------------------------------------------------------------
 
 export type PyTokenType =
-    'NOT' |
-    'AND' |
-    'OR' |
-    'L_PAREN' |
-    'R_PAREN' |
-    'TERMINAL'
+    | 'NOT'
+    | 'AND'
+    | 'OR'
+    | 'L_PAREN'
+    | 'R_PAREN'
+    | 'TERMINAL'
 
 export type PyToken = {
     type: PyTokenType

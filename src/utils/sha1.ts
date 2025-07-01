@@ -35,11 +35,11 @@ export function sha1(input: string): string {
         const w = new Array<number>(80)
 
         for (let i = 0; i < 16; i++) {
-            const valBigEndian =
-                buffer[chunkOffsetBytes + (i * 4) + 0] << (24 - 0 * 8) |
-                buffer[chunkOffsetBytes + (i * 4) + 1] << (24 - 1 * 8) |
-                buffer[chunkOffsetBytes + (i * 4) + 2] << (24 - 2 * 8) |
-                buffer[chunkOffsetBytes + (i * 4) + 3] << (24 - 3 * 8)
+            const valBigEndian = 0
+                | buffer[chunkOffsetBytes + (i * 4) + 0] << (24 - 0 * 8)
+                | buffer[chunkOffsetBytes + (i * 4) + 1] << (24 - 1 * 8)
+                | buffer[chunkOffsetBytes + (i * 4) + 2] << (24 - 2 * 8)
+                | buffer[chunkOffsetBytes + (i * 4) + 3] << (24 - 3 * 8)
 
             w[i] = valBigEndian
         }

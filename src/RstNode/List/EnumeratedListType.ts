@@ -1,11 +1,11 @@
 import { romanUpperRe, romanLowerRe, romanToInt } from '@/utils/romanToInt.js'
 
 export type RstEnumeratedListType =
-    'Arabic' |
-    'AlphabetUpper' |
-    'AlphabetLower' |
-    'RomanUpper' |
-    'RomanLower'
+    | 'Arabic'
+    | 'AlphabetUpper'
+    | 'AlphabetLower'
+    | 'RomanUpper'
+    | 'RomanLower'
 
 export function getEnumeratedListType(bulletValue: string): RstEnumeratedListType | null {
     switch (true) {

@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-
 import { RstNodeMap } from './RstNodeMap.js'
 import { RstNodeId, RstNodeRegistrar, RstNodeRegistration } from '@/Parser/RstNodeRegistrar.js'
 import { RstNodeType } from './RstNodeType.js'
@@ -14,12 +12,12 @@ export type RstNodeObject = {
     type: RstNodeType
     text?: string
     data?: Record<string,
-        string | ReadonlyArray<string> |
-        number | ReadonlyArray<number> |
-        boolean | ReadonlyArray<boolean> |
-        RstNodeObject | ReadonlyArray<RstNodeObject> | ReadonlyArray<ReadonlyArray<RstNodeObject>> |
-        Record<string, string | undefined> | ReadonlyArray<Record<string, string | undefined>> |
-        undefined | null
+        | string | ReadonlyArray<string>
+        | number | ReadonlyArray<number>
+        | boolean | ReadonlyArray<boolean>
+        | RstNodeObject | ReadonlyArray<RstNodeObject> | ReadonlyArray<ReadonlyArray<RstNodeObject>>
+        | Record<string, string | undefined> | ReadonlyArray<Record<string, string | undefined>>
+        | undefined | null
     >
     children?: Array<RstNodeObject>
 }
