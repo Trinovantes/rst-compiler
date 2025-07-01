@@ -58,6 +58,7 @@ import { rawTextPlugins } from './Plugins/RawText/RawTextPlugin.js'
 import { videoDirectivePlugins } from './Plugins/Video/VideoPlugin.js'
 import { pepRfcInterpretedTextPlugins } from './Plugins/InterpretedText/PepRfcPlugin.js'
 import { interpretedTextPlugins } from './Plugins/InterpretedText/InterpretedTextPlugin.js'
+import { rubricDirectivePlugin } from './Plugins/Rubric/RubricPlugin.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node Parsers
@@ -203,6 +204,7 @@ export const htmlPlugins: ReadonlyArray<RstCompilerPlugin> = [
     onlyDirectivePlugin,
     pepRfcInterpretedTextPlugins.htmlPlugin,
     rawTextPlugins.htmlPlugin,
+    rubricDirectivePlugin.htmlPlugin,
     tableDirectivePlugin.htmlPlugin,
     tabsDirectivePlugins.htmlPlugin,
     tocTreeDirectivePlugins.htmlPlugin,
@@ -223,6 +225,7 @@ export const mdPlugins: ReadonlyArray<RstCompilerPlugin> = [
     onlyDirectivePlugin,
     pepRfcInterpretedTextPlugins.mdPlugin,
     rawTextPlugins.mdPlugin,
+    rubricDirectivePlugin.mdPlugin,
     tableDirectivePlugin.mdPlugin,
     tabsDirectivePlugins.mdPlugin,
     tocTreeDirectivePlugins.mdPlugin,
