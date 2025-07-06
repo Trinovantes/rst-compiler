@@ -1,9 +1,10 @@
 import { createDirectiveGenerators } from '@/Generator/RstGenerator.js'
 import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
 import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
+import { RstParagraph } from '@/RstNode/Block/Paragraph.js'
 import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
 import { RstBulletList } from '@/RstNode/List/BulletList.js'
-import { RstTable, listTableGenerators, tableGenerators } from '@/RstNode/Table/Table.js'
+import { RstTable, csvTableGenerators, listTableGenerators, tableGenerators } from '@/RstNode/Table/Table.js'
 import { assertNode } from '@/utils/assertNode.js'
 
 // ----------------------------------------------------------------------------
@@ -46,6 +47,24 @@ export const listTableDirectiveGenerators = createDirectiveGenerators(
     },
 )
 
+const CSV_TABLE_DIRECTIVE = 'csv-table'
+
+export const csvTableDirectiveGenerators = createDirectiveGenerators(
+    [
+        CSV_TABLE_DIRECTIVE,
+    ],
+
+    (generatorState, node) => {
+        const paragraph = getCsvTableNode(generatorState, node)
+        csvTableGenerators.htmlGenerator.generate(generatorState, paragraph, node)
+    },
+
+    (generatorState, node) => {
+        const paragraph = getCsvTableNode(generatorState, node)
+        csvTableGenerators.mdGenerator.generate(generatorState, paragraph, node)
+    },
+)
+
 // ----------------------------------------------------------------------------
 // MARK: Plugin
 // ----------------------------------------------------------------------------
@@ -54,11 +73,13 @@ export const tableDirectivePlugin = createRstCompilerPlugins({
     directiveGenerators: [
         tableDirectiveGenerators,
         listTableDirectiveGenerators,
+        csvTableDirectiveGenerators,
     ],
 
     onBeforeParse: (parserOption) => {
         parserOption.directivesWithInitContent.push(TABLE_DIRECTIVE)
         parserOption.directivesWithInitContent.push(LIST_TABLE_DIRECTIVE)
+        parserOption.directivesWithInitContent.push(CSV_TABLE_DIRECTIVE)
     },
 })
 
@@ -82,4 +103,13 @@ function getListTableNode(generatorState: RstGeneratorState, directiveNode: RstD
     assertNode(generatorState, list, 'BulletList')
 
     return list
+}
+
+function getCsvTableNode(generatorState: RstGeneratorState, directiveNode: RstDirective): RstParagraph {
+    assertNode(generatorState, directiveNode, 'Directive', 1)
+
+    const paragraph = directiveNode.children[0]
+    assertNode(generatorState, paragraph, 'Paragraph')
+
+    return paragraph
 }

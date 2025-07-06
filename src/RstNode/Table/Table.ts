@@ -9,6 +9,7 @@ import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
 import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
 import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
 import { assertNode } from '@/utils/assertNode.js'
+import { parseCsv } from '@/utils/parseCsv.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -163,6 +164,57 @@ export const listTableGenerators = createNodeGenerators<'BulletList', [RstDirect
     },
 )
 
+export const csvTableGenerators = createNodeGenerators<'Paragraph', [RstDirective]>(
+    'Paragraph',
+
+    (generatorState, node, directiveNode) => {
+        const numHeadRows = parseInt(directiveNode.config?.getField('header-rows') ?? '0')
+        const tableAlign = directiveNode.config?.getField('align') ?? null
+        const tableWidth = directiveNode.config?.getField('width') ?? null
+        const colWidths = getColWidths(generatorState, directiveNode, false)
+
+        const explicitHeaderRows = parseCsv(directiveNode.config?.getField('header'))
+        const csvRows = parseCsv(node.rawTextContent)
+        const headRows = csvRows.slice(0, numHeadRows)
+        const bodyRows = csvRows.slice(numHeadRows)
+        const numColumns = Math.max(...csvRows.map((row) => row.length), explicitHeaderRows?.length ?? 0)
+
+        const tableAttrs = new HtmlAttributeStore()
+        if (tableWidth) {
+            tableAttrs.set('style', getCssWidth(tableWidth))
+        }
+
+        generatorState.useNoLineBreaksBetweenBlocks(() => {
+            generatorState.writeLineHtmlTagWithAttr('table', node, tableAttrs, () => {
+                if (directiveNode.initContent.length > 0) {
+                    generatorState.writeLineHtmlTag('caption', null, () => {
+                        generatorState.visitNodes(directiveNode.initContent)
+                    })
+                }
+
+                if (explicitHeaderRows.length > 0 || headRows.length > 0) {
+                    generatorState.writeLineHtmlTag('thead', null, () => {
+                        for (const headRow of explicitHeaderRows) {
+                            generateCsvTableRow(generatorState, headRow, numColumns, 'th', colWidths, tableAlign)
+                        }
+                        for (const headRow of headRows) {
+                            generateCsvTableRow(generatorState, headRow, numColumns, 'th', colWidths, tableAlign)
+                        }
+                    })
+                }
+
+                if (bodyRows.length > 0) {
+                    generatorState.writeLineHtmlTag('tbody', null, () => {
+                        for (const bodyRow of bodyRows) {
+                            generateCsvTableRow(generatorState, bodyRow, numColumns, 'td', colWidths, tableAlign)
+                        }
+                    })
+                }
+            })
+        })
+    },
+)
+
 // ----------------------------------------------------------------------------
 // MARK: Helpers
 // ----------------------------------------------------------------------------
@@ -260,4 +312,26 @@ function generateListTableRows(generatorState: RstGeneratorState, rowNodes: Read
             }
         })
     }
+}
+
+function generateCsvTableRow(generatorState: RstGeneratorState, columns: Array<string>, numColumns: number, cellTag: 'th' | 'td', colWidths: Array<string>, tableAlign: string | null): void {
+    for (let i = columns.length; i < numColumns; i++) {
+        columns.push('')
+    }
+
+    generatorState.writeLineHtmlTag('tr', null, () => {
+        for (let idx = 0; idx < columns.length; idx++) {
+            const attrs = new HtmlAttributeStore()
+            if (colWidths.length > 0) {
+                attrs.append('style', getCssWidth(colWidths[idx]))
+            }
+            if (tableAlign) {
+                attrs.append('style', `text-align:${tableAlign};`)
+            }
+
+            generatorState.writeLineHtmlTagWithAttr(cellTag, null, attrs, () => {
+                generatorState.writeLine(columns[idx])
+            })
+        }
+    })
 }
