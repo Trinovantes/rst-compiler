@@ -183,21 +183,21 @@ export class SimpleNameResolver {
         this._implicitNodes.set(node, simpleName)
     }
 
-    registerNodeAsLinkable(node: RstNode, idAttr: SimpleName, linkableFromOutside = true): void {
-        this._htmlAttrResolver.registerNodeAsLinkable(node, idAttr)
+    registerNodeAsLinkable(node: RstNode, simpleName: SimpleName, linkableFromOutside = true): void {
+        this._htmlAttrResolver.registerNodeAsLinkable(node, simpleName)
 
         if (linkableFromOutside) {
-            const existingTargetedNode = this._nodesLinkableFromOutside.get(idAttr)
+            const existingTargetedNode = this._nodesLinkableFromOutside.get(simpleName)
             const existingTargetedNodeIsExplict = existingTargetedNode && this._explicitNodes.has(existingTargetedNode)
             if (existingTargetedNodeIsExplict) {
                 throw new Error(trimCommonIndent(`
-                    id:"${idAttr}" already exists
+                    SimpleName:"${simpleName}" already exists
                         new: [${node.toShortString()}] (${node.lineNums})
                         old: [${existingTargetedNode.toShortString()}] (${existingTargetedNode.lineNums})
                 `))
             }
 
-            this._nodesLinkableFromOutside.set(idAttr, node)
+            this._nodesLinkableFromOutside.set(simpleName, node)
         }
     }
 

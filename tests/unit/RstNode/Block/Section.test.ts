@@ -94,7 +94,7 @@ describe('when there are multiple Sections with different markers, the first Sec
     `)
 })
 
-describe('when there are multiple Sections with same normalized id, it generates first Section\'s id based on text and second Section\'s id based on node', () => {
+describe('when multiple Sections resolve to same candidate name, it appends counter to the candidate until it is unique', () => {
     const input = `
         ---
         introduction
@@ -134,6 +134,47 @@ describe('when there are multiple Sections with same normalized id, it generates
         # introduction {#introduction}
 
         # Introduction {#introduction-1}
+    `)
+})
+
+describe('when multiple Sections resolve to different candidate names but same sanitized name (html id), it generates another unique html id', () => {
+    const input = `
+        2D
+        ---
+
+        3D
+        ---
+    `
+
+    testParser(input, [
+        {
+            type: 'Section',
+            text: '2D',
+            data: {
+                level: 1,
+            },
+        },
+        {
+            type: 'Section',
+            text: '3D',
+            data: {
+                level: 1,
+            },
+        },
+    ])
+
+    testGenerator(input, `
+        <h1 id="d">
+            2D
+        </h1>
+
+        <h1 id="id1">
+            3D
+        </h1>
+    `, `
+        # 2D {#d}
+
+        # 3D {#id1}
     `)
 })
 

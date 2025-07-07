@@ -6,7 +6,7 @@ import { sanitizeSimpleName, SimpleName, SanitizedSimpleName } from '@/SimpleNam
 export class HtmlAttrResolver {
     private _idCounter = 0
 
-    private readonly _htmlIds = new Set<SanitizedSimpleName>()
+    private readonly _htmlIds = new Set<SanitizedSimpleName>() // Set of values from _nodesWithId map (used for fast lookups)
     private readonly _nodesWithId = new Map<RstNode, SanitizedSimpleName>() // Tracks nodes that are targeted by <a> somewhere (e.g. chained HyperlinkTarget, FootnoteDef, CitationDef) and maps to their intended id
     private readonly _nodesWithClass = new Map<RstNode, Array<RstDirective>>() // Tracks nodes that have user-defined html class set via "class" Directive
 
@@ -36,6 +36,8 @@ export class HtmlAttrResolver {
         }
 
         const htmlId = this.getNextAvailableHtmlId(name)
+
+        this._htmlIds.add(htmlId)
         this._nodesWithId.set(node, htmlId)
 
         return htmlId
