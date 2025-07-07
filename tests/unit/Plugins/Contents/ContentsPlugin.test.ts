@@ -1,6 +1,16 @@
 import { describe } from 'vitest'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
+describe('empty table of contents do not generate any markup', () => {
+    const input = `
+        .. contents::
+    `
+
+    testGenerator(input, `
+        <!-- Directive id:1 children:0 directive:"contents" initContentText:"" -->
+    `)
+})
+
 describe('table of contents includes all sections', () => {
     const input = `
         h1 before

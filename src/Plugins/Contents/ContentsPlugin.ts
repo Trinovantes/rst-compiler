@@ -24,6 +24,11 @@ export const contentsDirectiveGenerators = createDirectiveGenerators(
             ? generateLocalToc(node, maxDepth)
             : generateGlobalToc(node, maxDepth)
 
+        if (!node.initContentText && trees.length === 0) {
+            generatorState.writeLineHtmlComment(node.toShortString())
+            return
+        }
+
         const attrs = new HtmlAttributeStore({ class: 'contents' })
         const htmlId = generatorState.htmlAttrResolver.getNodeHtmlId(node)
         if (htmlId) {
@@ -31,9 +36,11 @@ export const contentsDirectiveGenerators = createDirectiveGenerators(
         }
 
         generatorState.writeLineHtmlTagWithAttr('div', node, attrs, () => {
-            generatorState.writeLineHtmlTagWithAttr('p', null, new HtmlAttributeStore({ class: 'title' }), () => {
-                generatorState.writeLine(node.initContentText)
-            })
+            if (node.initContentText) {
+                generatorState.writeLineHtmlTagWithAttr('p', null, new HtmlAttributeStore({ class: 'title' }), () => {
+                    generatorState.writeLine(node.initContentText)
+                })
+            }
 
             if (trees.length > 0) {
                 generatorState.writeLineHtmlTag('ul', null, () => {
