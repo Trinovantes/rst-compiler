@@ -2,8 +2,20 @@ type ListAttrKey = 'value' | 'type'
 type TableAttrKey = 'rowspan' | 'colspan'
 type VideoAttrKey = 'muted' | 'controls' | 'autoplay' | 'loop' | 'preload' | 'src' | 'type'
 type ImageAttrKey = 'src' | 'alt' | 'width' | 'height' | 'loading'
+type LinkAttrKey = 'href'
 
-type AttrKey = 'id' | 'class' | 'style' | `data-${string}` | 'role' | 'slot' | ListAttrKey | TableAttrKey | VideoAttrKey | ImageAttrKey
+type AttrKey =
+    | 'id'
+    | 'class'
+    | 'style'
+    | `data-${string}`
+    | 'role'
+    | 'slot'
+    | ListAttrKey
+    | TableAttrKey
+    | VideoAttrKey
+    | ImageAttrKey
+    | LinkAttrKey
 
 export class HtmlAttributeStore {
     private readonly _store = new Map<string, Array<string>>()

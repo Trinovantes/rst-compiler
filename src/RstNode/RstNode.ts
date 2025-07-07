@@ -186,6 +186,19 @@ export abstract class RstNode {
     // MARK: Tree Traversal
     // ------------------------------------------------------------------------
 
+    getRoot(): RstNode {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let currNode: RstNode | null = this
+
+        while (true) {
+            if (!currNode.parent) {
+                return currNode
+            }
+
+            currNode = currNode.parent
+        }
+    }
+
     getParent<T extends keyof RstNodeMap>(expectedParentType: T): RstNodeMap[T] | null {
         if (!this._parent) {
             return null
@@ -244,6 +257,23 @@ export abstract class RstNode {
             }
 
             prev = child
+        }
+
+        return null
+    }
+
+    getPrevNodeInTree(): RstNode | null {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let currNode: RstNode | null = this
+        let prevSibling: RstNode | null = null
+
+        while (currNode !== null) {
+            prevSibling = currNode.getPrevSibling()
+            if (prevSibling) {
+                return prevSibling
+            }
+
+            currNode = currNode._parent
         }
 
         return null

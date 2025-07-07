@@ -59,6 +59,7 @@ import { videoDirectivePlugins } from './Plugins/Video/VideoPlugin.js'
 import { pepRfcInterpretedTextPlugins } from './Plugins/InterpretedText/PepRfcPlugin.js'
 import { interpretedTextPlugins } from './Plugins/InterpretedText/InterpretedTextPlugin.js'
 import { rubricDirectivePlugin } from './Plugins/Rubric/RubricPlugin.js'
+import { contentsDirectivePlugins } from './Plugins/Contents/ContentsPlugin.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node Parsers
@@ -195,6 +196,7 @@ export const htmlPlugins: ReadonlyArray<RstCompilerPlugin> = [
     centeredDirectivePlugins.htmlPlugin,
     codePlugins.htmlPlugin,
     containerDirectivePlugins.htmlPlugin,
+    contentsDirectivePlugins.htmlPlugin,
     htmlClassDirectivePlugins.htmlPlugin,
     imageDirectivePlugins.htmlPlugin,
     interpretedTextPlugins.htmlPlugin,
@@ -216,6 +218,7 @@ export const mdPlugins: ReadonlyArray<RstCompilerPlugin> = [
     centeredDirectivePlugins.mdPlugin,
     codePlugins.mdPlugin,
     containerDirectivePlugins.mdPlugin,
+    contentsDirectivePlugins.mdPlugin,
     htmlClassDirectivePlugins.mdPlugin,
     imageDirectivePlugins.mdPlugin,
     interpretedTextPlugins.mdPlugin,
