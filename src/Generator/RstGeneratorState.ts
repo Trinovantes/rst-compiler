@@ -238,22 +238,28 @@ export class RstGeneratorState {
             return this.resolveNodeToUrl(anonymousHyperlinkTarget)
         }
 
+        const candidateSimpleNames = new Array<SimpleName>()
+
         // HyperlinkRef can be written without space between label and angle brackets
         // - Some expect the angle brackets to contain the target url
         // - Others expect the whole string as label
-        // Thus we need to test both cases
         if (node.isEmbeded) {
-            const candidateSimpleName = normalizeSimpleName(`${node.label}<${node.target}>`)
-            const candidateUrl = this.resolveSimpleNameToUrl(candidateSimpleName)
-            if (candidateUrl) {
-                return candidateUrl
-            }
+            candidateSimpleNames.push(normalizeSimpleName(`${node.label}<${node.target}>`))
         }
 
-        const targetSimpleName = normalizeSimpleName(node.target)
-        const targetUrl = this.resolveSimpleNameToUrl(targetSimpleName)
-        if (targetUrl) {
-            return targetUrl
+        // HyperlinkRef can have aliases inside embeded targets e.g. `label <target_>`_
+        if (node.isEmbeded && node.isAlias) {
+            candidateSimpleNames.push(normalizeSimpleName(node.target.substring(0, node.target.length - 1)))
+        }
+
+        // Finally fallback to treating the target as a SimpleName as-is
+        candidateSimpleNames.push(normalizeSimpleName(node.target))
+
+        for (const simpleName of candidateSimpleNames) {
+            const targetUrl = this.resolveSimpleNameToUrl(simpleName)
+            if (targetUrl) {
+                return targetUrl
+            }
         }
 
         return node.target
