@@ -1,4 +1,4 @@
-import { romanToInt } from '@/utils/romanToInt.js'
+import { romanToInt } from '../../../src/utils/romanToInt.js'
 import { expect, test } from 'vitest'
 
 test.each([

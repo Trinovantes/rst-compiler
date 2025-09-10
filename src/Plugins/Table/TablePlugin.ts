@@ -1,11 +1,12 @@
-import { createDirectiveGenerators } from '@/Generator/RstGenerator.js'
-import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
-import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
-import { RstParagraph } from '@/RstNode/Block/Paragraph.js'
-import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
-import { RstBulletList } from '@/RstNode/List/BulletList.js'
-import { RstTable, csvTableGenerators, listTableGenerators, tableGenerators } from '@/RstNode/Table/Table.js'
-import { assertNode } from '@/utils/assertNode.js'
+import { tableGenerators, listTableGenerators, csvTableGenerators } from '../../Generator/NodeGenerators/tableGenerators.js'
+import { createDirectiveGenerators } from '../../Generator/RstGenerator.js'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
+import { RstParagraph } from '../../RstNode/Block/Paragraph.js'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
+import { RstBulletList } from '../../RstNode/List/BulletList.js'
+import { RstTable } from '../../RstNode/Table/Table.js'
+import { assertNode } from '../../utils/assertNode.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

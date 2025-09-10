@@ -1,4 +1,4 @@
-import { getFilePathWithoutRst } from '@/Generator/FilePathWithoutRst.js'
+import { getFilePathWithoutRst } from '../../../src/Generator/FilePathWithoutRst.js'
 import { expect, test } from 'vitest'
 
 test('when file path includes rst file extension, it removes the extension', () => {

@@ -1,7 +1,7 @@
-import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
-import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
-import { RstNode } from '@/RstNode/RstNode.js'
-import { RstNodeMap } from '@/RstNode/RstNodeMap.js'
+import { RstGeneratorError } from '../Generator/RstGeneratorError.js'
+import { RstGeneratorState } from '../Generator/RstGeneratorState.js'
+import { RstNode } from '../RstNode/RstNode.js'
+import type { RstNodeMap } from '../RstNode/RstNodeMap.js'
 
 export function assertNode<T extends keyof RstNodeMap>(generatorState: RstGeneratorState, node: RstNode | null | undefined, expectedNodeType: T, expectedNumChildren?: number): asserts node is RstNodeMap[T] {
     if (!node) {

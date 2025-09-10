@@ -1,6 +1,6 @@
-import { RstNodeMap } from './RstNodeMap.js'
-import { RstNodeId, RstNodeRegistrar, RstNodeRegistration } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from './RstNodeType.js'
+import type { RstNodeMap } from './RstNodeMap.js'
+import type { RstNodeId, RstNodeRegistrar, RstNodeRegistration } from '../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from './RstNodeType.js'
 
 export type RstNodeSource = {
     startLineIdx: number

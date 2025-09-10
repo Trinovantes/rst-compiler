@@ -1,9 +1,7 @@
-import { RstNode, RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
-import { removeEscapeChar } from '@/utils/removeEscapeChar.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
+import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.js'
+import { removeEscapeChar } from '../../utils/removeEscapeChar.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -88,19 +86,3 @@ export class RstText extends RstNode {
 }
 
 export type ContinuousText = Array<RstText>
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const textGenerators = createNodeGenerators(
-    'Text',
-
-    (generatorState, node) => {
-        generatorState.writeTextWithLinePrefix(sanitizeHtml(node.textContent))
-    },
-
-    (generatorState, node) => {
-        generatorState.writeTextWithLinePrefix(sanitizeHtml(node.textContent))
-    },
-)

@@ -1,5 +1,5 @@
 import { RstText } from '../RstNode/Inline/Text.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
+import { RstNodeRegistrar } from '../Parser/RstNodeRegistrar.js'
 
 export function mergeSequentialTextNodes(registrar: RstNodeRegistrar, tokens: Array<RstText>): Array<RstText> {
     const mergedTokens = new Array<RstText>()

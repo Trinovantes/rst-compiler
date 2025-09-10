@@ -266,10 +266,10 @@ MARK: Dev Notes
 
 Create `./tests/playground/playground.rst` (not tracked by Git) and write test input
 
-* Run `yarn playPy` to run `docutils` (Python reference implementation) on test input
+* Run `pnpm playPy` to run `docutils` (Python reference implementation) on test input
 
-* Run `yarn playJs` to run `rst-compiler` on test input (requires [Bun](https://bun.sh/) runtime)
+* Run `pnpm playJs` to run `rst-compiler` on test input (requires [Bun](https://bun.sh/) runtime)
 
     * Press `F5` in VSCode to run this command inside the debugger
 
-    * Run `yarn server` to serve the output at [localhost:8080](http://localhost:8080)
+    * Run `pnpm server` to serve the output at [localhost:8080](http://localhost:8080)

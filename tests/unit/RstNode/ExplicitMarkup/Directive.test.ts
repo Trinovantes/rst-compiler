@@ -1,6 +1,6 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { trimCommonIndent } from '@/utils/trimCommonIndent.js'
+import { trimCommonIndent } from '../../../../src/utils/trimCommonIndent.js'
 
 describe('with no data', () => {
     const input = `

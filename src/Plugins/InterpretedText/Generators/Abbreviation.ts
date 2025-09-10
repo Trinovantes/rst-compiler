@@ -1,6 +1,6 @@
-import { createInterpretedTextGenerators } from '@/Generator/RstGenerator.js'
-import { parseAbbr } from '@/utils/parseAbbr.js'
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
+import { createInterpretedTextGenerators } from '../../../Generator/RstGenerator.js'
+import { parseAbbr } from '../../../utils/parseAbbr.js'
+import { sanitizeHtml } from '../../../utils/sanitizeHtml.js'
 
 export const abbreviationInterpretedTextGenerators = createInterpretedTextGenerators(
     [

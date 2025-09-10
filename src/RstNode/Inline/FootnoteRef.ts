@@ -1,9 +1,8 @@
-import { isSimpleName } from '@/SimpleName.js'
-import { RstNodeJson, RstNodeObject } from '../RstNode.js'
-import { RstText, RstTextData } from './Text.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
+import { isSimpleName } from '../../SimpleName.js'
+import type { RstNodeJson, RstNodeObject } from '../RstNode.js'
+import { RstText, type RstTextData } from './Text.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -61,24 +60,3 @@ export class RstFootnoteRef extends RstText {
         return false
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const footnoteRefGenerators = createNodeGenerators(
-    'FootnoteRef',
-
-    (generatorState, node) => {
-        const targetDef = generatorState.resolveFootnoteDef(node)
-        const targetDefUrl = generatorState.resolveNodeToUrl(targetDef)
-        const refId = generatorState.htmlAttrResolver.getNodeHtmlId(node)
-        const refLabel = generatorState.resolveFootnoteRefLabel(node)
-        generatorState.writeTextWithLinePrefix(`<a href="${targetDefUrl}" id="${refId}" class="${generatorState.opts.htmlClass.footnoteRef}">${refLabel}</a>`)
-    },
-
-    (generatorState, node) => {
-        const refLabel = generatorState.resolveFootnoteRefLabel(node)
-        generatorState.writeTextWithLinePrefix(`[^${refLabel}]`)
-    },
-)

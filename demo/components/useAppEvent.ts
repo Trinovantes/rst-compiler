@@ -1,5 +1,5 @@
-import mitt, { Emitter } from 'mitt'
-import { Plugin, inject } from 'vue'
+import mitt, { type Emitter } from 'mitt'
+import { type Plugin, inject } from 'vue'
 
 type AppEvent = {
     resetEditor: void

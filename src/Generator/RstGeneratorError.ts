@@ -1,4 +1,4 @@
-import { RstNode } from '@/RstNode/RstNode.js'
+import { RstNode } from '../RstNode/RstNode.js'
 import { RstGeneratorState } from './RstGeneratorState.js'
 
 export class RstGeneratorError extends Error {

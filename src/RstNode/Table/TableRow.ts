@@ -1,8 +1,6 @@
-import { RstNode, RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
+import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -65,38 +63,3 @@ export class RstTableRow extends RstNode {
         return `${super.toShortString()} isHeadRow:${this.isHeadRow}`
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const tableRowGenerators = createNodeGenerators(
-    'TableRow',
-
-    (generatorState, node) => {
-        throw new RstGeneratorError(generatorState, node, 'This should not be called directly')
-    },
-
-    (generatorState, node) => {
-        generatorState.writeLineVisitor(() => {
-            for (const cell of node.children) {
-                generatorState.writeText('|')
-                generatorState.visitNode(cell)
-            }
-
-            generatorState.writeText('|')
-        })
-
-        // Markdown requires header separator to be printed after first row to parse as table
-        if (node.getMyIndexInParent() === 0) {
-            generatorState.writeLineVisitor(() => {
-                for (let i = 0; i < node.children.length; i++) {
-                    generatorState.writeText('|')
-                    generatorState.writeText(' --- ')
-                }
-
-                generatorState.writeText('|')
-            })
-        }
-    },
-)

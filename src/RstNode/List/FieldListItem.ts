@@ -1,10 +1,7 @@
-import { ContinuousText } from '../Inline/Text.js'
-import { RstNode, RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { normalizeSimpleName } from '@/SimpleName.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
+import type { ContinuousText } from '../Inline/Text.js'
+import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -103,45 +100,3 @@ export class RstFieldListItem extends RstNode {
         return str
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const fieldListItemGenerators = createNodeGenerators(
-    'FieldListItem',
-
-    (generatorState, node) => {
-        const className = normalizeSimpleName(node.name.map((nameNode) => nameNode.textContent).join(''))
-        const attr = new HtmlAttributeStore({ class: className })
-
-        generatorState.writeLineHtmlTagWithAttr('dt', node, attr, () => {
-            generatorState.writeLineVisitor(() => {
-                generatorState.visitNodes(node.name)
-            })
-        })
-
-        generatorState.writeLineHtmlTagWithAttr('dd', node, attr, () => {
-            generatorState.visitNodes(node.body)
-        })
-    },
-
-    (generatorState, node) => {
-        // First line contains term
-        generatorState.writeLineVisitor(() => {
-            generatorState.writeText('**')
-
-            for (const textNode of node.name) {
-                generatorState.visitNode(textNode)
-            }
-
-            generatorState.writeText('**')
-        })
-
-        // Empty line between term and definition
-        generatorState.writeLine()
-
-        // Subsequent lines contain definitions
-        generatorState.visitNodes(node.body)
-    },
-)

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { getAutoFootnoteSymbol } from '@/utils/getAutoFootnoteSymbol.js'
+import { getAutoFootnoteSymbol } from '../../../src/utils/getAutoFootnoteSymbol.js'
 
 test('should throw error when input is < 1', () => {
     expect(() => getAutoFootnoteSymbol(0)).toThrow(/symNum must be >= 1/)

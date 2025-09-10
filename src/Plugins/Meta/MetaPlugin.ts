@@ -1,7 +1,7 @@
-import { createDirectiveGenerators } from '@/Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
-import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
-import { RstFieldListItem } from '@/RstNode/List/FieldListItem.js'
+import { createDirectiveGenerators } from '../../Generator/RstGenerator.js'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
+import { RstFieldListItem } from '../../RstNode/List/FieldListItem.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

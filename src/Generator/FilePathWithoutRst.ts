@@ -1,4 +1,4 @@
-import { Brand } from '@/@types/Brand.js'
+import type { Brand } from '../@types/Brand.js'
 
 export type FilePathWithoutRst = Brand<string, 'FilePathWithoutRst'>
 

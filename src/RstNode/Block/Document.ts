@@ -1,8 +1,7 @@
-import { RstNode, RstNodeJson, RstNodeSource } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
+import { RstNode, type RstNodeJson, type RstNodeSource } from '../RstNode.js'
 import { RstFieldList } from '../List/FieldList.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -77,29 +76,3 @@ export class RstDocument extends RstNode {
         return str
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const documentGenerators = createNodeGenerators(
-    'Document',
-
-    (generatorState, node) => {
-        if (node.docMeta) {
-            generatorState.writeLineHtmlComment(node.docMeta.toMapString())
-            generatorState.writeLine()
-        }
-
-        generatorState.visitNodes(node.children)
-    },
-
-    (generatorState, node) => {
-        if (node.docMeta) {
-            generatorState.writeLineMdComment(node.docMeta.toMapString())
-            generatorState.writeLine()
-        }
-
-        generatorState.visitNodes(node.children)
-    },
-)

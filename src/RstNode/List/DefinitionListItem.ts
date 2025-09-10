@@ -1,8 +1,7 @@
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { ContinuousText } from '../Inline/Text.js'
-import { RstNode, RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeType } from '../RstNodeType.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { ContinuousText } from '../Inline/Text.js'
+import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -110,66 +109,3 @@ export class RstDefinitionListItem extends RstNode {
         return str
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const definitionListItemGenerators = createNodeGenerators(
-    'DefinitionListItem',
-
-    (generatorState, node) => {
-        generatorState.writeLineHtmlTag('dt', node, () => {
-            generatorState.writeLineVisitor(() => {
-                for (const textNode of node.term) {
-                    generatorState.visitNode(textNode)
-                }
-
-                for (const classifier of node.classifiers) {
-                    generatorState.writeText(' ')
-                    generatorState.writeText(`<span class="${generatorState.opts.htmlClass.definitionListItemClassifier}">`)
-
-                    for (const textNode of classifier) {
-                        generatorState.visitNode(textNode)
-                    }
-
-                    generatorState.writeText('</span>')
-                }
-            })
-        })
-
-        generatorState.writeLineHtmlTag('dd', node, () => {
-            generatorState.visitNodes(node.definition)
-        })
-    },
-
-    (generatorState, node) => {
-        // First line contains term
-        generatorState.writeLineVisitor(() => {
-            generatorState.writeText('**')
-
-            for (const textNode of node.term) {
-                generatorState.visitNode(textNode)
-            }
-
-            for (const classifier of node.classifiers) {
-                generatorState.writeText(' ')
-                generatorState.writeText('*')
-
-                for (const textNode of classifier) {
-                    generatorState.visitNode(textNode)
-                }
-
-                generatorState.writeText('*')
-            }
-
-            generatorState.writeText('**')
-        })
-
-        // Empty line between term and definition
-        generatorState.writeLine()
-
-        // Subsequent lines contain definitions
-        generatorState.visitNodes(node.definition)
-    },
-)

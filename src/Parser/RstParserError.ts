@@ -1,4 +1,4 @@
-import { RstParserState } from './RstParserState.js'
+import type { RstParserState } from './RstParserState.js'
 
 export class RstParserError extends Error {
     private _parserState: RstParserState

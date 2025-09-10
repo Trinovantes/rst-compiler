@@ -1,7 +1,7 @@
-import type { RstNode } from '@/RstNode/RstNode.js'
+import type { RstNode } from '../RstNode/RstNode.js'
 import type { RstParserState } from './RstParserState.js'
-import type { RstNodeMap } from '@/RstNode/RstNodeMap.js'
-import type { RstNodeType } from '@/RstNode/RstNodeType.js'
+import type { RstNodeMap } from '../RstNode/RstNodeMap.js'
+import type { RstNodeType } from '../RstNode/RstNodeType.js'
 
 type RstNodeParserInstance<T extends keyof RstNodeMap> = Readonly<{
     onParseShouldExitBody?: boolean

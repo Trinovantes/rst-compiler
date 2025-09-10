@@ -1,7 +1,7 @@
-import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
-import { createDirectiveGenerators } from '@/Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
-import { normalizeSimpleName } from '@/SimpleName.js'
+import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.js'
+import { createDirectiveGenerators } from '../../Generator/RstGenerator.js'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
+import { normalizeSimpleName } from '../../SimpleName.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

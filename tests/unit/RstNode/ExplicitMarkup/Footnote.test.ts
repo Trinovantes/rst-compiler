@@ -1,12 +1,12 @@
 import { test, describe, expect } from 'vitest'
-import { RstNodeSource } from '@/RstNode/RstNode.js'
-import { RstFootnoteDef } from '@/RstNode/ExplicitMarkup/FootnoteDef.js'
-import { RstFootnoteRef } from '@/RstNode/Inline/FootnoteRef.js'
+import type { RstNodeSource } from '../../../../src/RstNode/RstNode.js'
+import { RstFootnoteDef } from '../../../../src/RstNode/ExplicitMarkup/FootnoteDef.js'
+import { RstFootnoteRef } from '../../../../src/RstNode/Inline/FootnoteRef.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { parseTestInput, parseTestInputForGeneratorState } from 'tests/fixtures/parseTestInput.js'
-import { RstToHtmlCompiler } from '@/RstCompiler.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
+import { RstToHtmlCompiler } from '../../../../src/RstCompiler.js'
+import { RstNodeRegistrar } from '../../../../src/Parser/RstNodeRegistrar.js'
 
 describe('manual number', () => {
     const input = `

@@ -1,6 +1,6 @@
-import { RstSection } from '@/RstNode/Block/Section.js'
-import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
-import { RstNode } from '@/RstNode/RstNode.js'
+import { RstSection } from '../../RstNode/Block/Section.js'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
+import { RstNode } from '../../RstNode/RstNode.js'
 
 export type TocTree = {
     section: RstSection

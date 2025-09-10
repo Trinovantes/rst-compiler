@@ -1,9 +1,6 @@
-import { RstNode, RstNodeSource, RstNodeJson, RstNodeObject } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { RstParagraph } from '../Block/Paragraph.js'
-import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
+import { RstNode, type RstNodeSource, type RstNodeJson, type RstNodeObject } from '../RstNode.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -81,33 +78,3 @@ export class RstTableCell extends RstNode {
         return `${super.toShortString()} rowSpan:${this.rowSpan} colSpan:${this.colSpan}`
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const tableCellGenerators = createNodeGenerators(
-    'TableCell',
-
-    (generatorState, node) => {
-        throw new RstGeneratorError(generatorState, node, 'This should not be called directly')
-    },
-
-    (generatorState, node) => {
-        const cellText = generatorState.getChildrenText(() => {
-            for (let i = 0; i < node.children.length; i++) {
-                const child = node.children[i]
-                if (!(child instanceof RstParagraph)) {
-                    throw new RstGeneratorError(generatorState, 'Cannot render non-paragraphs in Markdown tables')
-                }
-                if (i > 0) {
-                    generatorState.writeText('<br>')
-                }
-
-                generatorState.visitNodes(child.children)
-            }
-        })
-
-        generatorState.writeText(` ${cellText.replaceAll('\n', ' ')} `)
-    },
-)

@@ -1,4 +1,4 @@
-import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
 import { abbreviationInterpretedTextGenerators } from './Generators/Abbreviation.js'
 import { acronymInterpretedTextGenerators } from './Generators/Acronym.js'
 import { docInterpretedTextGenerators } from './Generators/Doc.js'

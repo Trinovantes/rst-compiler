@@ -1,5 +1,5 @@
-import { RstNodeObject } from '@/RstNode/RstNode.js'
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
+import type { RstNodeObject } from '../../../../src/RstNode/RstNode.js'
+import { sanitizeHtml } from '../../../../src/utils/sanitizeHtml.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe } from 'vitest'

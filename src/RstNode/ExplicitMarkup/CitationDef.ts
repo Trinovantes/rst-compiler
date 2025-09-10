@@ -1,10 +1,8 @@
-import { RstNode, RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
+import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.js'
 import { RstCitationRef } from '../Inline/CitationRef.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { removeEscapeChar } from '@/utils/removeEscapeChar.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
+import { removeEscapeChar } from '../../utils/removeEscapeChar.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -74,40 +72,3 @@ export class RstCitationDef extends RstNode {
         return this.label === citationRef.textContent
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const citationDefGenerators = createNodeGenerators(
-    'CitationDef',
-
-    (generatorState, node) => {
-        const backlinks = generatorState.resolveCitationDefBacklinks(node)
-
-        generatorState.writeLineHtmlTag('dt', node, () => {
-            generatorState.writeLineHtmlTagWithAttr('span', null, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.citationDef }), () => {
-                generatorState.writeLine(node.label)
-
-                if (backlinks.length > 0) {
-                    generatorState.writeLineHtmlTagWithAttr('span', null, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.citationDefBacklinks }), () => {
-                        for (const [idx, backlink] of backlinks.entries()) {
-                            generatorState.writeLine(`<a href="${backlink}">[${idx + 1}]</a>`)
-                        }
-                    })
-                }
-            })
-        })
-
-        generatorState.writeLineHtmlTag('dd', null, () => {
-            generatorState.visitNodes(node.children)
-        })
-    },
-
-    (generatorState, node) => {
-        generatorState.writeLine(`[^${node.nthOfType}]:`)
-        generatorState.useIndent(() => {
-            generatorState.visitNodes(node.children)
-        })
-    },
-)

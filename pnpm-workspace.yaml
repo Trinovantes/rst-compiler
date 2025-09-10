@@ -1,0 +1,7 @@
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+
+patchedDependencies:
+  mitt: patches/mitt.patch
+  quasar: patches/quasar.patch

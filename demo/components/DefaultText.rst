@@ -4,11 +4,11 @@ rst-compiler
 
 This is a reStructuredText parser and HTML/Markdown generator implemented in pure TypeScript.
 
-You can install it with :code:`yarn` using this command:
+You can install it with :code:`npm` using this command:
 
 .. code-block::
 
-    yarn add rst-compiler
+    npm add rst-compiler
 
 You can find more information and the source code on GitHub__.
 

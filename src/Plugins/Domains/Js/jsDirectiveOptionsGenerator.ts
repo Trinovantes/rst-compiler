@@ -1,4 +1,4 @@
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
+import { createNodeGenerators } from '../../../Generator/RstGenerator.js'
 import { getJsPropGroups, getJsPropGroupLabel, renderPropGroupAsHtml } from './JsPropGroup.js'
 
 export const jsDirectiveOptionsGenerator = createNodeGenerators(

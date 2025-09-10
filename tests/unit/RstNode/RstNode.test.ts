@@ -1,9 +1,9 @@
-import { RstParagraph } from '@/RstNode/Block/Paragraph.js'
-import { RstNodeSource } from '@/RstNode/RstNode.js'
+import { RstParagraph } from '../../../src/RstNode/Block/Paragraph.js'
+import type { RstNodeSource } from '../../../src/RstNode/RstNode.js'
 import { describe, expect, test } from 'vitest'
-import { RstText } from '@/RstNode/Inline/Text.js'
+import { RstText } from '../../../src/RstNode/Inline/Text.js'
 import { parseTestInput } from 'tests/fixtures/parseTestInput.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
+import { RstNodeRegistrar } from '../../../src/Parser/RstNodeRegistrar.js'
 
 const registrar = new RstNodeRegistrar()
 const source: RstNodeSource = {

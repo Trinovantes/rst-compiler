@@ -1,12 +1,9 @@
-import { romanToInt } from '@/utils/romanToInt.js'
-import { RstNode, RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { RstEnumeratedList } from './EnumeratedList.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
-import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
-import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
+import { romanToInt } from '../../utils/romanToInt.js'
+import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
+import { RstGeneratorError } from '../../Generator/RstGeneratorError.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -112,36 +109,3 @@ export class RstBulletListItem extends RstNode {
         }
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const bulletListItemGenerators = createNodeGenerators(
-    'BulletListItem',
-
-    (generatorState, node) => {
-        const attrs = new HtmlAttributeStore()
-        if (node.parent instanceof RstEnumeratedList && node.isFirstChild() && !node.isEnumeratedListFirstValue()) {
-            attrs.set('value', node.getEnumeratedListValue(generatorState).toString())
-        }
-
-        generatorState.writeLineHtmlTagWithAttr('li', node, attrs, () => {
-            generatorState.visitNodes(node.children)
-        })
-    },
-
-    (generatorState, node) => {
-        const bullet = node.parent instanceof RstEnumeratedList
-            ? `${node.getEnumeratedListValue(generatorState)}. `
-            : `${node.bullet} `
-        const bulletWhitespace = ' '.repeat(bullet.length)
-
-        generatorState.usePrefix({
-            val: bullet,
-            replacementAfterOnce: bulletWhitespace,
-        }, () => {
-            generatorState.visitNodes(node.children)
-        })
-    },
-)

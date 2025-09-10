@@ -1,10 +1,10 @@
-import { RstNodeParser } from '@/Parser/RstParser.js'
-import { RstNode } from '../RstNode.js'
-import { RstTable } from './Table.js'
-import { RstTableCell } from './TableCell.js'
-import { RstTableRow } from './TableRow.js'
-import { createBooleanTable } from './createBooleanTable.js'
-import { RstParserError } from '@/Parser/RstParserError.js'
+import type { RstNodeParser } from '../RstParser.js'
+import { RstNode } from '../../RstNode/RstNode.js'
+import { RstTable } from '../../RstNode/Table/Table.js'
+import { RstTableCell } from '../../RstNode/Table/TableCell.js'
+import { RstTableRow } from '../../RstNode/Table/TableRow.js'
+import { createBooleanTable } from '../../utils/createBooleanTable.js'
+import { RstParserError } from '../RstParserError.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Grid Parser

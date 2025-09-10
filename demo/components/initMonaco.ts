@@ -3,7 +3,14 @@ import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-import 'monaco-editor'
+import type { Environment } from 'monaco-editor'
+
+declare global {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+    interface Window {
+        MonacoEnvironment: Environment
+    }
+}
 
 export function initMonaco() {
     self.MonacoEnvironment = {

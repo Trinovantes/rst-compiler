@@ -1,4 +1,4 @@
-import { romanUpperRe, romanLowerRe, romanToInt } from '@/utils/romanToInt.js'
+import { romanUpperRe, romanLowerRe, romanToInt } from '../../utils/romanToInt.js'
 
 export type RstEnumeratedListType =
     | 'Arabic'

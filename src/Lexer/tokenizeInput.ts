@@ -1,4 +1,4 @@
-import { Token } from './Token.js'
+import type { Token } from './Token.js'
 
 export function tokenizeInput(input: string): Array<Token> {
     const tokens = new Array<Token>()

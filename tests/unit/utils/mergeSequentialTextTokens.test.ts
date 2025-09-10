@@ -1,8 +1,8 @@
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstStrongEmphasis } from '@/RstNode/Inline/StrongEmphasis.js'
-import { RstText } from '@/RstNode/Inline/Text.js'
-import { RstNodeSource } from '@/RstNode/RstNode.js'
-import { mergeSequentialTextNodes } from '@/utils/mergeSequentialTextNodes.js'
+import { RstNodeRegistrar } from '../../../src/Parser/RstNodeRegistrar.js'
+import { RstStrongEmphasis } from '../../../src/RstNode/Inline/StrongEmphasis.js'
+import { RstText } from '../../../src/RstNode/Inline/Text.js'
+import type { RstNodeSource } from '../../../src/RstNode/RstNode.js'
+import { mergeSequentialTextNodes } from '../../../src/utils/mergeSequentialTextNodes.js'
 import { expect, test } from 'vitest'
 
 const registrar = new RstNodeRegistrar()

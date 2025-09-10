@@ -1,11 +1,6 @@
-import { RstNodeParser } from '@/Parser/RstParser.js'
-import { RstNode, RstNodeJson, RstNodeSource } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
-import { renderCodeBlockHtml } from '@/Plugins/Code/renderCodeBlockHtml.js'
-import { renderCodeBlockMd } from '@/Plugins/Code/renderCodeBlockMd.js'
+import { RstNode, type RstNodeJson, type RstNodeSource } from '../RstNode.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -63,41 +58,3 @@ export class RstDoctestBlock extends RstNode {
         return this._rawText
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Parser
-// ----------------------------------------------------------------------------
-
-const doctestBlockRe = /^([ ]*)>>> (.+)$/
-
-export const doctestBlockParser: RstNodeParser<'DoctestBlock'> = {
-    parse: (parserState, indentSize) => {
-        const startLineIdx = parserState.lineIdx
-
-        if (!parserState.peekTest(doctestBlockRe)) {
-            return null
-        }
-
-        const doctestBlockText = parserState.parseBodyText(indentSize, 'DoctestBlock', /^[^\n]+$/)
-        const endLineIdx = parserState.lineIdx
-        return new RstDoctestBlock(parserState.registrar, { startLineIdx, endLineIdx }, doctestBlockText)
-    },
-}
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const docTestBlockGenerators = createNodeGenerators(
-    'DoctestBlock',
-
-    (generatorState, node) => {
-        generatorState.writeLineHtmlTagWithAttr('div', node, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.docTestBlock }), () => {
-            renderCodeBlockHtml(generatorState, 'python', node.rawTextContent, node)
-        })
-    },
-
-    (generatorState, node) => {
-        renderCodeBlockMd(generatorState, 'python', node.rawTextContent)
-    },
-)

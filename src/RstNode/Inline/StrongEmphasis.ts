@@ -1,9 +1,7 @@
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
-import { RstNodeJson } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstText, RstTextData } from './Text.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
+import type { RstNodeJson } from '../RstNode.js'
+import { RstText, type RstTextData } from './Text.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -22,19 +20,3 @@ export class RstStrongEmphasis extends RstText {
         return 'StrongEmphasis'
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const strongEmphasisGenerators = createNodeGenerators(
-    'StrongEmphasis',
-
-    (generatorState, node) => {
-        generatorState.writeTextWithLinePrefix(`<strong>${sanitizeHtml(node.textContent)}</strong>`)
-    },
-
-    (generatorState, node) => {
-        generatorState.writeTextWithLinePrefix(`**${sanitizeHtml(node.textContent)}**`)
-    },
-)

@@ -1,10 +1,8 @@
 import { RstFootnoteRef } from '../Inline/FootnoteRef.js'
-import { RstNode, RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { removeEscapeChar } from '@/utils/removeEscapeChar.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
+import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.js'
+import { removeEscapeChar } from '../../utils/removeEscapeChar.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -102,43 +100,3 @@ export class RstFootnoteDef extends RstNode {
         return false
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const footnoteDefGenerators = createNodeGenerators(
-    'FootnoteDef',
-
-    (generatorState, node) => {
-        const label = generatorState.resolveFootnoteDefLabel(node)
-        const backlinks = generatorState.resolveFootnoteDefBacklinks(node)
-
-        generatorState.writeLineHtmlTag('dt', node, () => {
-            generatorState.writeLineHtmlTagWithAttr('span', null, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.footnoteDef }), () => {
-                generatorState.writeLine(label)
-
-                if (backlinks.length > 0) {
-                    generatorState.writeLineHtmlTagWithAttr('span', null, new HtmlAttributeStore({ class: generatorState.opts.htmlClass.footnoteDefBacklinks }), () => {
-                        for (const [idx, backlink] of backlinks.entries()) {
-                            generatorState.writeLine(`<a href="${backlink}">[${idx + 1}]</a>`)
-                        }
-                    })
-                }
-            })
-        })
-
-        generatorState.writeLineHtmlTag('dd', null, () => {
-            generatorState.visitNodes(node.children)
-        })
-    },
-
-    (generatorState, node) => {
-        const label = generatorState.resolveFootnoteDefLabel(node)
-
-        generatorState.writeLine(`[^${label}]:`)
-        generatorState.useIndent(() => {
-            generatorState.visitNodes(node.children)
-        })
-    },
-)

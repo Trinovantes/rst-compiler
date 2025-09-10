@@ -1,6 +1,6 @@
-import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
-import { createDirectiveGenerators } from '@/Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
+import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.js'
+import { createDirectiveGenerators } from '../../Generator/RstGenerator.js'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

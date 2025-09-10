@@ -1,11 +1,11 @@
-import { createDirectiveGenerators } from '@/Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
-import { generateGlobalToc, generateLocalToc, TocTree } from './TocTree.js'
-import { normalizeSimpleName, SimpleName } from '@/SimpleName.js'
-import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
-import { RstNode } from '@/RstNode/RstNode.js'
-import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
-import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
+import { createDirectiveGenerators } from '../../Generator/RstGenerator.js'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
+import { generateGlobalToc, generateLocalToc, type TocTree } from './TocTree.js'
+import { normalizeSimpleName, type SimpleName } from '../../SimpleName.js'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
+import { RstNode } from '../../RstNode/RstNode.js'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
+import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

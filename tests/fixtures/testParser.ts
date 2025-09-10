@@ -1,7 +1,7 @@
-import { RstNodeObject } from '@/RstNode/RstNode.js'
+import type { RstNodeObject } from '../../src/RstNode/RstNode.js'
 import { test, expect } from 'vitest'
 import { parseTestInput } from './parseTestInput.js'
-import { RstParserOptions } from '@/Parser/RstParserOptions.js'
+import type { RstParserOptions } from '../../src/Parser/RstParserOptions.js'
 
 export function testParser(input: string, expectedBodyNodes: Array<RstNodeObject>, optionsOverride?: Partial<RstParserOptions>): void {
     test('parser', () => {

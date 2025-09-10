@@ -1,8 +1,6 @@
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
-import { RstNode, RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
+import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -83,68 +81,3 @@ export class RstOptionListItem extends RstNode {
         return str
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const optionListItemGenerators = createNodeGenerators(
-    'OptionListItem',
-
-    (generatorState, node) => {
-        generatorState.writeLineHtmlTag('dt', node, () => {
-            generatorState.writeLineVisitor(() => {
-                generatorState.writeText('<kbd>')
-
-                for (const [idx, option] of node.options.entries()) {
-                    if (idx > 0) {
-                        generatorState.writeText(', ')
-                    }
-
-                    generatorState.writeText(`<span class="${generatorState.opts.htmlClass.optionListItemOption}">`)
-
-                    generatorState.writeText(sanitizeHtml(option.name))
-                    if (option.rawArgName && option.delimiter) {
-                        generatorState.writeText(option.delimiter)
-                        generatorState.writeText(`<var>${sanitizeHtml(option.rawArgName)}</var>`)
-                    }
-
-                    generatorState.writeText('</span>')
-                }
-
-                generatorState.writeText('</kbd>')
-            })
-        })
-
-        generatorState.writeLineHtmlTag('dd', node, () => {
-            generatorState.visitNodes(node.children)
-        })
-    },
-
-    (generatorState, node) => {
-        // First line contains option
-        generatorState.writeLineVisitor(() => {
-            generatorState.writeText('`')
-
-            for (const [idx, option] of node.options.entries()) {
-                if (idx > 0) {
-                    generatorState.writeText(', ')
-                }
-
-                generatorState.writeText(option.name)
-                if (option.rawArgName && option.delimiter) {
-                    generatorState.writeText(option.delimiter)
-                    generatorState.writeText(option.rawArgName) // Don't sanitize since this is written inside literal text
-                }
-            }
-
-            generatorState.writeText('`')
-        })
-
-        // Empty line between option and description
-        generatorState.writeLine()
-
-        // Subsequent lines contain description
-        generatorState.visitNodes(node.children)
-    },
-)

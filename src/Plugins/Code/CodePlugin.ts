@@ -1,7 +1,7 @@
-import { createDirectiveGenerators, createInterpretedTextGenerators } from '@/Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '@/RstCompilerPlugin.js'
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
-import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
+import { createDirectiveGenerators, createInterpretedTextGenerators } from '../../Generator/RstGenerator.js'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
+import { sanitizeHtml } from '../../utils/sanitizeHtml.js'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
 import { renderCodeBlockHtml } from './renderCodeBlockHtml.js'
 import { renderCodeBlockMd } from './renderCodeBlockMd.js'
 

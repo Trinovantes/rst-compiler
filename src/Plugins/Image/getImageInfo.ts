@@ -1,8 +1,8 @@
-import { HtmlAttributeStore } from '@/Generator/HtmlAttributeStore.js'
-import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
-import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
-import { RstSubstitutionDef } from '@/RstNode/ExplicitMarkup/SubstitutionDef.js'
-import { urlRe, filePathRe } from '@/utils/parseEmbededRef.js'
+import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.js'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
+import { RstSubstitutionDef } from '../../RstNode/ExplicitMarkup/SubstitutionDef.js'
+import { urlRe, filePathRe } from '../../utils/parseEmbededRef.js'
 
 export function getImageInfo(generatorState: RstGeneratorState, node: RstDirective | RstSubstitutionDef) {
     let needHtmlTag = false

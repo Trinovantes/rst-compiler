@@ -1,5 +1,5 @@
-import { PyToken, evaluatePythonExpr, parsePythonBinaryExpr, tokenizePythonBinaryExpr } from '@/Plugins/Only/parsePythonBinaryExpr.js'
 import { describe, expect, test } from 'vitest'
+import { evaluatePythonExpr, parsePythonBinaryExpr, tokenizePythonBinaryExpr, type PyToken } from '../../../../src/Plugins/Only/parsePythonBinaryExpr.js'
 
 describe('tokenizePythonBinaryExpr', () => {
     test.each<{

@@ -1,4 +1,4 @@
-import { RstToHtmlCompiler } from '@/RstCompiler.js'
+import { RstToHtmlCompiler } from '../../src/RstCompiler.js'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -9,7 +9,7 @@ const port = 8080
 Bun.serve({
     port,
 
-    fetch: async() => {
+    fetch: async () => {
         const filename = fileURLToPath(import.meta.url)
         const dirname = path.dirname(filename)
         const rst = fs.readFileSync(path.join(dirname, 'playground.rst')).toString('utf-8')

@@ -1,7 +1,7 @@
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { RstText, RstTextData } from './Text.js'
-import { RstNodeType } from '../RstNodeType.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
+import { RstText, type RstTextData } from './Text.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 export const interpretedTextRoleRe = /[a-zA-Z0-9](?:[a-zA-Z0-9]|[-_+:.]{0,1}[a-zA-Z0-9])*/
 

@@ -1,4 +1,4 @@
-import { removeEscapeChar } from '@/utils/removeEscapeChar.js'
+import { removeEscapeChar } from '../../../src/utils/removeEscapeChar.js'
 import { expect, test } from 'vitest'
 
 test('escaped non-whitespace characters are preserved', () => {

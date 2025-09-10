@@ -1,12 +1,12 @@
-import { Brand } from '@/@types/Brand.js'
-import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
-import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
-import { RstParagraph } from '@/RstNode/Block/Paragraph.js'
-import { RstFieldList } from '@/RstNode/List/FieldList.js'
-import { RstFieldListItem } from '@/RstNode/List/FieldListItem.js'
-import { normalizeSimpleName } from '@/SimpleName.js'
-import { assertNode } from '@/utils/assertNode.js'
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
+import type { Brand } from '../../../@types/Brand.js'
+import { RstGeneratorError } from '../../../Generator/RstGeneratorError.js'
+import { RstGeneratorState } from '../../../Generator/RstGeneratorState.js'
+import { RstParagraph } from '../../../RstNode/Block/Paragraph.js'
+import { RstFieldList } from '../../../RstNode/List/FieldList.js'
+import { RstFieldListItem } from '../../../RstNode/List/FieldListItem.js'
+import { normalizeSimpleName } from '../../../SimpleName.js'
+import { assertNode } from '../../../utils/assertNode.js'
+import { sanitizeHtml } from '../../../utils/sanitizeHtml.js'
 
 export type JsPropGroupType = Brand<string, 'JsPropGroupType'> // "param", "throw", "return", etc.
 

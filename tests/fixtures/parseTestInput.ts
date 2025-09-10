@@ -1,9 +1,9 @@
-import { RstToHtmlCompiler } from '@/RstCompiler.js'
-import { trimCommonIndent } from '@/utils/trimCommonIndent.js'
-import { RstGeneratorInput, RstGeneratorState } from '@/Generator/RstGeneratorState.js'
-import { RstParserOptions } from '@/Parser/RstParserOptions.js'
-import { RstParserOutput } from '@/Parser/RstParserState.js'
-import { createDefaultGeneratorOptions } from '@/Generator/RstGeneratorOptions.js'
+import { RstToHtmlCompiler } from '../../src/RstCompiler.js'
+import { trimCommonIndent } from '../../src/utils/trimCommonIndent.js'
+import { type RstGeneratorInput, RstGeneratorState } from '../../src/Generator/RstGeneratorState.js'
+import type { RstParserOptions } from '../../src/Parser/RstParserOptions.js'
+import type { RstParserOutput } from '../../src/Parser/RstParserState.js'
+import { createDefaultGeneratorOptions } from '../../src/Generator/RstGeneratorOptions.js'
 
 export function parseTestInput(input: string, parserOptionsOverride?: Partial<RstParserOptions>): RstParserOutput {
     const parserOptions: Partial<RstParserOptions> = {

@@ -1,9 +1,7 @@
-import { RstNodeParser } from '@/Parser/RstParser.js'
-import { RstNode, RstNodeJson, RstNodeSource } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { ContinuousText } from '../Inline/Text.js'
+import { RstNode, type RstNodeJson, type RstNodeSource } from '../RstNode.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
+import type { ContinuousText } from '../Inline/Text.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -36,74 +34,3 @@ export class RstBlockquoteAttribution extends RstNode {
         return 'BlockquoteAttribution'
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Parser
-// ----------------------------------------------------------------------------
-
-const blockquoteAttributonRe = /^([ ]*)(?<bulletAndSpace>---?[ ]+)(?<firstLineText>.+)$/
-
-export const blockquoteAttributionParser: RstNodeParser<'BlockquoteAttribution'> = {
-    onParseShouldExitBody: true,
-
-    parse: (parserState, indentSize, parentType) => {
-        const startLineIdx = parserState.lineIdx
-
-        if (parentType !== 'Blockquote') {
-            return null
-        }
-        if (!parserState.peekIsIndented(indentSize)) {
-            return null
-        }
-
-        const firstLineMatches = parserState.peekTest(blockquoteAttributonRe)
-        if (!firstLineMatches) {
-            return null
-        }
-
-        // Consume first line that we've already peeked at and tested
-        parserState.consume()
-
-        const bulletAndSpace = firstLineMatches.groups?.bulletAndSpace ?? ''
-        const bodyIndentSize = indentSize + bulletAndSpace.length
-        const firstLineText = firstLineMatches.groups?.firstLineText ?? ''
-        const attributionText = parserState.parseInitContentText(bodyIndentSize, firstLineText)
-
-        const endLineIdx = parserState.lineIdx
-        const attributionTextSrc = { startLineIdx, endLineIdx }
-        const attributionTextNodes = parserState.parseInlineNodes(attributionText, attributionTextSrc)
-        return new RstBlockquoteAttribution(parserState.registrar, attributionTextSrc, attributionTextNodes)
-    },
-}
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const blockquoteAttributonGenerators = createNodeGenerators(
-    'BlockquoteAttribution',
-
-    (generatorState, node) => {
-        generatorState.writeLineHtmlTag('footer', node, () => {
-            generatorState.writeLineHtmlTag('cite', node, () => {
-                generatorState.writeLineVisitor(() => {
-                    if (generatorState.opts.enableBlockQuoteAttributionDash) {
-                        generatorState.writeText('&mdash; ')
-                    }
-
-                    generatorState.visitNodes(node.children)
-                })
-            })
-        })
-    },
-
-    (generatorState, node) => {
-        generatorState.writeLineVisitor(() => {
-            if (generatorState.opts.enableBlockQuoteAttributionDash) {
-                generatorState.writeText('--- ')
-            }
-
-            generatorState.visitNodes(node.children)
-        })
-    },
-)

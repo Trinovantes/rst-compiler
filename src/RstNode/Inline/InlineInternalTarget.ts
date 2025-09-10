@@ -1,9 +1,7 @@
-import { RstText, RstTextData } from './Text.js'
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeJson } from '../RstNode.js'
-import { RstNodeType } from '../RstNodeType.js'
+import { RstText, type RstTextData } from './Text.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeJson } from '../RstNode.js'
+import type { RstNodeType } from '../RstNodeType.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -22,20 +20,3 @@ export class RstInlineInternalTarget extends RstText {
         return 'InlineInternalTarget'
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const inlineInternalTargetGenerators = createNodeGenerators(
-    'InlineInternalTarget',
-
-    (generatorState, node) => {
-        const htmlId = generatorState.htmlAttrResolver.getNodeHtmlId(node)
-        generatorState.writeTextWithLinePrefix(`<span class="${generatorState.opts.htmlClass.inlineInternalTarget}" id="${htmlId}">${sanitizeHtml(node.textContent)}</span>`)
-    },
-
-    (generatorState, node) => {
-        generatorState.writeTextWithLinePrefix(sanitizeHtml(node.textContent))
-    },
-)

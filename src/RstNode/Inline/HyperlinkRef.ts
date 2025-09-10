@@ -1,10 +1,8 @@
-import { RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { RstText, RstTextData } from './Text.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { parseEmbededRef } from '@/utils/parseEmbededRef.js'
+import type { RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
+import { RstText, type RstTextData } from './Text.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
+import { parseEmbededRef } from '../../utils/parseEmbededRef.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -129,21 +127,3 @@ export class RstHyperlinkRef extends RstText {
         return str
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const hyperlinkRefGenerators = createNodeGenerators(
-    'HyperlinkRef',
-
-    (generatorState, node) => {
-        const url = generatorState.resolveHyperlinkRefToUrl(node)
-        generatorState.writeTextWithLinePrefix(`<a href="${url}">${sanitizeHtml(node.label)}</a>`)
-    },
-
-    (generatorState, node) => {
-        const url = generatorState.resolveHyperlinkRefToUrl(node)
-        generatorState.writeTextWithLinePrefix(`[${sanitizeHtml(node.label)}](${url})`)
-    },
-)

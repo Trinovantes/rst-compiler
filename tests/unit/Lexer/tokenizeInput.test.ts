@@ -1,4 +1,4 @@
-import { tokenizeInput } from '@/Lexer/tokenizeInput.js'
+import { tokenizeInput } from '../../../src/Lexer/tokenizeInput.js'
 import { test, expect } from 'vitest'
 
 test('when input is empty, it should return empty array', () => {

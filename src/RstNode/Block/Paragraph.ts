@@ -1,11 +1,8 @@
-import { RstNodeParser } from '@/Parser/RstParser.js'
-import { RstNode, RstNodeJson, RstNodeSource } from '../RstNode.js'
-import { createNodeGenerators } from '@/Generator/RstGenerator.js'
-import { RstGeneratorState } from '@/Generator/RstGeneratorState.js'
-import { RstNodeRegistrar } from '@/Parser/RstNodeRegistrar.js'
-import { RstNodeType } from '../RstNodeType.js'
-import { RstLiteralBlock } from './LiteralBlock.js'
-import { RstGeneratorError } from '@/Generator/RstGeneratorError.js'
+import { RstNode, type RstNodeJson } from '../RstNode.js'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
+import type { RstNodeType } from '../RstNodeType.js'
+import { RstGeneratorError } from '../../Generator/RstGeneratorError.js'
 
 // ----------------------------------------------------------------------------
 // MARK: Node
@@ -28,7 +25,7 @@ export class RstParagraph extends RstNode {
     }
 
     override get willRenderVisibleContent(): boolean {
-        return !(this.textContent === '::' && (this.getNextSibling() instanceof RstLiteralBlock))
+        return !(this.textContent === '::' && this.getNextSibling()?.nodeType === 'LiteralBlock')
     }
 
     getOutputText(generatorState: RstGeneratorState): string | null {
@@ -37,7 +34,7 @@ export class RstParagraph extends RstNode {
         })
 
         switch (true) {
-            case !(this.getNextSibling() instanceof RstLiteralBlock): {
+            case this.getNextSibling()?.nodeType !== 'LiteralBlock': {
                 return childText // If Paragraph is not followed by LiteralBlock, then generate Paragraph as-is
             }
 
@@ -57,47 +54,3 @@ export class RstParagraph extends RstNode {
         throw new RstGeneratorError(generatorState, 'Invalid childText')
     }
 }
-
-// ----------------------------------------------------------------------------
-// MARK: Parser
-// ----------------------------------------------------------------------------
-
-export const paragraphParser: RstNodeParser<'Paragraph'> = {
-    parse: (parserState, indentSize, parentType) => {
-        const startLineIdx = parserState.lineIdx
-        const paragraphText = parserState.parseBodyText(indentSize, parentType, /^[^\n]+$/)
-        const endLineIdx = parserState.lineIdx
-        const source: RstNodeSource = { startLineIdx, endLineIdx }
-        return new RstParagraph(parserState.registrar, source, parserState.parseInlineNodes(paragraphText, source))
-    },
-}
-
-// ----------------------------------------------------------------------------
-// MARK: Generator
-// ----------------------------------------------------------------------------
-
-export const paragraphGenerators = createNodeGenerators(
-    'Paragraph',
-
-    (generatorState, node) => {
-        const outputText = node.getOutputText(generatorState)
-        if (outputText === null) {
-            generatorState.writeLineHtmlComment(node.textContent)
-            return
-        }
-
-        generatorState.writeLineHtmlTag('p', node, () => {
-            generatorState.writeLine(outputText)
-        })
-    },
-
-    (generatorState, node) => {
-        const outputText = node.getOutputText(generatorState)
-        if (outputText === null) {
-            generatorState.writeLineMdComment(node.textContent)
-            return
-        }
-
-        generatorState.writeLine(outputText)
-    },
-)

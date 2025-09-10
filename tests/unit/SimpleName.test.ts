@@ -1,4 +1,4 @@
-import { normalizeSimpleName } from '@/SimpleName.js'
+import { normalizeSimpleName } from '../../src/SimpleName.js'
 import { describe, expect, test } from 'vitest'
 
 describe('normalizeSimpleName', () => {

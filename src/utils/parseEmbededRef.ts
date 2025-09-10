@@ -1,4 +1,4 @@
-import { simpleNameReStr } from '@/SimpleName.js'
+import { simpleNameReStr } from '../SimpleName.js'
 import { removeEscapeChar } from './removeEscapeChar.js'
 
 // Good enough url regex that assumes url is at least 3 characters long (e.g. "a.a")

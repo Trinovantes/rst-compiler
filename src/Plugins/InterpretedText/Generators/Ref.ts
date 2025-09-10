@@ -1,7 +1,7 @@
-import { createInterpretedTextGenerators } from '@/Generator/RstGenerator.js'
-import { sanitizeHtml } from '@/utils/sanitizeHtml.js'
-import { normalizeSimpleName } from '@/SimpleName.js'
-import { parseEmbededRef } from '@/utils/parseEmbededRef.js'
+import { createInterpretedTextGenerators } from '../../../Generator/RstGenerator.js'
+import { sanitizeHtml } from '../../../utils/sanitizeHtml.js'
+import { normalizeSimpleName } from '../../../SimpleName.js'
+import { parseEmbededRef } from '../../../utils/parseEmbededRef.js'
 
 export const refInterpretedTextGenerators = createInterpretedTextGenerators(
     [

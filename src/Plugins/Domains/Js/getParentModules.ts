@@ -1,5 +1,5 @@
-import { RstDirective } from '@/RstNode/ExplicitMarkup/Directive.js'
-import { RstNode } from '@/RstNode/RstNode.js'
+import { RstDirective } from '../../../RstNode/ExplicitMarkup/Directive.js'
+import { RstNode } from '../../../RstNode/RstNode.js'
 import { getJsLocalName } from './getJsLocalName.js'
 
 export function getParentModules(node: RstDirective): Array<string> {

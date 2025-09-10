@@ -34,10 +34,9 @@
         "demoBuild": "  vite build   --config vite.config.demo.ts",
         "demoPreview": "vite preview --config vite.config.demo.ts",
         "clean": "rm -rf ./dist ./demo/dist",
-        "build": "yarn clean && vite build",
-        "prepublishOnly": "yarn build",
-        "prepare": "patch-package",
-        "lint": "vue-tsc --noemit && eslint",
+        "build": "vite build",
+        "prepublishOnly": "pnpm clean && pnpm build",
+        "lint": "vue-tsc && eslint",
         "test": "vitest --typecheck",
         "playPy": "python3 ./tests/playground/run.py",
         "playJs": "bun run ./tests/playground/run.ts",
@@ -70,8 +69,7 @@
         "lodash.merge": "^4.6.2",
         "lz-string": "^1.5.0",
         "mitt": "^3.0.1",
-        "monaco-editor": "^0.52.0",
-        "patch-package": "^8.0.0",
+        "monaco-editor": "^0.53.0",
         "quasar": "^2.17.7",
         "sass": "^1.77.6",
         "typescript": "^5.8.1-rc",
@@ -81,6 +79,6 @@
         "vitest": "^3.0.7",
         "vue": "^3.4.30",
         "vue-eslint-parser": "^10.1.3",
-        "vue-tsc": "^2.0.29"
+        "vue-tsc": "^3.0.6"
     }
 }

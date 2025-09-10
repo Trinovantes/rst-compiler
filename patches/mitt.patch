@@ -1,0 +1,10 @@
+diff --git a/package.json b/package.json
+index e51397cb4104da5424936208509d2aa0dc73313f..07d3cf6083f2581554c41706d48051108774edc7 100644
+--- a/package.json
++++ b/package.json
+@@ -1,4 +1,5 @@
+ {
++  "type": "module",
+   "name": "mitt",
+   "version": "3.0.1",
+   "description": "Tiny 200b functional Event Emitter / pubsub.",

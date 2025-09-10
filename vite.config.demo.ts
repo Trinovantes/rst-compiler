@@ -1,12 +1,11 @@
-import { defineConfig, mergeConfig } from 'vitest/config'
+import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import path from 'node:path'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
-import { commonConfig } from './vite.config.js'
 import packageJson from './package.json' with { type: 'json' }
 import { fileURLToPath } from 'node:url'
 
-export default mergeConfig(commonConfig, defineConfig({
+export default defineConfig({
     root: path.resolve(__dirname, './demo'),
     base: '/rst-compiler/',
 
@@ -43,4 +42,4 @@ export default mergeConfig(commonConfig, defineConfig({
         }),
         quasar(),
     ],
-}))
+})
