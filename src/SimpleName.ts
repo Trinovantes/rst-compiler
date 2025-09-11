@@ -1,6 +1,6 @@
 import type { Brand } from './@types/Brand.js'
 
-export const simpleNameReStr = '(?:[a-zA-Z](?:-?[a-zA-Z0-9_.:+<>]+)*(?:-?[a-zA-Z0-9.:+<>]+))'
+export const simpleNameReStr = '(?:[a-zA-Z][a-zA-Z0-9_.:+<>]*?)'
 
 /**
  * Reference Name (called SimpleName in this project to avoid confusion with RstNodes that include "Ref" e.g. SubstitutionRef)

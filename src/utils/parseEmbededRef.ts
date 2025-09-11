@@ -7,7 +7,7 @@ export const emailRe = /[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+/
 export const filePathRe = /\/?(?:[\w.\-+]+\/)+(?<fileName>\w+)(?:\.(?<fileExt>\w+))?/
 
 export const standaloneHyperlinkRefReStr = [
-    `(?:(?<simpleName>${simpleNameReStr})(?<!\\\\)(?<simpleNameTail>__?))`, // Name_
+    `(?:(?<simpleName>${simpleNameReStr})(?<simpleNameTail>__?))`,          // Name_
     `<(?<embedUrl>${urlRe.source})>`,                                       // <https>
     `(?<url>${urlRe.source})`,                                              // https
     `<(?<embedEmail>${emailRe.source})>`,                                   // <a@b.c>
