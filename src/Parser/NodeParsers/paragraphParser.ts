@@ -1,6 +1,6 @@
-import { RstParagraph } from '../../RstNode/Block/Paragraph.js'
-import type { RstNodeSource } from '../../RstNode/RstNode.js'
-import type { RstNodeParser } from '../RstParser.js'
+import { RstParagraph } from '../../RstNode/Block/Paragraph.ts'
+import type { RstNodeSource } from '../../RstNode/RstNode.ts'
+import type { RstNodeParser } from '../RstParser.ts'
 
 export const paragraphParser: RstNodeParser<'Paragraph'> = {
     parse: (parserState, indentSize, parentType) => {

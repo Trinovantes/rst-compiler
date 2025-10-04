@@ -1,9 +1,9 @@
-import { createDirectiveGenerators } from '../../Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
-import { getImageInfo } from './getImageInfo.js'
-import { createImgTagMd } from './createImgTagMd.js'
-import { createImgTagHtml } from './createImgTagHtml.js'
-import { RstGeneratorError } from '../../Generator/RstGeneratorError.js'
+import { createDirectiveGenerators } from '../../Generator/RstGenerator.ts'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.ts'
+import { getImageInfo } from './getImageInfo.ts'
+import { createImgTagMd } from './createImgTagMd.ts'
+import { createImgTagHtml } from './createImgTagHtml.ts'
+import { RstGeneratorError } from '../../Generator/RstGeneratorError.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

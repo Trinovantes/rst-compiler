@@ -1,7 +1,7 @@
-import { RstNode, type RstNodeJson, type RstNodeSource } from '../RstNode.js'
-import { removeEscapeChar } from '../../utils/removeEscapeChar.js'
-import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
-import type { RstNodeType } from '../RstNodeType.js'
+import { RstNode, type RstNodeJson, type RstNodeSource } from '../RstNode.ts'
+import { removeEscapeChar } from '../../utils/removeEscapeChar.ts'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.ts'
+import type { RstNodeType } from '../RstNodeType.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Node

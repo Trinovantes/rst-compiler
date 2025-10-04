@@ -1,8 +1,8 @@
-import { RstCitationDef } from '../../RstNode/ExplicitMarkup/CitationDef.js'
-import { RstCitationDefGroup } from '../../RstNode/ExplicitMarkup/CitationDefGroup.js'
-import { simpleNameReStr } from '../../SimpleName.js'
-import type { RstNodeParser } from '../RstParser.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstCitationDef } from '../../RstNode/ExplicitMarkup/CitationDef.ts'
+import { RstCitationDefGroup } from '../../RstNode/ExplicitMarkup/CitationDefGroup.ts'
+import { simpleNameReStr } from '../../SimpleName.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 const citationDefRe = new RegExp(
     '^ *\\.\\. +' +

@@ -1,8 +1,8 @@
 import { describe } from 'vitest'
-import type { RstNodeObject } from '../../../../src/RstNode/RstNode.js'
+import type { RstNodeObject } from '../../../../src/RstNode/RstNode.ts'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
-import type { RstNodeType } from '../../../../src/RstNode/RstNodeType.js'
+import type { RstNodeType } from '../../../../src/RstNode/RstNodeType.ts'
 
 // To keep this test file simple, we do not have any other data in our Document
 // Thus, we need to skip these nodes' generated output tests because they reference other nodes in Document

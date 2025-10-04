@@ -1,8 +1,8 @@
-import { createInterpretedTextGenerators } from '../../Generator/RstGenerator.js'
-import { RstGeneratorError } from '../../Generator/RstGeneratorError.js'
-import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
-import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
-import { RstInterpretedText } from '../../RstNode/Inline/InterpretedText.js'
+import { createInterpretedTextGenerators } from '../../Generator/RstGenerator.ts'
+import { RstGeneratorError } from '../../Generator/RstGeneratorError.ts'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.ts'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.ts'
+import { RstInterpretedText } from '../../RstNode/Inline/InterpretedText.ts'
 
 const pepRe = /^(?<pep>\d+)$/
 const rfcRe = /^(?<rfc>\d+)(?<anchor>#.+)?$/

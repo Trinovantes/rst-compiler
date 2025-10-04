@@ -1,6 +1,6 @@
-import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.js'
-import { createDirectiveGenerators, createInterpretedTextGenerators } from '../../Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
+import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.ts'
+import { createDirectiveGenerators, createInterpretedTextGenerators } from '../../Generator/RstGenerator.ts'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.ts'
 import katex from 'katex'
 
 const globalHeaderKey = 'katex'

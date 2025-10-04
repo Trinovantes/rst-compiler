@@ -1,6 +1,6 @@
-import { RstHyperlinkTarget } from '../../RstNode/ExplicitMarkup/HyperlinkTarget.js'
-import type { RstNodeParser } from '../RstParser.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstHyperlinkTarget } from '../../RstNode/ExplicitMarkup/HyperlinkTarget.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 const explicitHyperlinkTargetRe = new RegExp(
     '^ *\\.\\. +' +

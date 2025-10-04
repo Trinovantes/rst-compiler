@@ -1,7 +1,7 @@
-import { RstFieldList } from '../../RstNode/List/FieldList.js'
-import { RstFieldListItem } from '../../RstNode/List/FieldListItem.js'
-import type { RstNodeParser } from '../RstParser.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstFieldList } from '../../RstNode/List/FieldList.ts'
+import { RstFieldListItem } from '../../RstNode/List/FieldListItem.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 export const fieldListItemRe = new RegExp(
     '^[ ]*' + // Whitespace at start

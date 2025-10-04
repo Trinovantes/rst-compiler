@@ -1,5 +1,5 @@
-import { RstComment } from '../../RstNode/ExplicitMarkup/Comment.js'
-import type { RstNodeParser } from '../RstParser.js'
+import { RstComment } from '../../RstNode/ExplicitMarkup/Comment.ts'
+import type { RstNodeParser } from '../RstParser.ts'
 
 const commentRe = /^(?<indent>[ ]*\.\.)(?: (?<commentText>.*))?$/
 

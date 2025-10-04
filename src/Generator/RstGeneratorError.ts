@@ -1,5 +1,5 @@
-import { RstNode } from '../RstNode/RstNode.js'
-import { RstGeneratorState } from './RstGeneratorState.js'
+import { RstNode } from '../RstNode/RstNode.ts'
+import { RstGeneratorState } from './RstGeneratorState.ts'
 
 export class RstGeneratorError extends Error {
     constructor(generatorState: RstGeneratorState, msg: string)

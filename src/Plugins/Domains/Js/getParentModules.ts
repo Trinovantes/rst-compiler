@@ -1,6 +1,6 @@
-import { RstDirective } from '../../../RstNode/ExplicitMarkup/Directive.js'
-import { RstNode } from '../../../RstNode/RstNode.js'
-import { getJsLocalName } from './getJsLocalName.js'
+import { RstDirective } from '../../../RstNode/ExplicitMarkup/Directive.ts'
+import { RstNode } from '../../../RstNode/RstNode.ts'
+import { getJsLocalName } from './getJsLocalName.ts'
 
 export function getParentModules(node: RstDirective): Array<string> {
     const nameChain = new Array<string>()

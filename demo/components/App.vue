@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, ref } from 'vue'
-import { useAppEvent } from './useAppEvent.js'
-import { getDefaultText } from './getDefaultText.js'
+import { useAppEvent } from './useAppEvent.ts'
+import { getDefaultText } from './getDefaultText.ts'
 import githubIconPath from '../img/github.svg'
 import npmIconPath from '../img/npm.svg'
 import { compressToBase64 } from 'lz-string'

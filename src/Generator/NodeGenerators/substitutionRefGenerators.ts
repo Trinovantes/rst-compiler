@@ -1,9 +1,9 @@
 import { format } from 'date-fns'
-import { createImgTagHtml } from '../../Plugins/Image/createImgTagHtml.js'
-import { createImgTagMd } from '../../Plugins/Image/createImgTagMd.js'
-import { getImageInfo } from '../../Plugins/Image/getImageInfo.js'
-import { createNodeGenerators } from '../RstGenerator.js'
-import { RstGeneratorError } from '../RstGeneratorError.js'
+import { createImgTagHtml } from '../../Plugins/Image/createImgTagHtml.ts'
+import { createImgTagMd } from '../../Plugins/Image/createImgTagMd.ts'
+import { getImageInfo } from '../../Plugins/Image/getImageInfo.ts'
+import { createNodeGenerators } from '../RstGenerator.ts'
+import { RstGeneratorError } from '../RstGeneratorError.ts'
 
 export const substitutionRefGenerators = createNodeGenerators(
     'SubstitutionRef',

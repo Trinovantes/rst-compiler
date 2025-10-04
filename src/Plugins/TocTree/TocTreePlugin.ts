@@ -1,10 +1,10 @@
-import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.js'
-import { createDirectiveGenerators } from '../../Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
-import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
-import { parseEmbededRef } from '../../utils/parseEmbededRef.js'
-import { RstNode } from '../../RstNode/RstNode.js'
-import { type SimpleName, normalizeSimpleName } from '../../SimpleName.js'
+import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.ts'
+import { createDirectiveGenerators } from '../../Generator/RstGenerator.ts'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.ts'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.ts'
+import { parseEmbededRef } from '../../utils/parseEmbededRef.ts'
+import { RstNode } from '../../RstNode/RstNode.ts'
+import { type SimpleName, normalizeSimpleName } from '../../SimpleName.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

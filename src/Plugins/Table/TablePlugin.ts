@@ -1,12 +1,12 @@
-import { tableGenerators, listTableGenerators, csvTableGenerators } from '../../Generator/NodeGenerators/tableGenerators.js'
-import { createDirectiveGenerators } from '../../Generator/RstGenerator.js'
-import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
-import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
-import { RstParagraph } from '../../RstNode/Block/Paragraph.js'
-import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
-import { RstBulletList } from '../../RstNode/List/BulletList.js'
-import { RstTable } from '../../RstNode/Table/Table.js'
-import { assertNode } from '../../utils/assertNode.js'
+import { tableGenerators, listTableGenerators, csvTableGenerators } from '../../Generator/NodeGenerators/tableGenerators.ts'
+import { createDirectiveGenerators } from '../../Generator/RstGenerator.ts'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.ts'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.ts'
+import { RstParagraph } from '../../RstNode/Block/Paragraph.ts'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.ts'
+import { RstBulletList } from '../../RstNode/List/BulletList.ts'
+import { RstTable } from '../../RstNode/Table/Table.ts'
+import { assertNode } from '../../utils/assertNode.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

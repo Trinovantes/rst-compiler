@@ -2,7 +2,7 @@ import './css/main.scss'
 import { createApp } from 'vue'
 import App from './components/App.vue'
 import { Quasar, Notify } from 'quasar'
-import { appEventPlugin } from './components/useAppEvent.js'
+import { appEventPlugin } from './components/useAppEvent.ts'
 
 function main() {
     const app = createApp(App)

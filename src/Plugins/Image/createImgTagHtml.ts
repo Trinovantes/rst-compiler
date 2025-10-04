@@ -1,4 +1,4 @@
-import { getImageInfo } from './getImageInfo.js'
+import { getImageInfo } from './getImageInfo.ts'
 
 export function createImgTagHtml(imgInfo: ReturnType<typeof getImageInfo>): string {
     const { attrs, targetUrl } = imgInfo

@@ -1,8 +1,8 @@
-import type { RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.js'
-import { RstText, type RstTextData } from './Text.js'
-import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
-import type { RstNodeType } from '../RstNodeType.js'
-import { parseEmbededRef } from '../../utils/parseEmbededRef.js'
+import type { RstNodeJson, RstNodeObject, RstNodeSource } from '../RstNode.ts'
+import { RstText, type RstTextData } from './Text.ts'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.ts'
+import type { RstNodeType } from '../RstNodeType.ts'
+import { parseEmbededRef } from '../../utils/parseEmbededRef.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Node

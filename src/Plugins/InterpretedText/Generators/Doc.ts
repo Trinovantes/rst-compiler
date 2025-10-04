@@ -1,6 +1,6 @@
-import { createInterpretedTextGenerators } from '../../../Generator/RstGenerator.js'
-import { parseEmbededRef } from '../../../utils/parseEmbededRef.js'
-import { sanitizeHtml } from '../../../utils/sanitizeHtml.js'
+import { createInterpretedTextGenerators } from '../../../Generator/RstGenerator.ts'
+import { parseEmbededRef } from '../../../utils/parseEmbededRef.ts'
+import { sanitizeHtml } from '../../../utils/sanitizeHtml.ts'
 
 export const docInterpretedTextGenerators = createInterpretedTextGenerators(
     [

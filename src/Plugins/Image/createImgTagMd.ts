@@ -1,5 +1,5 @@
-import { createImgTagHtml } from './createImgTagHtml.js'
-import { getImageInfo } from './getImageInfo.js'
+import { createImgTagHtml } from './createImgTagHtml.ts'
+import { getImageInfo } from './getImageInfo.ts'
 
 export function createImgTagMd(imgInfo: ReturnType<typeof getImageInfo>): string {
     const { needHtmlTag, attrs, targetUrl } = imgInfo

@@ -1,5 +1,5 @@
-import { HtmlAttributeStore } from '../HtmlAttributeStore.js'
-import { createNodeGenerators } from '../RstGenerator.js'
+import { HtmlAttributeStore } from '../HtmlAttributeStore.ts'
+import { createNodeGenerators } from '../RstGenerator.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: CitationDefGroup

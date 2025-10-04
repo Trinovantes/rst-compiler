@@ -1,7 +1,7 @@
-import { RstNode, type RstNodeJson, type RstNodeSource } from '../RstNode.js'
-import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
-import type { RstNodeType } from '../RstNodeType.js'
-import type { ContinuousText } from '../Inline/Text.js'
+import { RstNode, type RstNodeJson, type RstNodeSource } from '../RstNode.ts'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.ts'
+import type { RstNodeType } from '../RstNodeType.ts'
+import type { ContinuousText } from '../Inline/Text.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Node

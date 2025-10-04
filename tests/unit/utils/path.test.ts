@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest'
-import { getPathDirname, joinFilePath, resolveFilePath } from '../../../src/utils/path.js'
+import { getPathDirname, joinFilePath, resolveFilePath } from '../../../src/utils/path.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: getPathDirname

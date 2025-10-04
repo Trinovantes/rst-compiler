@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest'
-import { convertUnicode } from '../../../src/utils/convertUnicode.js'
+import { convertUnicode } from '../../../src/utils/convertUnicode.ts'
 
 test('when input does not contain decimal or hex numbers, it should return original string', () => {
     const input = 'hello world'

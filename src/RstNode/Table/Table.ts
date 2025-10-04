@@ -1,8 +1,8 @@
-import { RstNode, type RstNodeJson, type RstNodeSource } from '../RstNode.js'
-import { RstTableCell } from './TableCell.js'
-import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
-import type { RstNodeType } from '../RstNodeType.js'
-import { RstParagraph } from '../Block/Paragraph.js'
+import { RstNode, type RstNodeJson, type RstNodeSource } from '../RstNode.ts'
+import { RstTableCell } from './TableCell.ts'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.ts'
+import type { RstNodeType } from '../RstNodeType.ts'
+import { RstParagraph } from '../Block/Paragraph.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Node

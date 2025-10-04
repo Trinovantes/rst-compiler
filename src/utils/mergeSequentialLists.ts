@@ -1,12 +1,12 @@
-import { RstNodeRegistrar } from '../Parser/RstNodeRegistrar.js'
-import { RstNode, type RstNodeSource } from '../RstNode/RstNode.js'
-import { RstBulletList } from '../RstNode/List/BulletList.js'
-import { RstEnumeratedList } from '../RstNode/List/EnumeratedList.js'
-import { RstFieldList } from '../RstNode/List/FieldList.js'
-import { RstOptionList } from '../RstNode/List/OptionList.js'
-import { RstDefinitionList } from '../RstNode/List/DefinitionList.js'
-import { isSequentialBullet } from '../RstNode/List/EnumeratedListType.js'
-import { RstBulletListItem } from '../RstNode/List/BulletListItem.js'
+import { RstNodeRegistrar } from '../Parser/RstNodeRegistrar.ts'
+import { RstNode, type RstNodeSource } from '../RstNode/RstNode.ts'
+import { RstBulletList } from '../RstNode/List/BulletList.ts'
+import { RstEnumeratedList } from '../RstNode/List/EnumeratedList.ts'
+import { RstFieldList } from '../RstNode/List/FieldList.ts'
+import { RstOptionList } from '../RstNode/List/OptionList.ts'
+import { RstDefinitionList } from '../RstNode/List/DefinitionList.ts'
+import { isSequentialBullet } from '../RstNode/List/EnumeratedListType.ts'
+import { RstBulletListItem } from '../RstNode/List/BulletListItem.ts'
 
 export function mergeSequentialLists(registrar: RstNodeRegistrar, nodes: ReadonlyArray<RstNode>): ReadonlyArray<RstNode> {
     if (nodes.length === 0) {

@@ -1,9 +1,9 @@
-import { createDirectiveGenerators, createInterpretedTextGenerators } from '../../Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
-import { sanitizeHtml } from '../../utils/sanitizeHtml.js'
-import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
-import { renderCodeBlockHtml } from './renderCodeBlockHtml.js'
-import { renderCodeBlockMd } from './renderCodeBlockMd.js'
+import { createDirectiveGenerators, createInterpretedTextGenerators } from '../../Generator/RstGenerator.ts'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.ts'
+import { sanitizeHtml } from '../../utils/sanitizeHtml.ts'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.ts'
+import { renderCodeBlockHtml } from './renderCodeBlockHtml.ts'
+import { renderCodeBlockMd } from './renderCodeBlockMd.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

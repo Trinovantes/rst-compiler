@@ -1,9 +1,9 @@
-import { romanToInt } from '../../utils/romanToInt.js'
-import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.js'
-import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
-import type { RstNodeType } from '../RstNodeType.js'
-import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
-import { RstGeneratorError } from '../../Generator/RstGeneratorError.js'
+import { romanToInt } from '../../utils/romanToInt.ts'
+import { RstNode, type RstNodeJson, type RstNodeObject, type RstNodeSource } from '../RstNode.ts'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.ts'
+import type { RstNodeType } from '../RstNodeType.ts'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.ts'
+import { RstGeneratorError } from '../../Generator/RstGeneratorError.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Node

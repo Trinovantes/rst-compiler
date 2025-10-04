@@ -1,6 +1,6 @@
-import { HtmlAttributeStore } from '../HtmlAttributeStore.js'
-import { createNodeGenerators } from '../RstGenerator.js'
-import { normalizeSimpleName } from '../../SimpleName.js'
+import { HtmlAttributeStore } from '../HtmlAttributeStore.ts'
+import { createNodeGenerators } from '../RstGenerator.ts'
+import { normalizeSimpleName } from '../../SimpleName.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: FieldList

@@ -1,7 +1,7 @@
-import { RstSection } from '../../RstNode/Block/Section.js'
-import { escapeForRegExp } from '../../utils/escapeForRegExp.js'
-import type { RstNodeParser } from '../RstParser.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstSection } from '../../RstNode/Block/Section.ts'
+import { escapeForRegExp } from '../../utils/escapeForRegExp.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 export const sectionChars  = ['=', '-', '`', ':', '.', "'", '"', '~', '^', '_', '*', '+', '#']
 export const sectionMarkRe = new RegExp(`^(${sectionChars.map(escapeForRegExp).map((c) => `${c}{2,}`).join('|')})[ ]*$`)

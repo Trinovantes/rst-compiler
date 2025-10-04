@@ -1,7 +1,7 @@
-import { RstNode } from '../../RstNode/RstNode.js'
-import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
-import { RstDocument } from '../../RstNode/Block/Document.js'
-import { sanitizeSimpleName, type SimpleName, type SanitizedSimpleName } from '../../SimpleName.js'
+import { RstNode } from '../../RstNode/RstNode.ts'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.ts'
+import { RstDocument } from '../../RstNode/Block/Document.ts'
+import { sanitizeSimpleName, type SimpleName, type SanitizedSimpleName } from '../../SimpleName.ts'
 
 export class HtmlAttrResolver {
     private _idCounter = 0

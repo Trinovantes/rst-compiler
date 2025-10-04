@@ -1,7 +1,7 @@
-import type { RstGeneratorState } from './RstGeneratorState.js'
-import type { RstNodeMap } from '../RstNode/RstNodeMap.js'
-import type { RstDirective } from '../RstNode/ExplicitMarkup/Directive.js'
-import type { RstInterpretedText } from '../RstNode/Inline/InterpretedText.js'
+import type { RstGeneratorState } from './RstGeneratorState.ts'
+import type { RstNodeMap } from '../RstNode/RstNodeMap.ts'
+import type { RstDirective } from '../RstNode/ExplicitMarkup/Directive.ts'
+import type { RstInterpretedText } from '../RstNode/Inline/InterpretedText.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Generator

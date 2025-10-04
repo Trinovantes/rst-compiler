@@ -1,7 +1,7 @@
-import { RstToHtmlCompiler } from '../../../src/RstCompiler.js'
+import { RstToHtmlCompiler } from '../../../src/RstCompiler.ts'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
-import { trimCommonIndent } from '../../../src/utils/trimCommonIndent.js'
+import { trimCommonIndent } from '../../../src/utils/trimCommonIndent.ts'
 import { describe, expect, test } from 'vitest'
 
 test('when there is no epilog, it throws error', () => {

@@ -1,6 +1,6 @@
-import { RstSubstitutionDef } from '../../RstNode/ExplicitMarkup/SubstitutionDef.js'
-import type { RstNodeParser } from '../RstParser.js'
-import { fieldListParser } from './fieldListParser.js'
+import { RstSubstitutionDef } from '../../RstNode/ExplicitMarkup/SubstitutionDef.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import { fieldListParser } from './fieldListParser.ts'
 
 const substitutionDefRe = new RegExp(
     '^ *\\.\\. +' +

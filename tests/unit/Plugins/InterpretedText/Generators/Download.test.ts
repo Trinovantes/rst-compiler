@@ -2,7 +2,7 @@ import path from 'node:path'
 import { describe } from 'vitest'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { parseTestInput } from 'tests/fixtures/parseTestInput.js'
-import { sha1 } from '../../../../../src/utils/sha1.js'
+import { sha1 } from '../../../../../src/utils/sha1.ts'
 
 describe.each([
     '/',

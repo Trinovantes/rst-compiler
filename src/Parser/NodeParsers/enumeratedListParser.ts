@@ -1,10 +1,10 @@
-import { RstBulletListItem } from '../../RstNode/List/BulletListItem.js'
-import { RstEnumeratedList } from '../../RstNode/List/EnumeratedList.js'
-import type { RstEnumeratedListItem } from '../../RstNode/List/EnumeratedListItem.js'
-import { getEnumeratedListType, isSequentialBullet } from '../../RstNode/List/EnumeratedListType.js'
-import { romanUpperRe, romanLowerRe } from '../../utils/romanToInt.js'
-import type { RstNodeParser } from '../RstParser.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstBulletListItem } from '../../RstNode/List/BulletListItem.ts'
+import { RstEnumeratedList } from '../../RstNode/List/EnumeratedList.ts'
+import type { RstEnumeratedListItem } from '../../RstNode/List/EnumeratedListItem.ts'
+import { getEnumeratedListType, isSequentialBullet } from '../../RstNode/List/EnumeratedListType.ts'
+import { romanUpperRe, romanLowerRe } from '../../utils/romanToInt.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 const enumeratedListItemRe = new RegExp(
     '^[ ]*' + // Whitespace at start

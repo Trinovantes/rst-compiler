@@ -1,4 +1,4 @@
-import { sha1 } from '../../../src/utils/sha1.js'
+import { sha1 } from '../../../src/utils/sha1.ts'
 import { expect, test } from 'vitest'
 import crypto from 'node:crypto'
 

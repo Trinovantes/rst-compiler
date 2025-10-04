@@ -1,5 +1,5 @@
-import { RstBlockquote } from '../../RstNode/Block/Blockquote.js'
-import type { RstNodeParser } from '../RstParser.js'
+import { RstBlockquote } from '../../RstNode/Block/Blockquote.ts'
+import type { RstNodeParser } from '../RstParser.ts'
 
 export const blockquoteParser: RstNodeParser<'Blockquote'> = {
     parse: (parserState, indentSize) => {

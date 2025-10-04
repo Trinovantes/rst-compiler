@@ -1,4 +1,4 @@
-import { createNodeGenerators } from '../RstGenerator.js'
+import { createNodeGenerators } from '../RstGenerator.ts'
 
 export const paragraphGenerators = createNodeGenerators(
     'Paragraph',

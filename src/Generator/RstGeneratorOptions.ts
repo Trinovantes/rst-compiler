@@ -1,6 +1,6 @@
 import merge from 'lodash.merge'
 import type { KatexOptions } from 'katex'
-import { createHighlighter, type ShikiTransformer, type CodeOptionsMultipleThemes } from 'shiki'
+import type { createHighlighter, ShikiTransformer, CodeOptionsMultipleThemes } from 'shiki'
 
 export type RstGeneratorOptions = {
     disableWarnings: boolean

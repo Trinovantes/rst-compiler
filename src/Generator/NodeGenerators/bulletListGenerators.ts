@@ -1,6 +1,6 @@
-import { createNodeGenerators } from '../RstGenerator.js'
-import { RstEnumeratedList } from '../../RstNode/List/EnumeratedList.js'
-import { HtmlAttributeStore } from '../HtmlAttributeStore.js'
+import { createNodeGenerators } from '../RstGenerator.ts'
+import { RstEnumeratedList } from '../../RstNode/List/EnumeratedList.ts'
+import { HtmlAttributeStore } from '../HtmlAttributeStore.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: BulletList

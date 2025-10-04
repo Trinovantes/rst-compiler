@@ -1,7 +1,7 @@
-import { RstOptionList } from '../../RstNode/List/OptionList.js'
-import { RstOptionListItem, type CommandOption } from '../../RstNode/List/OptionListItem.js'
-import type { RstNodeParser } from '../RstParser.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstOptionList } from '../../RstNode/List/OptionList.ts'
+import { RstOptionListItem, type CommandOption } from '../../RstNode/List/OptionListItem.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 const optionListItemOptionArgRe = /[a-zA-Z][a-zA-Z0-9_-]*|<.+>/
 

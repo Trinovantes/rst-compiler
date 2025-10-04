@@ -3,5 +3,6 @@ ignoredBuiltDependencies:
   - esbuild
 
 patchedDependencies:
+  '@nuxt/devalue': patches/@nuxt__devalue.patch
   mitt: patches/mitt.patch
   quasar: patches/quasar.patch

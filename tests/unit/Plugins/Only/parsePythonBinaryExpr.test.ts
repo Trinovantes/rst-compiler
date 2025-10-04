@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { evaluatePythonExpr, parsePythonBinaryExpr, tokenizePythonBinaryExpr, type PyToken } from '../../../../src/Plugins/Only/parsePythonBinaryExpr.js'
+import { evaluatePythonExpr, parsePythonBinaryExpr, tokenizePythonBinaryExpr, type PyToken } from '../../../../src/Plugins/Only/parsePythonBinaryExpr.ts'
 
 describe('tokenizePythonBinaryExpr', () => {
     test.each<{

@@ -1,12 +1,12 @@
-import { RstParagraph } from '../../RstNode/Block/Paragraph.js'
-import type { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
-import { RstNode } from '../../RstNode/RstNode.js'
-import { assertNode } from '../../utils/assertNode.js'
-import { parseCsv } from '../../utils/parseCsv.js'
-import { HtmlAttributeStore } from '../HtmlAttributeStore.js'
-import { createNodeGenerators } from '../RstGenerator.js'
-import { RstGeneratorError } from '../RstGeneratorError.js'
-import type { RstGeneratorState } from '../RstGeneratorState.js'
+import { RstParagraph } from '../../RstNode/Block/Paragraph.ts'
+import type { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.ts'
+import { RstNode } from '../../RstNode/RstNode.ts'
+import { assertNode } from '../../utils/assertNode.ts'
+import { parseCsv } from '../../utils/parseCsv.ts'
+import { HtmlAttributeStore } from '../HtmlAttributeStore.ts'
+import { createNodeGenerators } from '../RstGenerator.ts'
+import { RstGeneratorError } from '../RstGeneratorError.ts'
+import type { RstGeneratorState } from '../RstGeneratorState.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Table

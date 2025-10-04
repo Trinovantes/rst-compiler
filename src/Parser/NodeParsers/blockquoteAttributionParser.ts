@@ -1,5 +1,5 @@
-import { RstBlockquoteAttribution } from '../../RstNode/Block/BlockquoteAttribution.js'
-import type { RstNodeParser } from '../RstParser.js'
+import { RstBlockquoteAttribution } from '../../RstNode/Block/BlockquoteAttribution.ts'
+import type { RstNodeParser } from '../RstParser.ts'
 
 const blockquoteAttributonRe = /^([ ]*)(?<bulletAndSpace>---?[ ]+)(?<firstLineText>.+)$/
 

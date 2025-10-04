@@ -1,6 +1,6 @@
-import { RstNode, type RstNodeSource, type RstNodeJson, type RstNodeObject } from '../RstNode.js'
-import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
-import type { RstNodeType } from '../RstNodeType.js'
+import { RstNode, type RstNodeSource, type RstNodeJson, type RstNodeObject } from '../RstNode.ts'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.ts'
+import type { RstNodeType } from '../RstNodeType.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Node

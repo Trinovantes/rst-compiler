@@ -1,7 +1,7 @@
-import { RstDefinitionList } from '../../RstNode/List/DefinitionList.js'
-import { RstDefinitionListItem } from '../../RstNode/List/DefinitionListItem.js'
-import type { RstNodeParser } from '../RstParser.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstDefinitionList } from '../../RstNode/List/DefinitionList.ts'
+import { RstDefinitionListItem } from '../../RstNode/List/DefinitionListItem.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 const definitionListItemRe = /^[ ]*(?!\.\.)(?<lineText>.+)$/
 

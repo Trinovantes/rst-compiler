@@ -1,9 +1,9 @@
-import { normalizeSimpleName } from '../../../../src/SimpleName.js'
+import { normalizeSimpleName } from '../../../../src/SimpleName.ts'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { describe, expect, test } from 'vitest'
 import { parseTestInputForGeneratorState } from 'tests/fixtures/parseTestInput.js'
-import { RstToHtmlCompiler } from '../../../../src/RstCompiler.js'
+import { RstToHtmlCompiler } from '../../../../src/RstCompiler.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: InlineInternalTarget

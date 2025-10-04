@@ -1,5 +1,5 @@
-import { simpleNameReStr } from '../SimpleName.js'
-import { removeEscapeChar } from './removeEscapeChar.js'
+import { simpleNameReStr } from '../SimpleName.ts'
+import { removeEscapeChar } from './removeEscapeChar.ts'
 
 // Good enough url regex that assumes url is at least 3 characters long (e.g. "a.a")
 export const urlRe = /[a-zA-Z][\w.\-+]*:(?:\/\/)?[A-Za-z0-9\-._~:/?#[\]\\@!$&'()*+,;=]{3,}(?=\s|$|>)/

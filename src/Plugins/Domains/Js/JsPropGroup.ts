@@ -1,12 +1,12 @@
-import type { Brand } from '../../../@types/Brand.js'
-import { RstGeneratorError } from '../../../Generator/RstGeneratorError.js'
-import { RstGeneratorState } from '../../../Generator/RstGeneratorState.js'
-import { RstParagraph } from '../../../RstNode/Block/Paragraph.js'
-import { RstFieldList } from '../../../RstNode/List/FieldList.js'
-import { RstFieldListItem } from '../../../RstNode/List/FieldListItem.js'
-import { normalizeSimpleName } from '../../../SimpleName.js'
-import { assertNode } from '../../../utils/assertNode.js'
-import { sanitizeHtml } from '../../../utils/sanitizeHtml.js'
+import type { Brand } from '../../../@types/Brand.ts'
+import { RstGeneratorError } from '../../../Generator/RstGeneratorError.ts'
+import { RstGeneratorState } from '../../../Generator/RstGeneratorState.ts'
+import { RstParagraph } from '../../../RstNode/Block/Paragraph.ts'
+import { RstFieldList } from '../../../RstNode/List/FieldList.ts'
+import { RstFieldListItem } from '../../../RstNode/List/FieldListItem.ts'
+import { normalizeSimpleName } from '../../../SimpleName.ts'
+import { assertNode } from '../../../utils/assertNode.ts'
+import { sanitizeHtml } from '../../../utils/sanitizeHtml.ts'
 
 export type JsPropGroupType = Brand<string, 'JsPropGroupType'> // "param", "throw", "return", etc.
 

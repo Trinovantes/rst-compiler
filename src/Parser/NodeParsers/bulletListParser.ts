@@ -1,7 +1,7 @@
-import { RstBulletList } from '../../RstNode/List/BulletList.js'
-import { RstBulletListItem } from '../../RstNode/List/BulletListItem.js'
-import type { RstNodeParser } from '../RstParser.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstBulletList } from '../../RstNode/List/BulletList.ts'
+import { RstBulletListItem } from '../../RstNode/List/BulletListItem.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 const bulletListItemRe = /^[ ]*(?<bulletAndSpace>(?<bullet>[*+-])[ ]+)(?<firstLineText>.+)$/
 

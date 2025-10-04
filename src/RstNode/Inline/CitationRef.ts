@@ -1,8 +1,8 @@
-import { isSimpleName } from '../../SimpleName.js'
-import type { RstNodeJson } from '../RstNode.js'
-import { RstText, type RstTextData } from './Text.js'
-import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
-import type { RstNodeType } from '../RstNodeType.js'
+import { isSimpleName } from '../../SimpleName.ts'
+import type { RstNodeJson } from '../RstNode.ts'
+import { RstText, type RstTextData } from './Text.ts'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.ts'
+import type { RstNodeType } from '../RstNodeType.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Node

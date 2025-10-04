@@ -1,8 +1,8 @@
-import { RstNode, type RstNodeJson } from '../RstNode.js'
-import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
-import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.js'
-import type { RstNodeType } from '../RstNodeType.js'
-import { RstGeneratorError } from '../../Generator/RstGeneratorError.js'
+import { RstNode, type RstNodeJson } from '../RstNode.ts'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.ts'
+import type { RstNodeRegistrar } from '../../Parser/RstNodeRegistrar.ts'
+import type { RstNodeType } from '../RstNodeType.ts'
+import { RstGeneratorError } from '../../Generator/RstGeneratorError.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Node

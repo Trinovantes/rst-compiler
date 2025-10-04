@@ -1,11 +1,11 @@
-import { createRstCompilerPlugins } from '../../../RstCompilerPlugin.js'
-import { RstDirective } from '../../../RstNode/ExplicitMarkup/Directive.js'
-import { RstNode } from '../../../RstNode/RstNode.js'
-import { type SimpleName, normalizeSimpleName } from '../../../SimpleName.js'
-import { jsDirectiveGenerators, jsDirectives } from './jsDirectiveGenerators.js'
-import { jsInterpretedTextGenerators } from './jsInterpretedTextGenerators.js'
-import { getJsLocalName } from './getJsLocalName.js'
-import { getParentModules } from './getParentModules.js'
+import { createRstCompilerPlugins } from '../../../RstCompilerPlugin.ts'
+import { RstDirective } from '../../../RstNode/ExplicitMarkup/Directive.ts'
+import { RstNode } from '../../../RstNode/RstNode.ts'
+import { type SimpleName, normalizeSimpleName } from '../../../SimpleName.ts'
+import { jsDirectiveGenerators, jsDirectives } from './jsDirectiveGenerators.ts'
+import { jsInterpretedTextGenerators } from './jsInterpretedTextGenerators.ts'
+import { getJsLocalName } from './getJsLocalName.ts'
+import { getParentModules } from './getParentModules.ts'
 
 export const jsDomainPlugins = createRstCompilerPlugins({
     directiveGenerators: [

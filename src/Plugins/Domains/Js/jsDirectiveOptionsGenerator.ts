@@ -1,5 +1,5 @@
-import { createNodeGenerators } from '../../../Generator/RstGenerator.js'
-import { getJsPropGroups, getJsPropGroupLabel, renderPropGroupAsHtml } from './JsPropGroup.js'
+import { createNodeGenerators } from '../../../Generator/RstGenerator.ts'
+import { getJsPropGroups, getJsPropGroupLabel, renderPropGroupAsHtml } from './JsPropGroup.ts'
 
 export const jsDirectiveOptionsGenerator = createNodeGenerators(
     'FieldList',

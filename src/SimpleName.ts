@@ -1,4 +1,4 @@
-import type { Brand } from './@types/Brand.js'
+import type { Brand } from './@types/Brand.ts'
 
 export const simpleNameReStr = '(?:[a-zA-Z][a-zA-Z0-9_.:+<>]*?)'
 

@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { codeToHtml, createHighlighter } from 'shiki'
 import { useQuasar } from 'quasar'
-import { type RstGeneratorOptions, type RstParserOptions, RstToHtmlCompiler, RstToMdCompiler } from '../../src/index.js'
+import { type RstGeneratorOptions, type RstParserOptions, RstToHtmlCompiler, RstToMdCompiler } from '../../src/index.ts'
 
 type Tab = 'HTML_RENDER' | 'RAW_HTML' | 'RAW_MARKDOWN' | 'AST'
 const currentTab = ref<Tab>('HTML_RENDER')

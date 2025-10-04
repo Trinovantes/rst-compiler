@@ -1,7 +1,7 @@
-import { RstGeneratorError } from '../../Generator/RstGeneratorError.js'
-import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
-import type { RstSubstitutionDef } from '../../RstNode/ExplicitMarkup/SubstitutionDef.js'
-import type { RstSubstitutionRef } from '../../RstNode/Inline/SubstitutionRef.js'
+import { RstGeneratorError } from '../../Generator/RstGeneratorError.ts'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.ts'
+import type { RstSubstitutionDef } from '../../RstNode/ExplicitMarkup/SubstitutionDef.ts'
+import type { RstSubstitutionRef } from '../../RstNode/Inline/SubstitutionRef.ts'
 
 export class SubstitutionResolver {
     private readonly _substitutionDefs: ReadonlyMap<string, RstSubstitutionDef>

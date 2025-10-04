@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import * as monaco from 'monaco-editor'
-import { initMonaco } from './initMonaco.js'
-import { getDefaultText } from './getDefaultText.js'
-import { useAppEvent } from './useAppEvent.js'
+import { initMonaco } from './initMonaco.ts'
+import { getDefaultText } from './getDefaultText.ts'
+import { useAppEvent } from './useAppEvent.ts'
 import debounce from 'lodash.debounce'
 
 let editor: monaco.editor.IStandaloneCodeEditor | null = null

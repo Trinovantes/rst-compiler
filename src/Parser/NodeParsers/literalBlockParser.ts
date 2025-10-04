@@ -1,6 +1,6 @@
-import { RstLiteralBlock } from '../../RstNode/Block/LiteralBlock.js'
-import { RstParagraph } from '../../RstNode/Block/Paragraph.js'
-import type { RstNodeParser } from '../RstParser.js'
+import { RstLiteralBlock } from '../../RstNode/Block/LiteralBlock.ts'
+import { RstParagraph } from '../../RstNode/Block/Paragraph.ts'
+import type { RstNodeParser } from '../RstParser.ts'
 
 const quotedLiteralBlockRe = /^([ ]*)>+(?: .+)?$/
 

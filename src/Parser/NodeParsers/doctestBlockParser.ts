@@ -1,5 +1,5 @@
-import { RstDoctestBlock } from '../../RstNode/Block/DoctestBlock.js'
-import type { RstNodeParser } from '../RstParser.js'
+import { RstDoctestBlock } from '../../RstNode/Block/DoctestBlock.ts'
+import type { RstNodeParser } from '../RstParser.ts'
 
 const doctestBlockRe = /^([ ]*)>>> (.+)$/
 

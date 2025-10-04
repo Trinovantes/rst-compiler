@@ -1,11 +1,11 @@
-import type { RstGeneratorOutput } from './Generator/RstGeneratorState.js'
-import type { RstCompiler } from './RstCompiler.js'
-import type { RstParserOptions } from './Parser/RstParserOptions.js'
-import type { RstGeneratorOptions } from './Generator/RstGeneratorOptions.js'
-import type { RstNode } from './RstNode/RstNode.js'
-import type { SimpleName } from './SimpleName.js'
-import type { createDirectiveGenerators, createInterpretedTextGenerators } from './Generator/RstGenerator.js'
-import type { RstParserOutput } from './Parser/RstParserState.js'
+import type { RstGeneratorOutput } from './Generator/RstGeneratorState.ts'
+import type { RstCompiler } from './RstCompiler.ts'
+import type { RstParserOptions } from './Parser/RstParserOptions.ts'
+import type { RstGeneratorOptions } from './Generator/RstGeneratorOptions.ts'
+import type { RstNode } from './RstNode/RstNode.ts'
+import type { SimpleName } from './SimpleName.ts'
+import type { createDirectiveGenerators, createInterpretedTextGenerators } from './Generator/RstGenerator.ts'
+import type { RstParserOutput } from './Parser/RstParserState.ts'
 
 export type RstCompilerPlugin = Partial<{
     onInstall: (compiler: RstCompiler) => void

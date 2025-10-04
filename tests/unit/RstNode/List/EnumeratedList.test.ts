@@ -1,6 +1,6 @@
 import { describe } from 'vitest'
 import { testParser } from 'tests/fixtures/testParser.js'
-import type { RstEnumeratedListType } from '../../../../src/RstNode/List/EnumeratedListType.js'
+import type { RstEnumeratedListType } from '../../../../src/RstNode/List/EnumeratedListType.ts'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 
 describe('EnumeratedList', () => {

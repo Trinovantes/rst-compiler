@@ -1,6 +1,6 @@
-import { HtmlAttributeStore } from '../HtmlAttributeStore.js'
-import { createNodeGenerators } from '../RstGenerator.js'
-import { sanitizeHtml } from '../../utils/sanitizeHtml.js'
+import { HtmlAttributeStore } from '../HtmlAttributeStore.ts'
+import { createNodeGenerators } from '../RstGenerator.ts'
+import { sanitizeHtml } from '../../utils/sanitizeHtml.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: OptionList

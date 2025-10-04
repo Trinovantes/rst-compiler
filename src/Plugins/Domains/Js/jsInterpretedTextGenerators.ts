@@ -1,7 +1,7 @@
-import { createInterpretedTextGenerators } from '../../../Generator/RstGenerator.js'
-import { parseEmbededRef } from '../../../utils/parseEmbededRef.js'
-import { normalizeSimpleName } from '../../../SimpleName.js'
-import { sanitizeHtml } from '../../../utils/sanitizeHtml.js'
+import { createInterpretedTextGenerators } from '../../../Generator/RstGenerator.ts'
+import { parseEmbededRef } from '../../../utils/parseEmbededRef.ts'
+import { normalizeSimpleName } from '../../../SimpleName.ts'
+import { sanitizeHtml } from '../../../utils/sanitizeHtml.ts'
 
 export const jsRoles = new Set([
     'js:mod',

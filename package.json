@@ -39,9 +39,9 @@
         "lint": "vue-tsc && eslint",
         "test": "vitest --typecheck",
         "playPy": "python3 ./tests/playground/run.py",
-        "playJs": "bun run ./tests/playground/run.ts",
-        "playServer": "bun --watch run ./tests/playground/server.ts",
-        "benchmark": "hyperfine --warmup 10 'bun run ./tests/playground/run.ts' 'python3 ./tests/playground/run.py'",
+        "playJs": "node --import ./build/rawImportHook.ts ./tests/playground/run.ts",
+        "playServer": "node --import ./build/rawImportHook.ts ./tests/playground/server.ts",
+        "benchmark": "hyperfine --warmup 10 'pnpm playJs' 'pnpm playPy'",
         "cloc": "cloc --vcs=git"
     },
     "dependencies": {
@@ -51,10 +51,10 @@
     "devDependencies": {
         "@eslint/compat": "^1.1.0",
         "@eslint/js": "^9.4.0",
+        "@nuxt/devalue": "^2.0.2",
         "@quasar/extras": "^1.16.11",
         "@quasar/vite-plugin": "^1.7.0",
         "@stylistic/eslint-plugin": "^5.1.0",
-        "@types/bun": "^1.1.2",
         "@types/katex": "^0.16.7",
         "@types/lodash.debounce": "^4.0.9",
         "@types/lodash.merge": "^4.6.9",

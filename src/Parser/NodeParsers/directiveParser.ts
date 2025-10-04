@@ -1,6 +1,6 @@
-import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
-import type { RstNodeParser } from '../RstParser.js'
-import { fieldListParser } from './fieldListParser.js'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import { fieldListParser } from './fieldListParser.ts'
 
 const directiveRe = new RegExp(
     '^ *\\.\\. +' +

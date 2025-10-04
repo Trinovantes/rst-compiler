@@ -1,5 +1,5 @@
-import { createInterpretedTextGenerators } from '../../../Generator/RstGenerator.js'
-import { sanitizeHtml } from '../../../utils/sanitizeHtml.js'
+import { createInterpretedTextGenerators } from '../../../Generator/RstGenerator.ts'
+import { sanitizeHtml } from '../../../utils/sanitizeHtml.ts'
 
 export const kbdInterpretedTextGenerators = createInterpretedTextGenerators(
     [

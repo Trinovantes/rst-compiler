@@ -1,5 +1,5 @@
-import { createDirectiveGenerators, createInterpretedTextGenerators } from '../../Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
+import { createDirectiveGenerators, createInterpretedTextGenerators } from '../../Generator/RstGenerator.ts'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Directive

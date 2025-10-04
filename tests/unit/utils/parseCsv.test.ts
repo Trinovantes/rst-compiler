@@ -1,5 +1,5 @@
-import { parseCsv } from '../../../src/utils/parseCsv.js'
-import { trimCommonIndent } from '../../../src/utils/trimCommonIndent.js'
+import { parseCsv } from '../../../src/utils/parseCsv.ts'
+import { trimCommonIndent } from '../../../src/utils/trimCommonIndent.ts'
 import { expect, test } from 'vitest'
 
 test.each([

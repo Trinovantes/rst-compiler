@@ -1,4 +1,4 @@
-import { removeEscapeChar } from './removeEscapeChar.js'
+import { removeEscapeChar } from './removeEscapeChar.ts'
 
 const abbrRe = new RegExp('' +
     '^' +

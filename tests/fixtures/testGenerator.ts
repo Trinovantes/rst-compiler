@@ -1,10 +1,10 @@
 import { expect, test } from 'vitest'
-import { trimCommonIndent } from '../../src/utils/trimCommonIndent.js'
-import type { RstGeneratorOptions } from '../../src/Generator/RstGeneratorOptions.js'
-import { RstToHtmlCompiler, RstToMdCompiler } from '../../src/RstCompiler.js'
-import type { RstGeneratorInput } from '../../src/Generator/RstGeneratorState.js'
-import { parseTestInputForGeneratorInput } from './parseTestInput.js'
-import type { RstParserOptions } from '../../src/Parser/RstParserOptions.js'
+import { trimCommonIndent } from '../../src/utils/trimCommonIndent.ts'
+import type { RstGeneratorOptions } from '../../src/Generator/RstGeneratorOptions.ts'
+import { RstToHtmlCompiler, RstToMdCompiler } from '../../src/RstCompiler.ts'
+import type { RstGeneratorInput } from '../../src/Generator/RstGeneratorState.ts'
+import { parseTestInputForGeneratorInput } from './parseTestInput.ts'
+import type { RstParserOptions } from '../../src/Parser/RstParserOptions.ts'
 
 type OptionsOverride = Partial<{
     parserOptions: Partial<RstParserOptions>

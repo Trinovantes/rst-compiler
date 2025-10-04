@@ -1,7 +1,7 @@
-import { RstTransition } from '../../RstNode/Block/Transition.js'
-import { escapeForRegExp } from '../../utils/escapeForRegExp.js'
-import type { RstNodeParser } from '../RstParser.js'
-import { sectionChars } from './sectionParser.js'
+import { RstTransition } from '../../RstNode/Block/Transition.ts'
+import { escapeForRegExp } from '../../utils/escapeForRegExp.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import { sectionChars } from './sectionParser.ts'
 
 const transitionMarkRe = new RegExp(`^(${sectionChars.map(escapeForRegExp).map((c) => `${c}{4,}`).join('|')})[ ]*$`)
 

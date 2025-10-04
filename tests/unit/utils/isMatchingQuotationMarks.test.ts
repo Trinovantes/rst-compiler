@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { isMatchingQuotationMarks } from '../../../src/utils/isMatchingQuotationMarks.js'
+import { isMatchingQuotationMarks } from '../../../src/utils/isMatchingQuotationMarks.ts'
 
 test('should return true for matching quotation marks', () => {
     expect(isMatchingQuotationMarks("'", "'")).toBe(true)

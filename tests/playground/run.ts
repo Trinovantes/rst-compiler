@@ -1,4 +1,4 @@
-import { RstToHtmlCompiler, RstToMdCompiler } from '../../src/RstCompiler.js'
+import { RstToHtmlCompiler, RstToMdCompiler } from '../../src/RstCompiler.ts'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'

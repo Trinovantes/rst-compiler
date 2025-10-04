@@ -1,6 +1,6 @@
-import type { RstCompilerPlugin } from '../../RstCompilerPlugin.js'
-import { evaluatePythonExpr } from './parsePythonBinaryExpr.js'
-import { RstGeneratorError } from '../../Generator/RstGeneratorError.js'
+import type { RstCompilerPlugin } from '../../RstCompilerPlugin.ts'
+import { evaluatePythonExpr } from './parsePythonBinaryExpr.ts'
+import { RstGeneratorError } from '../../Generator/RstGeneratorError.ts'
 
 const ONLY_DIRECTIVE = 'only'
 

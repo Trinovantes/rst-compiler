@@ -1,12 +1,12 @@
 import { test, describe, expect } from 'vitest'
-import type { RstNodeSource } from '../../../../src/RstNode/RstNode.js'
-import { RstFootnoteDef } from '../../../../src/RstNode/ExplicitMarkup/FootnoteDef.js'
-import { RstFootnoteRef } from '../../../../src/RstNode/Inline/FootnoteRef.js'
+import type { RstNodeSource } from '../../../../src/RstNode/RstNode.ts'
+import { RstFootnoteDef } from '../../../../src/RstNode/ExplicitMarkup/FootnoteDef.ts'
+import { RstFootnoteRef } from '../../../../src/RstNode/Inline/FootnoteRef.ts'
 import { testParser } from 'tests/fixtures/testParser.js'
 import { testGenerator } from 'tests/fixtures/testGenerator.js'
 import { parseTestInput, parseTestInputForGeneratorState } from 'tests/fixtures/parseTestInput.js'
-import { RstToHtmlCompiler } from '../../../../src/RstCompiler.js'
-import { RstNodeRegistrar } from '../../../../src/Parser/RstNodeRegistrar.js'
+import { RstToHtmlCompiler } from '../../../../src/RstCompiler.ts'
+import { RstNodeRegistrar } from '../../../../src/Parser/RstNodeRegistrar.ts'
 
 describe('manual number', () => {
     const input = `

@@ -1,8 +1,8 @@
-import type { RstNodeParser } from '../RstParser.js'
-import { RstTable } from '../../RstNode/Table/Table.js'
-import { RstTableCell } from '../../RstNode/Table/TableCell.js'
-import { RstTableRow } from '../../RstNode/Table/TableRow.js'
-import { RstParserError } from '../RstParserError.js'
+import type { RstNodeParser } from '../RstParser.ts'
+import { RstTable } from '../../RstNode/Table/Table.ts'
+import { RstTableCell } from '../../RstNode/Table/TableCell.ts'
+import { RstTableRow } from '../../RstNode/Table/TableRow.ts'
+import { RstParserError } from '../RstParserError.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Simple Parser

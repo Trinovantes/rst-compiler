@@ -1,9 +1,9 @@
-import { createDirectiveGenerators } from '../../../Generator/RstGenerator.js'
-import { sanitizeHtml } from '../../../utils/sanitizeHtml.js'
-import { jsDirectiveOptionsGenerator } from './jsDirectiveOptionsGenerator.js'
-import { getParentModules } from './getParentModules.js'
-import { HtmlAttributeStore } from '../../../Generator/HtmlAttributeStore.js'
-import { RstGeneratorError } from '../../../Generator/RstGeneratorError.js'
+import { createDirectiveGenerators } from '../../../Generator/RstGenerator.ts'
+import { sanitizeHtml } from '../../../utils/sanitizeHtml.ts'
+import { jsDirectiveOptionsGenerator } from './jsDirectiveOptionsGenerator.ts'
+import { getParentModules } from './getParentModules.ts'
+import { HtmlAttributeStore } from '../../../Generator/HtmlAttributeStore.ts'
+import { RstGeneratorError } from '../../../Generator/RstGeneratorError.ts'
 
 export const jsDirectives = new Set([
     'js:module',

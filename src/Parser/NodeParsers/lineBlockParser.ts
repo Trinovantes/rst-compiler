@@ -1,8 +1,8 @@
-import { RstLineBlock, RstLineBlockLine } from '../../RstNode/Block/LineBlock.js'
-import type { RstNodeSource } from '../../RstNode/RstNode.js'
-import type { RstNodeParser } from '../RstParser.js'
-import { RstParserError } from '../RstParserError.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstLineBlock, RstLineBlockLine } from '../../RstNode/Block/LineBlock.ts'
+import type { RstNodeSource } from '../../RstNode/RstNode.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import { RstParserError } from '../RstParserError.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 const lineBlockRe = /^([ ]*)\|(?: (?<lineBlockIndent> *)(?<lineBlockText>.+))?$/
 

@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 9cc786bd8372b9d42c40d7224a53d30bf69dfa1d..8e7ba824c6f9e0c4dca6235a1495da05733e6523 100644
+--- a/package.json
++++ b/package.json
+@@ -11,6 +11,7 @@
+       "import": "./dist/devalue.mjs"
+     }
+   },
++  "type": "module",
+   "main": "./dist/devalue.js",
+   "module": "./dist/devalue.mjs",
+   "types": "./dist/index.d.ts",

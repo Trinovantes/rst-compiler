@@ -1,5 +1,5 @@
-import { sanitizeHtml } from '../../utils/sanitizeHtml.js'
-import { createNodeGenerators } from '../RstGenerator.js'
+import { sanitizeHtml } from '../../utils/sanitizeHtml.ts'
+import { createNodeGenerators } from '../RstGenerator.ts'
 
 export const citationRefGenerators = createNodeGenerators(
     'CitationRef',

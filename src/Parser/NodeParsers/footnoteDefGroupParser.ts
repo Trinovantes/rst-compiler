@@ -1,8 +1,8 @@
-import { RstFootnoteDef } from '../../RstNode/ExplicitMarkup/FootnoteDef.js'
-import { RstFootnoteDefGroup } from '../../RstNode/ExplicitMarkup/FootnoteDefGroup.js'
-import { simpleNameReStr } from '../../SimpleName.js'
-import type { RstNodeParser } from '../RstParser.js'
-import type { RstParserState } from '../RstParserState.js'
+import { RstFootnoteDef } from '../../RstNode/ExplicitMarkup/FootnoteDef.ts'
+import { RstFootnoteDefGroup } from '../../RstNode/ExplicitMarkup/FootnoteDefGroup.ts'
+import { simpleNameReStr } from '../../SimpleName.ts'
+import type { RstNodeParser } from '../RstParser.ts'
+import type { RstParserState } from '../RstParserState.ts'
 
 const footnoteDefRe = new RegExp(
     '^ *\\.\\. +' +

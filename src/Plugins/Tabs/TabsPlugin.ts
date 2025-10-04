@@ -1,15 +1,15 @@
-import { createDirectiveGenerators } from '../../Generator/RstGenerator.js'
-import { createRstCompilerPlugins } from '../../RstCompilerPlugin.js'
-import { normalizeSimpleName } from '../../SimpleName.js'
-import type { RstGeneratorState } from '../../Generator/RstGeneratorState.js'
-import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.js'
-import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.js'
-import browserCode from './Tabs.browser.js?raw' with { type: 'text' }
-import { renderCodeBlockHtml } from '../Code/renderCodeBlockHtml.js'
-import { renderCodeBlockMd } from '../Code/renderCodeBlockMd.js'
+import { createDirectiveGenerators } from '../../Generator/RstGenerator.ts'
+import { createRstCompilerPlugins } from '../../RstCompilerPlugin.ts'
+import { normalizeSimpleName } from '../../SimpleName.ts'
+import type { RstGeneratorState } from '../../Generator/RstGeneratorState.ts'
+import { RstDirective } from '../../RstNode/ExplicitMarkup/Directive.ts'
+import { HtmlAttributeStore } from '../../Generator/HtmlAttributeStore.ts'
+import browserCode from './Tabs.browser.js?raw'
+import { renderCodeBlockHtml } from '../Code/renderCodeBlockHtml.ts'
+import { renderCodeBlockMd } from '../Code/renderCodeBlockMd.ts'
 import { bundledLanguagesInfo } from 'shiki'
-import { assertNode } from '../../utils/assertNode.js'
-import { RstGeneratorError } from '../../Generator/RstGeneratorError.js'
+import { assertNode } from '../../utils/assertNode.ts'
+import { RstGeneratorError } from '../../Generator/RstGeneratorError.ts'
 
 // ----------------------------------------------------------------------------
 // MARK: Constants

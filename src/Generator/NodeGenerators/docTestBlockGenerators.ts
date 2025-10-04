@@ -1,7 +1,7 @@
-import { renderCodeBlockHtml } from '../../Plugins/Code/renderCodeBlockHtml.js'
-import { renderCodeBlockMd } from '../../Plugins/Code/renderCodeBlockMd.js'
-import { HtmlAttributeStore } from '../HtmlAttributeStore.js'
-import { createNodeGenerators } from '../RstGenerator.js'
+import { renderCodeBlockHtml } from '../../Plugins/Code/renderCodeBlockHtml.ts'
+import { renderCodeBlockMd } from '../../Plugins/Code/renderCodeBlockMd.ts'
+import { HtmlAttributeStore } from '../HtmlAttributeStore.ts'
+import { createNodeGenerators } from '../RstGenerator.ts'
 
 export const docTestBlockGenerators = createNodeGenerators(
     'DoctestBlock',
