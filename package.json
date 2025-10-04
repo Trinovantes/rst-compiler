@@ -40,7 +40,7 @@
         "test": "vitest --typecheck",
         "playPy": "python3 ./tests/playground/run.py",
         "playJs": "bun run ./tests/playground/run.ts",
-        "server": "bun --watch run ./tests/playground/server.ts",
+        "playServer": "bun --watch run ./tests/playground/server.ts",
         "benchmark": "hyperfine --warmup 10 'bun run ./tests/playground/run.ts' 'python3 ./tests/playground/run.py'",
         "cloc": "cloc --vcs=git"
     },
