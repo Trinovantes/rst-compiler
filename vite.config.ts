@@ -3,6 +3,12 @@ import { defineConfig } from 'vitest/config'
 import dts from 'vite-plugin-dts'
 
 export default defineConfig({
+    resolve: {
+        alias: {
+            tests: path.resolve(__dirname, './tests'),
+        },
+    },
+
     test: {
         dir: './tests',
         silent: Boolean(process.env.CI),
