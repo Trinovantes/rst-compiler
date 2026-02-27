@@ -6,3 +6,6 @@ patchedDependencies:
   '@nuxt/devalue': patches/@nuxt__devalue.patch
   mitt: patches/mitt.patch
   quasar: patches/quasar.patch
+
+overrides:
+  "@types/node": "^24"

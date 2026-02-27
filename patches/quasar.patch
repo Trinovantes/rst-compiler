@@ -1,10 +1,10 @@
 diff --git a/package.json b/package.json
-index bc4c9730d68121566d60f114342f276f7cec7eea..8c66277ace4f6e4ab210f1093764f02efd9152d4 100644
+index ebcb9cb170499bf4a502e5bb8231e2b324a05823..77807292c08f8685f01c88125ac4da027ec3d023 100644
 --- a/package.json
 +++ b/package.json
 @@ -2,10 +2,6 @@
    "name": "quasar",
-   "version": "2.18.2",
+   "version": "2.18.6",
    "description": "Build high-performance VueJS user interfaces (SPA, PWA, SSR, Mobile and Desktop) in record time",
 -  "type": "module",
 -  "module": "dist/quasar.client.js",
