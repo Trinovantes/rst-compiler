@@ -45,7 +45,7 @@ export class RstDoctestBlock extends RstNode {
         return 'DoctestBlock'
     }
 
-    override get shouldTestTextContent(): boolean {
+    override get shouldExportPlainText(): boolean {
         return true
     }
 

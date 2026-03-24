@@ -120,7 +120,7 @@ export class RstDirective extends RstNode {
         return this._rawBodyText ?? ''
     }
 
-    override get shouldTestTextContent(): boolean {
+    override get shouldExportPlainText(): boolean {
         return false
     }
 

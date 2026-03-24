@@ -51,7 +51,7 @@ export class RstDocument extends RstNode {
         return 'Document'
     }
 
-    override get shouldTestTextContent(): boolean {
+    override get shouldExportPlainText(): boolean {
         return false
     }
 

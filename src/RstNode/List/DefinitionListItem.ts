@@ -73,11 +73,11 @@ export class RstDefinitionListItem extends RstNode {
         return 'DefinitionListItem'
     }
 
-    override get shouldTestTextContent() {
+    override get shouldExportPlainText() {
         return false
     }
 
-    override get shouldTestChildren() {
+    override get shouldExportChildren() {
         return false
     }
 

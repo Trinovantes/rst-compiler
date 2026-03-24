@@ -65,11 +65,11 @@ export class RstFieldListItem extends RstNode {
         return 'FieldListItem'
     }
 
-    override get shouldTestTextContent() {
+    override get shouldExportPlainText() {
         return false
     }
 
-    override get shouldTestChildren() {
+    override get shouldExportChildren() {
         return false
     }
 

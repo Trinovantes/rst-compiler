@@ -50,7 +50,7 @@ export class RstComment extends RstNode {
         return false
     }
 
-    override get shouldTestTextContent(): boolean {
+    override get shouldExportPlainText(): boolean {
         return true
     }
 

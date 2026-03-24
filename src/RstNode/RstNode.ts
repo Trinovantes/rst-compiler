@@ -61,9 +61,9 @@ export abstract class RstNode {
             type: this.nodeType,
         }
 
-        if (this.shouldTestTextContent) {
+        if (this.shouldExportPlainText) {
             root.text = this.textContent
-        } else if (this.shouldTestChildren) {
+        } else if (this.shouldExportChildren) {
             root.children = this.children.map((child) => child.toObject())
         }
 
@@ -115,17 +115,17 @@ export abstract class RstNode {
      * When exporting node with toObject, if this function returns true, then the node will simply be
      *  {
      *      type: TYPE,
-     *      text: 'textContent',
+     *      text: node.textContent,
      *  }
      */
-    get shouldTestTextContent(): boolean {
+    get shouldExportPlainText(): boolean {
         return this.children.length === 1 && (
             (this.children[0].nodeType === 'Text') ||
-            (this.children[0].nodeType === 'Paragraph' && this.children[0].shouldTestTextContent)
+            (this.children[0].nodeType === 'Paragraph' && this.children[0].shouldExportPlainText)
         )
     }
 
-    get shouldTestChildren(): boolean {
+    get shouldExportChildren(): boolean {
         return this.children.length > 0
     }
 
@@ -169,7 +169,7 @@ export abstract class RstNode {
 
         let str = selfTab + `[${this.toShortString()}] (${this.lineNums})\n`
 
-        if (this.shouldTestTextContent) {
+        if (this.shouldExportPlainText) {
             for (const line of this.textContent.split('\n')) {
                 str += childTab + `"${line}"\n`
             }
