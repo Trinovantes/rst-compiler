@@ -1,7 +1,3 @@
-ignoredBuiltDependencies:
-  - '@parcel/watcher'
-  - esbuild
-
 patchedDependencies:
   '@nuxt/devalue': patches/@nuxt__devalue.patch
   mitt: patches/mitt.patch
@@ -9,3 +5,7 @@ patchedDependencies:
 
 overrides:
   '@types/node': '^24'
+
+allowBuilds:
+  '@parcel/watcher': false
+  esbuild: false
