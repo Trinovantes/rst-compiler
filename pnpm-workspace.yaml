@@ -1,11 +1,12 @@
 patchedDependencies:
   '@nuxt/devalue': patches/@nuxt__devalue.patch
-  mitt: patches/mitt.patch
-  quasar: patches/quasar.patch
+  'mitt': patches/mitt.patch
+  'quasar': patches/quasar.patch
 
 overrides:
-  '@types/node': '^24'
+  '@types/node': '^26'
+  'typescript': '^6'
 
 allowBuilds:
   '@parcel/watcher': false
-  esbuild: false
+  'esbuild': false

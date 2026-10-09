@@ -6,7 +6,7 @@ import packageJson from './package.json' with { type: 'json' }
 import { fileURLToPath } from 'node:url'
 
 export default defineConfig({
-    root: path.resolve(__dirname, './demo'),
+    root: path.resolve(import.meta.dirname, './demo'),
     base: '/rst-compiler/',
 
     build: {

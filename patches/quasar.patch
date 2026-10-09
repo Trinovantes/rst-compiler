@@ -1,12 +1,18 @@
 diff --git a/package.json b/package.json
-index 18a8f18c7b0c7ce01dafee83c1ceff305a09e71f..295c4ca587a3a6907fe10a26034aea005fb4f31e 100644
+index 83c6d9d6aa3859b3d66171154aed7cb9068654dc..f131d1a7e9193a88dbadfdf28e2e458bc7ab608f 100644
 --- a/package.json
 +++ b/package.json
-@@ -40,11 +40,6 @@
-     "src",
+@@ -45,17 +45,12 @@
+     "!src/**/test",
      "wrappers"
    ],
 -  "type": "module",
+   "sideEffects": [
+     "*.css",
+     "*.sass",
+     "./src/flags.dev.js",
+     "./src/umd-vue-guard.js"
+   ],
 -  "module": "dist/quasar.client.js",
 -  "typings": "dist/types/index.d.ts",
 -  "unpkg": "dist/quasar.umd.prod.js",

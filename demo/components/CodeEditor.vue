@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import * as monaco from 'monaco-editor'
-import { initMonaco } from './initMonaco.ts'
 import { getDefaultText } from './getDefaultText.ts'
 import { useAppEvent } from './useAppEvent.ts'
 import debounce from 'lodash.debounce'
@@ -22,8 +21,6 @@ onMounted(() => {
     if (!codeEditorRef.value) {
         throw new Error('Failed to resolve codeEditorRef')
     }
-
-    initMonaco()
 
     editor = monaco.editor.create(codeEditorRef.value, {
         value: editorText.value,
