@@ -268,7 +268,7 @@ Create `./tests/playground/playground.rst` (not tracked by Git) and write test i
 
 * Run `pnpm playPy` to run `docutils` (Python reference implementation) on test input
 
-* Run `pnpm playJs` to run `rst-compiler` on test input (requires [Bun](https://bun.sh/) runtime)
+* Run `pnpm playJs` to run `rst-compiler` on test input
 
     * Press `F5` in VSCode to run this command inside the debugger
 
